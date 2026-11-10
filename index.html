@@ -913,28 +913,28 @@
       <!-- Front Street Gutters & Front Parking Metric -->
       <div class="metric-card">
         <div class="metric-meta">
-          <span>Front Street Gutters (Parking)</span>
+          <span>Curb Gutters & Street Parking</span>
           <span id="frontParkingStatusText" style="color:var(--green);">100% DRY</span>
         </div>
         <div class="metric-val" id="valFrontParkingDepth">
           0.0 <span>in dry</span>
         </div>
         <div class="metric-sub" id="valFrontParkingSub">
-          Front of House (#326) • Breaches at 7.55' TWL
+          Street Margins & Gutter Pan (Fills at 7.15')
         </div>
       </div>
 
-      <!-- Back Lot Carport Metric -->
+      <!-- Pedestrian Crosswalk & Sidewalk Metric -->
       <div class="metric-card">
         <div class="metric-meta">
-          <span>Back Lot Carport (#86)</span>
-          <span id="carportStatusText" style="color:var(--green);">SAFE (DRY)</span>
+          <span>Pedestrian Crosswalk Dip</span>
+          <span id="crosswalkStatusText" style="color:var(--green);">100% DRY</span>
         </div>
-        <div class="metric-val" id="valCarportMargin" style="color:var(--green);">
-          +3.2 <span>in margin</span>
+        <div class="metric-val" id="valCrosswalkDepth" style="color:var(--green);">
+          0.0 <span>in dry</span>
         </div>
-        <div class="metric-sub" id="valCarportSub">
-          Slab: 7.75' | Direct lagoon inlet
+        <div class="metric-sub" id="valCrosswalkSub">
+          Curb ramp at sag dip • Walking passability
         </div>
       </div>
     </section>
@@ -1035,14 +1035,14 @@
           <!-- Pavement Terrain Polygon (Larkspur Plaza Dr Cross-Section) -->
           <polygon points="30,260 30,223 430,223 530,208.4 580,216 600,197.9 710,197.9 710,260" fill="url(#pavementGrad)"/>
           
-          <!-- Carport Reference Markers Directly in Front of Vehicle -->
+          <!-- High Elevation Reference Markers -->
           <g id="svgCarportMarkers">
-            <!-- 2nd Dashed Line: Carport Damage Level (8.86' = 8.15' Slab + 8.5" Door Sill) -->
+            <!-- 2nd Dashed Line: Severe Flooding Level (8.86' = 8.15' Slab + 8.5" Door Sill) -->
             <line x1="420" y1="191.7" x2="710" y2="191.7" stroke="#f43f5e" stroke-width="1.8" stroke-dasharray="5,3"/>
             <rect x="425" y="181.7" width="195" height="18" rx="4" fill="#311219" stroke="#f43f5e" stroke-width="1.2"/>
-            <text x="522" y="193.8" fill="#fb7185" font-size="8" font-weight="bold" font-family="monospace" text-anchor="middle">Carport Damage Level (8.86' | +8.5")</text>
+            <text x="522" y="193.8" fill="#fb7185" font-size="8" font-weight="bold" font-family="monospace" text-anchor="middle">Severe Flooding Level (8.86' | +8.5")</text>
 
-            <!-- 1st Dashed Line: Carport Slab (Bay #86 = 8.15') -->
+            <!-- 1st Dashed Line: Low Driveway Apron (8.15') -->
             <line x1="420" y1="208.7" x2="710" y2="208.7" stroke="#a855f7" stroke-width="1.8" stroke-dasharray="5,3"/>
             <rect x="425" y="198.7" width="150" height="18" rx="4" fill="#1e1b4b" stroke="#a855f7" stroke-width="1.2"/>
             <text x="500" y="210.8" fill="#c084fc" font-size="8" font-weight="bold" font-family="monospace" text-anchor="middle">Carport Bay #86 (8.15' Slab)</text>
@@ -1555,14 +1555,14 @@
             <td><strong>Travel lane depth &ge; 5.9" (Ground truth: 2:43 PM)</strong></td>
           </tr>
           <tr>
-            <td>Carport Stall #86 Floor (GL)</td>
+            <td>Low Driveway & Ground Apron (8.15')</td>
             <td class="val" style="color:var(--purple);">7.75 ft</td>
             <td>Concrete floor. Kept dry today (peak was 7.70 ft)</td>
           </tr>
           <tr>
-            <td>Carport Door Sill Damage Level</td>
+            <td>Vehicle Door Sill Damage Level</td>
             <td class="val" style="color:#f43f5e;">8.46 ft</td>
-            <td>+8.5" above carport GL where water enters parked car interior</td>
+            <td>+8.5" above ground where water enters low vehicles</td>
           </tr>
           <tr>
             <td>SUV / Truck Impassable</td>
@@ -1588,8 +1588,8 @@
         <div class="select-card-list">
           <div class="select-card active" id="loc-larkspur" onclick="selectLocation('larkspur')">
             <div>
-              <div class="select-card-name">📍 Larkspur Plaza Drive & Carport #86</div>
-              <div class="select-card-detail">Crown: 7.31' | Sag Dip: 7.55' | Stall: 7.75'</div>
+              <div class="select-card-name">📍 Larkspur Plaza Drive (Sag Dip & Crosswalk)</div>
+              <div class="select-card-detail">Road Crown: 7.42' | Sag Gutter: 7.15'</div>
             </div>
             <span>✓</span>
           </div>
@@ -1597,6 +1597,12 @@
             <div>
               <div class="select-card-name">📍 Manzanita Park & Ride (Shoreline Hwy)</div>
               <div class="select-card-detail">Lot Floods: 7.20' | Impassable: 7.45'</div>
+            </div>
+          </div>
+          <div class="select-card" id="loc-custom" onclick="selectLocation('custom')">
+            <div>
+              <div class="select-card-name">📍 Use My Current Location (GPS)</div>
+              <div class="select-card-detail" id="customLocDetail">Tap to detect local ground elevation via USGS</div>
             </div>
           </div>
           <div class="select-card" id="loc-tam" onclick="selectLocation('tam')">
@@ -1619,26 +1625,26 @@
         <div class="select-card-list">
           <div class="select-card active" id="veh-prius" onclick="selectVehicle('prius', 5.9)">
             <div>
-              <div class="select-card-name">🚗 Small Car / Prius (5.9" Clearance • 56.3" Height)</div>
+              <div class="select-card-name">🚗 Compact Sedan / Small Car (5.5"–5.9" Clearance)</div>
               <div class="select-card-detail">Impassable at 7.55 ft NAVD88 in Sag Dip</div>
             </div>
             <span>✓</span>
           </div>
           <div class="select-card" id="veh-sedan" onclick="selectVehicle('sedan', 6.5)">
             <div>
-              <div class="select-card-name">🚙 Standard Sedan / Camry (6.5" Clearance • 56.9" Height)</div>
+              <div class="select-card-name">🚙 Midsize Sedan (6.5" Clearance)</div>
               <div class="select-card-detail">Impassable at 7.60 ft NAVD88 in Sag Dip</div>
             </div>
           </div>
           <div class="select-card" id="veh-suv" onclick="selectVehicle('suv', 8.1)">
             <div>
-              <div class="select-card-name">🚙 Crossover SUV / Corolla Cross (8.1" Clearance • 64.9" Height)</div>
+              <div class="select-card-name">🚙 Crossover / SUV (8.1" Clearance)</div>
               <div class="select-card-detail">Impassable at 7.73 ft NAVD88 in Sag Dip</div>
             </div>
           </div>
           <div class="select-card" id="veh-truck" onclick="selectVehicle('truck', 9.4)">
             <div>
-              <div class="select-card-name">🛻 4x4 Truck / Tacoma (9.4" Clearance • 70.6" Height)</div>
+              <div class="select-card-name">🛻 Truck / High-Clearance 4x4 (9.4"+ Clearance)</div>
               <div class="select-card-detail">High Clearance • Impassable at 7.84 ft NAVD88</div>
             </div>
           </div>
@@ -1686,7 +1692,7 @@
             <div>
               <div style="font-size:0.84rem; font-weight:700; color:#fbbf24;">⚠️ Drain #1 Surcharging & Gutter Flood (7.28')</div>
               <div style="font-size:0.73rem; color:#cbd5e1; margin-top:2px; line-height:1.35;">
-                Alerts when Big Drain #1 surcharges onto the street and front stalls outside #326 begin flooding. Recommended for moving cars parked in front stalls.
+                Alerts when Big Drain #1 surcharges onto the street and on-street curb parking begins flooding. Recommended for moving cars parked along curb.
               </div>
             </div>
           </label>
@@ -1728,9 +1734,9 @@
           <label style="display:flex; gap:10px; align-items:flex-start; background:rgba(168, 85, 247, 0.06); border:1px solid rgba(168, 85, 247, 0.22); border-radius:10px; padding:10px 12px; cursor:pointer;">
             <input type="checkbox" id="notifyCarport" style="margin-top:2px; accent-color:#a855f7; width:16px; height:16px;">
             <div>
-              <div style="font-size:0.84rem; font-weight:700; color:#c084fc;">🚨 Extreme King Tide: Carport #86 Threat (7.75')</div>
+              <div style="font-size:0.84rem; font-weight:700; color:#c084fc;">🚨 Extreme King Tide: Low Driveway Threat (7.75'+)</div>
               <div style="font-size:0.73rem; color:#cbd5e1; margin-top:2px; line-height:1.35;">
-                Emergency alert if major surge approaches back lot Carport Spot #86 ground slab.
+                Emergency alert if major surge approaches low driveways and property aprons.
               </div>
             </div>
           </label>
@@ -1802,6 +1808,16 @@
         priusSag: 7.45,
         stall: 7.80,
         lagMinutes: 120
+      },
+      custom: {
+        name: "My Custom Location",
+        gutter: 7.15,
+        sagGutter: 7.15,
+        frontGutter: 7.28,
+        crown: 7.42,
+        priusSag: 7.91,
+        stall: 8.15,
+        lagMinutes: 180
       },
       tam: {
         name: "Tam Junction (SR-1)",
@@ -1880,10 +1896,66 @@
     }
     function selectLocation(key) {
       activeLocKey = key;
-      document.querySelectorAll('.select-card-list #loc-larkspur, #loc-manzanita, #loc-tam, #loc-creek').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.select-card-list div[id^="loc-"]').forEach(el => el.classList.remove('active'));
       const target = document.getElementById('loc-' + key);
       if (target) target.classList.add('active');
+
+      if (key === 'custom') {
+        detectCustomLocationElevation();
+        return;
+      }
       updateUI();
+    }
+
+    function detectCustomLocationElevation() {
+      const detailEl = document.getElementById('customLocDetail');
+      if (!navigator.geolocation) {
+        if (detailEl) detailEl.textContent = "Geolocation not supported by this browser.";
+        return;
+      }
+      if (detailEl) detailEl.textContent = "Detecting GPS & querying USGS 3DEP elevation...";
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          try {
+            const resp = await fetch(`https://epqs.nationalmap.gov/v1/json?x=${lon}&y=${lat}&units=Feet`);
+            const data = await resp.json();
+            const elev = parseFloat(data.value);
+            if (!isNaN(elev) && elev > -50 && elev < 500) {
+              THRESHOLDS.custom = {
+                name: `My GPS Spot (${lat.toFixed(3)}, ${lon.toFixed(3)})`,
+                crown: parseFloat(elev.toFixed(2)),
+                sagGutter: parseFloat((elev - 0.25).toFixed(2)),
+                gutter: parseFloat((elev - 0.25).toFixed(2)),
+                frontGutter: parseFloat((elev - 0.15).toFixed(2)),
+                stall: parseFloat((elev + 0.50).toFixed(2)),
+                lagMinutes: 180
+              };
+              if (detailEl) detailEl.textContent = `Ground Elev: ${elev.toFixed(1)}' NAVD88 (USGS 3DEP)`;
+              updateUI();
+            } else {
+              throw new Error("Invalid elevation");
+            }
+          } catch (err) {
+            if (detailEl) detailEl.textContent = `GPS: (${lat.toFixed(3)}, ${lon.toFixed(3)}) • Default 7.40'`;
+            THRESHOLDS.custom = {
+              name: `My Spot (${lat.toFixed(3)}, ${lon.toFixed(3)})`,
+              crown: 7.40,
+              sagGutter: 7.15,
+              gutter: 7.15,
+              frontGutter: 7.28,
+              stall: 8.00,
+              lagMinutes: 180
+            };
+            updateUI();
+          }
+        },
+        (err) => {
+          if (detailEl) detailEl.textContent = "GPS Permission denied. Tap to retry.";
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
     }
 
     // Vehicle Selection Switcher (Updates 3D/SVG Model Across Both Views)
@@ -2544,13 +2616,7 @@
       const valFrontParkingDepthEl = document.getElementById('valFrontParkingDepth');
       const valFrontParkingSubEl = document.getElementById('valFrontParkingSub');
 
-      // Zone 3: Back Lot Carport (#86 Stall: 8.15' slab, direct lagoon inlet)
-      const carportMarginFt = cfg.stall - twl;
-      const carportMarginIn = carportMarginFt * 12;
-      const carportDepthIn = Math.max(0, (twl - cfg.stall) * 12);
-      const carportStatusEl = document.getElementById('carportStatusText');
-      const valCarportMarginEl = document.getElementById('valCarportMargin');
-      const valCarportSubEl = document.getElementById('valCarportSub');
+
 
       // Update Zone 2 (Front Street Gutters in front of house / general front parking)
       if (valFrontParkingDepthEl && frontParkingStatusEl && valFrontParkingSubEl) {
@@ -2559,37 +2625,48 @@
           valFrontParkingDepthEl.style.color = "var(--red)";
           frontParkingStatusEl.textContent = "GUTTER FLOODED";
           frontParkingStatusEl.style.color = "var(--red)";
-          valFrontParkingSubEl.textContent = `Front street gutters taking water (+${frontGutterDepthIn.toFixed(1)}")`;
+          valFrontParkingSubEl.textContent = `Curb gutters taking water (+${frontGutterDepthIn.toFixed(1)}")`;
         } else if (sagGutterDepthIn > 0) {
           valFrontParkingDepthEl.innerHTML = `+${sagGutterDepthIn.toFixed(1)} <span>in gutter</span>`;
           valFrontParkingDepthEl.style.color = "var(--amber)";
           frontParkingStatusEl.textContent = "RESIDUAL PUDDLE";
           frontParkingStatusEl.style.color = "var(--amber)";
-          valFrontParkingSubEl.textContent = `Front stalls clear • Standing water trapped in curb gutter pan (+${sagGutterDepthIn.toFixed(1)}")`;
+          valFrontParkingSubEl.textContent = `Travel lanes clear • Standing water trapped in curb gutter pan (+${sagGutterDepthIn.toFixed(1)}")`;
         } else {
           valFrontParkingDepthEl.innerHTML = `0.0 <span>in (DRY)</span>`;
           valFrontParkingDepthEl.style.color = "var(--green)";
           frontParkingStatusEl.textContent = "100% DRY";
           frontParkingStatusEl.style.color = "var(--green)";
-          valFrontParkingSubEl.textContent = `Front street gutters & parking stalls fully dry`;
+          valFrontParkingSubEl.textContent = `Curb gutters & parking stalls fully dry`;
         }
       }
 
-      // Update Zone 3 (Back Lot Carport) Card
-      if (valCarportMarginEl && carportStatusEl && valCarportSubEl) {
-        if (twl >= cfg.stall) {
-          valCarportMarginEl.innerHTML = `+${carportDepthIn.toFixed(1)} <span>in stall</span>`;
-          valCarportMarginEl.style.color = "var(--red)";
-          carportStatusEl.textContent = "WATER AT SLAB";
-          carportStatusEl.style.color = "var(--red)";
-          valCarportSubEl.textContent = `Carport Spot #86 overtopped!`;
+      // Update Zone 3 (Pedestrian Crosswalk & Sidewalk Dip) Card
+      const valCrosswalkEl = document.getElementById('valCrosswalkDepth');
+      const crosswalkStatusEl = document.getElementById('crosswalkStatusText');
+      const valCrosswalkSubEl = document.getElementById('valCrosswalkSub');
+
+      if (valCrosswalkEl && crosswalkStatusEl && valCrosswalkSubEl) {
+        if (effectiveCrownDepthIn > 0.1) {
+          valCrosswalkEl.innerHTML = `+${(effectiveCrownDepthIn + 2.0).toFixed(1)} <span>in water</span>`;
+          valCrosswalkEl.style.color = "var(--red)";
+          crosswalkStatusEl.textContent = "IMPASSABLE";
+          crosswalkStatusEl.style.color = "var(--red)";
+          valCrosswalkSubEl.textContent = `Crosswalk completely submerged (+${(effectiveCrownDepthIn + 2.0).toFixed(1)}")`;
+        } else if (maxGutterDepthIn > 0.1) {
+          valCrosswalkEl.innerHTML = `+${maxGutterDepthIn.toFixed(1)} <span>in puddle</span>`;
+          valCrosswalkEl.style.color = "var(--amber)";
+          crosswalkStatusEl.textContent = "WET (AVOID)";
+          crosswalkStatusEl.style.color = "var(--amber)";
+          valCrosswalkSubEl.textContent = `Standing water over curb ramp (+${maxGutterDepthIn.toFixed(1)}") • Impassable on foot`;
         } else {
-          valCarportMarginEl.innerHTML = `+${carportMarginIn.toFixed(1)} <span>in margin</span>`;
-          valCarportMarginEl.style.color = "var(--green)";
-          carportStatusEl.textContent = "SAFE (DRY)";
-          carportStatusEl.style.color = "var(--green)";
-          valCarportSubEl.textContent = `Slab: 7.75' | Direct lagoon inlet`;
+          valCrosswalkEl.innerHTML = `0.0 <span>in (DRY)</span>`;
+          valCrosswalkEl.style.color = "var(--green)";
+          crosswalkStatusEl.textContent = "100% DRY";
+          crosswalkStatusEl.style.color = "var(--green)";
+          valCrosswalkSubEl.textContent = `Curb ramps & crosswalk dry and passable on foot`;
         }
+      }
       }
 
       // Roadway Crown & Vehicle Clearance Updates
@@ -3036,7 +3113,7 @@
     // Startup Initialization
     document.addEventListener('DOMContentLoaded', () => {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=38').catch(() => {});
+        navigator.serviceWorker.register('./sw.js?v=39').catch(() => {});
       }
       applyVehicleAndCarView();
       initHydrographDragScrub();
