@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>🌊 Marin County Live Flood Watch</name>
+    <open>1</open>
+    <description><![CDATA[
+      <h2>Marin County Coastal Flood & Elevation Watch</h2>
+      <p><b>Live Tide Level:</b> 3.57' NAVD88 (3.66' MLLW)</p>
+      <p>Real-time surveyed road crown elevations, curb gutter surcharges, and flood monitoring benchmarks.</p>
+    ]]></description>
+
+    <!-- Styles for Green, Yellow, and Red Pushpins -->
+    <Style id="greenPin">
+      <IconStyle>
+        <color>ff44c522</color>
+        <scale>1.2</scale>
+        <Icon>
+          <href>http://maps.google.com/mapfiles/kml/paddle/grn-circle.png</href>
+        </Icon>
+      </IconStyle>
+      <LabelStyle><scale>0.85</scale></LabelStyle>
+    </Style>
+
+    <Style id="yellowPin">
+      <IconStyle>
+        <color>ff0bbef5</color>
+        <scale>1.3</scale>
+        <Icon>
+          <href>http://maps.google.com/mapfiles/kml/paddle/ylw-circle.png</href>
+        </Icon>
+      </IconStyle>
+      <LabelStyle><scale>0.85</scale></LabelStyle>
+    </Style>
+
+    <Style id="redPin">
+      <IconStyle>
+        <color>ff4444ef</color>
+        <scale>1.4</scale>
+        <Icon>
+          <href>http://maps.google.com/mapfiles/kml/paddle/red-circle.png</href>
+        </Icon>
+      </IconStyle>
+      <LabelStyle><scale>0.9</scale></LabelStyle>
+    </Style>
+
+    <!-- NOAA Coastal Inundation WMS Overlay for Central & South Marin -->
+    <Folder>
+      <name>🌊 NOAA LiDAR Coastal Flood Inundation Model</name>
+      <open>1</open>
+      <description>NOAA Digital Coast 1-Meter Sea Level Rise &amp; King Tide Inundation Extent for Marin County</description>
+      <GroundOverlay>
+        <name>NOAA 1ft Coastal Inundation Extent (~7.25' MLLW King Tide)</name>
+        <Icon>
+          <href>https://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_1ft/MapServer/export?bbox=-122.56,37.86,-122.48,37.98&amp;bboxSR=4326&amp;imageSR=4326&amp;size=1600,1600&amp;format=png32&amp;transparent=true&amp;f=image</href>
+        </Icon>
+        <LatLonBox>
+          <north>37.98</north>
+          <south>37.86</south>
+          <east>-122.48</east>
+          <west>-122.56</west>
+        </LatLonBox>
+      </GroundOverlay>
+    </Folder>
+
+    <!-- Surveyed Hotspot Placemarks -->
+    <Folder>
+      <name>📍 Calibrated Flood Benchmarks</name>
+      <open>1</open>
+      
+      <Placemark>
+        <name>Larkspur Sag</name>
+        <description><![CDATA[
+          <div style="font-family: Arial, sans-serif; min-width: 260px; line-height: 1.4;">
+            <h3 style="margin: 0 0 4px 0; color: #0284c7;">Larkspur Plaza Dr (Sag & Crosswalk near Heather Way)</h3>
+            <p style="margin: 0 0 8px 0; font-size: 11px; color: #64748b;">📍 Larkspur, Marin County</p>
+            <div style="background: #22c55e; color: #fff; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; margin-bottom: 8px;">
+              🟢 100% CLEAR (3.85' margin)
+            </div>
+            <table style="width: 100%; font-size: 12px; border-collapse: collapse; margin-bottom: 8px;">
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 3px 0; color: #475569;"><b>👑 Road Crown:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.42' NAVD88 (7.51' MLLW)</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 3px 0; color: #475569;"><b>📐 Curb Gutter:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.28' NAVD88 (7.37' MLLW)</td>
+              </tr>
+              <tr>
+                <td style="padding: 3px 0; color: #475569;"><b>🌊 Live Tide:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace; font-weight: bold; color: #0284c7;">3.57' NAVD88 (3.66' MLLW)</td>
+              </tr>
+            </table>
+            <p style="font-size: 11px; color: #64748b; font-style: italic; margin: 0 0 8px 0;">Concave road sag on Larkspur Plaza Dr near Heather Way. Drains surcharge at 7.28' NAVD88; road crown overhauls at 7.42' NAVD88.</p>
+            <p style="margin: 0; font-size: 11px;"><a href="https://cloudwatchcomputing.com/" target="_blank">Open CWC Flood Watch Web Dashboard &rarr;</a></p>
+          </div>
+        ]]></description>
+        <styleUrl>#greenPin</styleUrl>
+        <Point>
+          <altitudeMode>relativeToGround</altitudeMode>
+          <coordinates>-122.535078,37.93975,5</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Larkspur Plaza North</name>
+        <description><![CDATA[
+          <div style="font-family: Arial, sans-serif; min-width: 260px; line-height: 1.4;">
+            <h3 style="margin: 0 0 4px 0; color: #0284c7;">Larkspur Plaza Dr North (#617 / Heather Gardens)</h3>
+            <p style="margin: 0 0 8px 0; font-size: 11px; color: #64748b;">📍 Larkspur, Marin County</p>
+            <div style="background: #22c55e; color: #fff; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; margin-bottom: 8px;">
+              🟢 100% CLEAR (3.84' margin)
+            </div>
+            <table style="width: 100%; font-size: 12px; border-collapse: collapse; margin-bottom: 8px;">
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 3px 0; color: #475569;"><b>👑 Road Crown:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.41' NAVD88 (7.50' MLLW)</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 3px 0; color: #475569;"><b>📐 Curb Gutter:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.10' NAVD88 (7.19' MLLW)</td>
+              </tr>
+              <tr>
+                <td style="padding: 3px 0; color: #475569;"><b>🌊 Live Tide:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace; font-weight: bold; color: #0284c7;">3.57' NAVD88 (3.66' MLLW)</td>
+              </tr>
+            </table>
+            <p style="font-size: 11px; color: #64748b; font-style: italic; margin: 0 0 8px 0;">Frequent neighborhood tidal flooding hotspot. Curb gutters surcharge at 7.10' NAVD88; roadway center breaches at 7.41' NAVD88.</p>
+            <p style="margin: 0; font-size: 11px;"><a href="https://cloudwatchcomputing.com/" target="_blank">Open CWC Flood Watch Web Dashboard &rarr;</a></p>
+          </div>
+        ]]></description>
+        <styleUrl>#greenPin</styleUrl>
+        <Point>
+          <altitudeMode>relativeToGround</altitudeMode>
+          <coordinates>-122.533875,37.941245,5</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Boardwalk One</name>
+        <description><![CDATA[
+          <div style="font-family: Arial, sans-serif; min-width: 260px; line-height: 1.4;">
+            <h3 style="margin: 0 0 4px 0; color: #0284c7;">Boardwalk One (at Corte Madera Creek)</h3>
+            <p style="margin: 0 0 8px 0; font-size: 11px; color: #64748b;">📍 Larkspur, Marin County</p>
+            <div style="background: #22c55e; color: #fff; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; margin-bottom: 8px;">
+              🟢 100% CLEAR (4.47' margin)
+            </div>
+            <table style="width: 100%; font-size: 12px; border-collapse: collapse; margin-bottom: 8px;">
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 3px 0; color: #475569;"><b>👑 Road Crown:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace;">8.04' NAVD88 (8.13' MLLW)</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 3px 0; color: #475569;"><b>📐 Curb Gutter:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.60' NAVD88 (7.69' MLLW)</td>
+              </tr>
+              <tr>
+                <td style="padding: 3px 0; color: #475569;"><b>🌊 Live Tide:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace; font-weight: bold; color: #0284c7;">3.57' NAVD88 (3.66' MLLW)</td>
+              </tr>
+            </table>
+            <p style="font-size: 11px; color: #64748b; font-style: italic; margin: 0 0 8px 0;">Elevated residential boardwalk deck (8.04' NAVD88 / 8.13' MLLW) on east bank of creek slough.</p>
+            <p style="margin: 0; font-size: 11px;"><a href="https://cloudwatchcomputing.com/" target="_blank">Open CWC Flood Watch Web Dashboard &rarr;</a></p>
+          </div>
+        ]]></description>
+        <styleUrl>#greenPin</styleUrl>
+        <Point>
+          <altitudeMode>relativeToGround</altitudeMode>
+          <coordinates>-122.532933,37.940714,5</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Corte Madera Pathway</name>
+        <description><![CDATA[
+          <div style="font-family: Arial, sans-serif; min-width: 260px; line-height: 1.4;">
+            <h3 style="margin: 0 0 4px 0; color: #0284c7;">Corte Madera Creek Pathway (Kentfield / Larkspur)</h3>
+            <p style="margin: 0 0 8px 0; font-size: 11px; color: #64748b;">📍 Kentfield / Larkspur, Marin County</p>
+            <div style="background: #22c55e; color: #fff; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; margin-bottom: 8px;">
+              🟢 100% CLEAR (4.43' margin)
+            </div>
+            <table style="width: 100%; font-size: 12px; border-collapse: collapse; margin-bottom: 8px;">
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 3px 0; color: #475569;"><b>👑 Road Crown:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace;">8.00' NAVD88 (8.09' MLLW)</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 3px 0; color: #475569;"><b>📐 Curb Gutter:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.20' NAVD88 (7.29' MLLW)</td>
+              </tr>
+              <tr>
+                <td style="padding: 3px 0; color: #475569;"><b>🌊 Live Tide:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace; font-weight: bold; color: #0284c7;">3.57' NAVD88 (3.66' MLLW)</td>
+              </tr>
+            </table>
+            <p style="font-size: 11px; color: #64748b; font-style: italic; margin: 0 0 8px 0;">Paved multi-use pathway between Larkspur and Kentfield. Low shoreline marsh verge takes water above 7.20'; paved crest at 8.00' NAVD88.</p>
+            <p style="margin: 0; font-size: 11px;"><a href="https://cloudwatchcomputing.com/" target="_blank">Open CWC Flood Watch Web Dashboard &rarr;</a></p>
+          </div>
+        ]]></description>
+        <styleUrl>#greenPin</styleUrl>
+        <Point>
+          <altitudeMode>relativeToGround</altitudeMode>
+          <coordinates>-122.538074,37.945709,5</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Lucky Dr Ramp</name>
+        <description><![CDATA[
+          <div style="font-family: Arial, sans-serif; min-width: 260px; line-height: 1.4;">
+            <h3 style="margin: 0 0 4px 0; color: #0284c7;">Lucky Dr at US-101 Off-Ramp (Corte Madera)</h3>
+            <p style="margin: 0 0 8px 0; font-size: 11px; color: #64748b;">📍 Corte Madera, Marin County</p>
+            <div style="background: #22c55e; color: #fff; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; margin-bottom: 8px;">
+              🟢 100% CLEAR (4.03' margin)
+            </div>
+            <table style="width: 100%; font-size: 12px; border-collapse: collapse; margin-bottom: 8px;">
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 3px 0; color: #475569;"><b>👑 Road Crown:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.60' NAVD88 (7.69' MLLW)</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 3px 0; color: #475569;"><b>📐 Curb Gutter:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.15' NAVD88 (7.24' MLLW)</td>
+              </tr>
+              <tr>
+                <td style="padding: 3px 0; color: #475569;"><b>🌊 Live Tide:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace; font-weight: bold; color: #0284c7;">3.57' NAVD88 (3.66' MLLW)</td>
+              </tr>
+            </table>
+            <p style="font-size: 11px; color: #64748b; font-style: italic; margin: 0 0 8px 0;">Tidal subsidence basin protected by municipal pump station up to 7.60' NAVD88; seepage starts at 7.15'.</p>
+            <p style="margin: 0; font-size: 11px;"><a href="https://cloudwatchcomputing.com/" target="_blank">Open CWC Flood Watch Web Dashboard &rarr;</a></p>
+          </div>
+        ]]></description>
+        <styleUrl>#greenPin</styleUrl>
+        <Point>
+          <altitudeMode>relativeToGround</altitudeMode>
+          <coordinates>-122.51828,37.93936,5</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Lucky Frontage</name>
+        <description><![CDATA[
+          <div style="font-family: Arial, sans-serif; min-width: 260px; line-height: 1.4;">
+            <h3 style="margin: 0 0 4px 0; color: #0284c7;">Lucky Dr Residential Frontage (Corte Madera)</h3>
+            <p style="margin: 0 0 8px 0; font-size: 11px; color: #64748b;">📍 Corte Madera, Marin County</p>
+            <div style="background: #22c55e; color: #fff; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; margin-bottom: 8px;">
+              🟢 100% CLEAR (4.13' margin)
+            </div>
+            <table style="width: 100%; font-size: 12px; border-collapse: collapse; margin-bottom: 8px;">
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 3px 0; color: #475569;"><b>👑 Road Crown:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.70' NAVD88 (7.79' MLLW)</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 3px 0; color: #475569;"><b>📐 Curb Gutter:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.25' NAVD88 (7.34' MLLW)</td>
+              </tr>
+              <tr>
+                <td style="padding: 3px 0; color: #475569;"><b>🌊 Live Tide:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace; font-weight: bold; color: #0284c7;">3.57' NAVD88 (3.66' MLLW)</td>
+              </tr>
+            </table>
+            <p style="font-size: 11px; color: #64748b; font-style: italic; margin: 0 0 8px 0;">Residential frontage road along Lucky Drive basin.</p>
+            <p style="margin: 0; font-size: 11px;"><a href="https://cloudwatchcomputing.com/" target="_blank">Open CWC Flood Watch Web Dashboard &rarr;</a></p>
+          </div>
+        ]]></description>
+        <styleUrl>#greenPin</styleUrl>
+        <Point>
+          <altitudeMode>relativeToGround</altitudeMode>
+          <coordinates>-122.518536,37.939194,5</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Manzanita P&R</name>
+        <description><![CDATA[
+          <div style="font-family: Arial, sans-serif; min-width: 260px; line-height: 1.4;">
+            <h3 style="margin: 0 0 4px 0; color: #0284c7;">Manzanita Park & Ride (Shoreline Hwy)</h3>
+            <p style="margin: 0 0 8px 0; font-size: 11px; color: #64748b;">📍 Mill Valley, Marin County</p>
+            <div style="background: #22c55e; color: #fff; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; margin-bottom: 8px;">
+              🟢 100% CLEAR (3.63' margin)
+            </div>
+            <table style="width: 100%; font-size: 12px; border-collapse: collapse; margin-bottom: 8px;">
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 3px 0; color: #475569;"><b>👑 Road Crown:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.20' NAVD88 (7.29' MLLW)</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 3px 0; color: #475569;"><b>📐 Curb Gutter:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.00' NAVD88 (7.09' MLLW)</td>
+              </tr>
+              <tr>
+                <td style="padding: 3px 0; color: #475569;"><b>🌊 Live Tide:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace; font-weight: bold; color: #0284c7;">3.57' NAVD88 (3.66' MLLW)</td>
+              </tr>
+            </table>
+            <p style="font-size: 11px; color: #64748b; font-style: italic; margin: 0 0 8px 0;">Commuter parking lot and US-101 highway underpass at head of Richardson Bay. Sheet-floods when tides exceed 7.00' NAVD88.</p>
+            <p style="margin: 0; font-size: 11px;"><a href="https://cloudwatchcomputing.com/" target="_blank">Open CWC Flood Watch Web Dashboard &rarr;</a></p>
+          </div>
+        ]]></description>
+        <styleUrl>#greenPin</styleUrl>
+        <Point>
+          <altitudeMode>relativeToGround</altitudeMode>
+          <coordinates>-122.519,37.8805,5</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Tam Junction</name>
+        <description><![CDATA[
+          <div style="font-family: Arial, sans-serif; min-width: 260px; line-height: 1.4;">
+            <h3 style="margin: 0 0 4px 0; color: #0284c7;">Tam Junction (Shoreline Hwy & Almonte)</h3>
+            <p style="margin: 0 0 8px 0; font-size: 11px; color: #64748b;">📍 Mill Valley, Marin County</p>
+            <div style="background: #22c55e; color: #fff; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; margin-bottom: 8px;">
+              🟢 100% CLEAR (3.78' margin)
+            </div>
+            <table style="width: 100%; font-size: 12px; border-collapse: collapse; margin-bottom: 8px;">
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 3px 0; color: #475569;"><b>👑 Road Crown:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.35' NAVD88 (7.44' MLLW)</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 3px 0; color: #475569;"><b>📐 Curb Gutter:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.10' NAVD88 (7.19' MLLW)</td>
+              </tr>
+              <tr>
+                <td style="padding: 3px 0; color: #475569;"><b>🌊 Live Tide:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace; font-weight: bold; color: #0284c7;">3.57' NAVD88 (3.66' MLLW)</td>
+              </tr>
+            </table>
+            <p style="font-size: 11px; color: #64748b; font-style: italic; margin: 0 0 8px 0;">Key intersection on Shoreline Hwy (SR-1). Low road shoulder and commercial parking margins flood at 7.10' NAVD88.</p>
+            <p style="margin: 0; font-size: 11px;"><a href="https://cloudwatchcomputing.com/" target="_blank">Open CWC Flood Watch Web Dashboard &rarr;</a></p>
+          </div>
+        ]]></description>
+        <styleUrl>#greenPin</styleUrl>
+        <Point>
+          <altitudeMode>relativeToGround</altitudeMode>
+          <coordinates>-122.525,37.886,5</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>San Rafael Canal</name>
+        <description><![CDATA[
+          <div style="font-family: Arial, sans-serif; min-width: 260px; line-height: 1.4;">
+            <h3 style="margin: 0 0 4px 0; color: #0284c7;">Canal St & Spinnaker Way (San Rafael Canal)</h3>
+            <p style="margin: 0 0 8px 0; font-size: 11px; color: #64748b;">📍 San Rafael, Marin County</p>
+            <div style="background: #22c55e; color: #fff; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; margin-bottom: 8px;">
+              🟢 100% CLEAR (3.88' margin)
+            </div>
+            <table style="width: 100%; font-size: 12px; border-collapse: collapse; margin-bottom: 8px;">
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 3px 0; color: #475569;"><b>👑 Road Crown:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.45' NAVD88 (7.54' MLLW)</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 3px 0; color: #475569;"><b>📐 Curb Gutter:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.20' NAVD88 (7.29' MLLW)</td>
+              </tr>
+              <tr>
+                <td style="padding: 3px 0; color: #475569;"><b>🌊 Live Tide:</b></td>
+                <td style="padding: 3px 0; text-align: right; font-family: monospace; font-weight: bold; color: #0284c7;">3.57' NAVD88 (3.66' MLLW)</td>
+              </tr>
+            </table>
+            <p style="font-size: 11px; color: #64748b; font-style: italic; margin: 0 0 8px 0;">San Rafael Canal District subsidence bowl. Shoreline berms, bulkheads, and tide gates protect the street bowl up to 7.45' NAVD88; overtopping occurs above 7.45'.</p>
+            <p style="margin: 0; font-size: 11px;"><a href="https://cloudwatchcomputing.com/" target="_blank">Open CWC Flood Watch Web Dashboard &rarr;</a></p>
+          </div>
+        ]]></description>
+        <styleUrl>#greenPin</styleUrl>
+        <Point>
+          <altitudeMode>relativeToGround</altitudeMode>
+          <coordinates>-122.502,37.9658,5</coordinates>
+        </Point>
+      </Placemark>
+    </Folder>
+
+  </Document>
+</kml>

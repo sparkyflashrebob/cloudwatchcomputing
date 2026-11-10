@@ -1083,6 +1083,66 @@
       margin-bottom: 3px;
     }
 
+  
+    /* NWS Real-Time Emergency Alerts & Levee Failure Monitor */
+    .nws-alert-banner {
+      margin: 12px 0 16px 0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 0.82rem;
+      line-height: 1.4;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.15);
+      animation: alertPulse 3s infinite alternate;
+    }
+    @keyframes alertPulse {
+      0% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+      100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
+    }
+    .nws-alert-banner.severity-extreme, .nws-alert-banner.severity-severe {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(185, 28, 28, 0.95));
+      color: #fff;
+      border-color: #fca5a5;
+    }
+    .nws-alert-banner.severity-moderate, .nws-alert-banner.severity-minor {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.95), rgba(217, 119, 6, 0.95));
+      color: #0b0f19;
+      border-color: #fde68a;
+    }
+    .nws-alert-banner .nws-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-weight: 800;
+      font-size: 0.92rem;
+    }
+    .nws-alert-banner .nws-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+    .nws-alert-btn {
+      text-decoration: none;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      background: rgba(0,0,0,0.25);
+      color: inherit;
+      border: 1px solid rgba(255,255,255,0.4);
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .nws-alert-btn:hover {
+      background: rgba(0,0,0,0.45);
+    }
+
   </style>
 </head>
 <body>
@@ -1103,6 +1163,10 @@
         <button class="btn-icon" title="Settings & Thresholds" onclick="openSettings()">⚙️</button>
       </div>
     </header>
+
+    <!-- NWS Real-Time Emergency Alerts & Levee Failure Monitor -->
+    <div id="nwsAlertBanner" class="nws-alert-banner" style="display:none;"></div>
+
 
     <!-- PWA Install Banner -->
     <div id="pwaBanner" class="install-banner" style="display:none;">
@@ -2518,6 +2582,8 @@
       }
       try {
         await fetchLiveNOAA();
+      fetchNwsAlerts();
+      setInterval(fetchNwsAlerts, 4 * 60 * 1000);
       } finally {
         if (btn) {
           setTimeout(() => {
@@ -4371,13 +4437,15 @@
     // Startup Initialization
     document.addEventListener('DOMContentLoaded', () => {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=cwc-wet-v57').catch(() => {});
+        navigator.serviceWorker.register('./sw.js?v=cwc-wet-v58').catch(() => {});
       }
       applyVehicleAndCarView();
       initHydrographDragScrub();
       initFloodMap();
       loadAlertSettings();
       fetchLiveNOAA();
+      fetchNwsAlerts();
+      setInterval(fetchNwsAlerts, 4 * 60 * 1000);
 
       // Continuous 24/7 Polling: Refresh NOAA data every 6 minutes all day & night
       setInterval(fetchLiveNOAA, 6 * 60 * 1000);
