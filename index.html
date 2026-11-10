@@ -1475,7 +1475,7 @@
     </section>
 
     <!-- INTERACTIVE ROAD CROSS-SECTION SIMULATOR (SVG) -->
-    <section class="cross-section-card" id="roadCard">
+    <section class="cross-section-card" id="roadCard" style="display:none;">
       <div class="card-title" style="flex-wrap: wrap; gap: 8px;">
         <div>
           <span id="roadSimTitle">🚗 Street Parking &amp; Vehicle Clearance Simulator</span>
@@ -2104,6 +2104,27 @@
               <div class="select-card-detail">High Clearance • Impassable at 7.84 ft NAVD88</div>
             </div>
           </div>
+
+      <!-- INTERACTIVE SIMULATOR MODULE TOGGLE -->
+      <div class="setting-group" style="border-top: 1px solid rgba(255,255,255,0.12); padding-top: 16px; margin-top: 16px;">
+        <label style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span>Interactive Simulator Module</span>
+          <span style="font-size:0.75rem; color:var(--text-muted); font-family:var(--mono);" id="roadSimStatusLabel">Off by Default</span>
+        </label>
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:10px; line-height:1.4;">
+          Enable or disable the interactive road cross-section &amp; vehicle clearance simulator graphic on the main dashboard:
+        </div>
+        <label style="display:flex; gap:12px; align-items:center; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.14); border-radius:10px; padding:12px 14px; cursor:pointer;">
+          <input type="checkbox" id="toggleRoadSimCheckbox" onchange="toggleRoadSimulator(this.checked)" style="accent-color:var(--cyan); width:18px; height:18px; cursor:pointer;">
+          <div>
+            <div style="font-size:0.86rem; font-weight:700; color:#f8fafc;">🚗 Street Parking &amp; Vehicle Clearance Simulator</div>
+            <div style="font-size:0.73rem; color:#94a3b8; margin-top:2px;">
+              Show interactive SVG road cross-section, curb water depths, and vehicle ground clearance graphics.
+            </div>
+          </div>
+        </label>
+      </div>
+
         </div>
       </div>
 
@@ -2434,7 +2455,42 @@
     let nextHighTideObj = null;
 
     // UI Navigation & Modals
+        // Street Parking & Vehicle Clearance Simulator Visibility (Default: OFF)
+    let showRoadSimulator = (function() {
+      try {
+        return localStorage.getItem('cwc_show_road_sim') === 'true'; // Default OFF
+      } catch (e) {
+        return false;
+      }
+    })();
+
+    function applyRoadSimulatorVisibility() {
+      const roadCard = document.getElementById('roadCard');
+      const checkbox = document.getElementById('toggleRoadSimCheckbox');
+      const label = document.getElementById('roadSimStatusLabel');
+
+      if (roadCard) {
+        roadCard.style.display = showRoadSimulator ? 'block' : 'none';
+      }
+      if (checkbox) {
+        checkbox.checked = showRoadSimulator;
+      }
+      if (label) {
+        label.textContent = showRoadSimulator ? 'Enabled (Active)' : 'Off by Default';
+        label.style.color = showRoadSimulator ? 'var(--green)' : 'var(--text-muted)';
+      }
+    }
+
+    function toggleRoadSimulator(enabled) {
+      showRoadSimulator = !!enabled;
+      try {
+        localStorage.setItem('cwc_show_road_sim', showRoadSimulator ? 'true' : 'false');
+      } catch (e) {}
+      applyRoadSimulatorVisibility();
+    }
+
     function openSettings() {
+      applyRoadSimulatorVisibility();
       document.getElementById('settingsModal').classList.add('open');
     }
     function closeSettings() {
@@ -4576,8 +4632,9 @@
 
     // Startup Initialization
     document.addEventListener('DOMContentLoaded', () => {
+      applyRoadSimulatorVisibility();
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=cwc-wet-v61').catch(() => {});
+        navigator.serviceWorker.register('./sw.js?v=cwc-wet-v62').catch(() => {});
       }
       applyVehicleAndCarView();
       initHydrographDragScrub();
