@@ -523,7 +523,8 @@
           [37.80, -122.65],
           [38.05, -122.40]
         ],
-        minZoom: 11
+        minZoom: 11,
+        maxZoom: 21
       }).setView([37.935, -122.528], 13);
 
       // Basemap options
@@ -544,31 +545,34 @@
 
       const esriDark = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
         attribution: 'Tiles &copy; Esri Dark Canvas',
-        maxZoom: 16
+        maxNativeZoom: 16,
+        maxZoom: 21
       });
 
       esriTopo.addTo(devMapInstance);
 
       // NOAA LiDAR Coastal Inundation Layers
-      // NOAA slr_1ft: MHHW + 1ft (captures ~7.00 - 7.50 ft MLLW flood footprint)
+      // With maxNativeZoom: 16 and maxZoom: 21, Leaflet seamlessly oversamples and scales tiles
+      // at street/driveway zoom levels so the flood overlay never disappears!
       inundationLayer1ft = L.tileLayer('https://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_1ft/MapServer/tile/{z}/{y}/{x}', {
         attribution: '&copy; NOAA Digital Coast LiDAR Inundation',
         opacity: 0.75,
-        maxZoom: 16
+        maxNativeZoom: 16,
+        maxZoom: 21
       });
 
-      // NOAA slr_2ft: MHHW + 2ft (captures ~7.75 - 8.50 ft MLLW extreme storm footprint)
       inundationLayer2ft = L.tileLayer('https://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_2ft/MapServer/tile/{z}/{y}/{x}', {
         attribution: '&copy; NOAA Digital Coast LiDAR Inundation',
         opacity: 0.75,
-        maxZoom: 16
+        maxNativeZoom: 16,
+        maxZoom: 21
       });
 
-      // NOAA slr_3ft: MHHW + 3ft (captures 8.50'+ surge)
       inundationLayer3ft = L.tileLayer('https://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_3ft/MapServer/tile/{z}/{y}/{x}', {
         attribution: '&copy; NOAA Digital Coast LiDAR Inundation',
         opacity: 0.75,
-        maxZoom: 16
+        maxNativeZoom: 16,
+        maxZoom: 21
       });
 
       inundationLayer1ft.addTo(devMapInstance);
