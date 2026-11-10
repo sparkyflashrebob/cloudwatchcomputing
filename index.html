@@ -1396,11 +1396,11 @@
         </div>
       </div>
       <div id="floodMap"></div>
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 0.72rem; color: var(--text-muted); flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 0.72rem; color: var(--text-muted); flex-wrap: wrap; gap: 8px;">
         <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-          <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#22c55e;margin-right:4px;"></span>Clear (Water &lt; Ground)</span>
-          <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#f59e0b;margin-right:4px;"></span>Gutter Wet (Invert Surcharge)</span>
-          <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#ef4444;margin-right:4px;"></span>Road Crown Submerged</span>
+          <span><span style="display:inline-block;width:14px;height:0;border-top:2px dashed #22c55e;margin-right:5px;vertical-align:middle;"></span><span style="display:inline-block;width:10px;height:10px;background:#38bdf8;opacity:0.25;margin-right:4px;vertical-align:middle;border-radius:2px;"></span>Clear (Water &lt; Ground)</span>
+          <span><span style="display:inline-block;width:14px;height:0;border-top:2px dashed #f97316;margin-right:5px;vertical-align:middle;"></span><span style="display:inline-block;width:10px;height:10px;background:#38bdf8;opacity:0.45;margin-right:4px;vertical-align:middle;border-radius:2px;"></span>Gutter Wet (Invert Surcharge)</span>
+          <span><span style="display:inline-block;width:14px;height:0;border-top:2px dashed #ef4444;margin-right:5px;vertical-align:middle;"></span><span style="display:inline-block;width:10px;height:10px;background:#0284c7;opacity:0.65;margin-right:4px;vertical-align:middle;border-radius:2px;"></span>Roadway / Trail Flooded</span>
         </div>
         <div>
           <span>Synced with 48h Tide Scrubber ⏱️</span>
@@ -1928,13 +1928,14 @@
       <div class="setting-group">
         <label style="display:flex; justify-content:space-between; align-items:center;">
           <span>Marin County Hotspots (by City)</span>
-          <span style="font-size:0.75rem; color:var(--text-muted);" id="hotspotCountBadge">7 Hotspots Available</span>
+          <span style="font-size:0.75rem; color:var(--text-muted);" id="hotspotCountBadge">8 Hotspots Available</span>
         </label>
         <select id="selectHotspot" class="styled-dropdown" onchange="selectLocation(this.value)">
-          <optgroup label="Larkspur">
+          <optgroup label="Larkspur &amp; Kentfield">
             <option value="larkspur" selected>📍 Larkspur Plaza Dr (at Heather Way / Sag Crosswalk) — Crown 7.42'</option>
+            <option value="larkspurnorth">📍 Larkspur Plaza Dr North (#617 / Heather Gardens) — Crown 7.41'</option>
             <option value="boardwalk">📍 Boardwalk One (at Corte Madera Creek) — Deck 8.04'</option>
-            <option value="creek">📍 Corte Madera Creek Path (Tidal Slough) — Crest 6.60'</option>
+            <option value="creek">📍 Corte Madera Creek Pathway (Kentfield / Larkspur) — Trail 6.40' - 8.00'</option>
           </optgroup>
           <optgroup label="Corte Madera">
             <option value="luckyramp">📍 Lucky Dr at US-101 Off-Ramp — Exit Dip 3.78'</option>
@@ -2276,18 +2277,32 @@
         lagMinutes: 150
       },
       creek: {
-        name: "Corte Madera Creek Path (at Larkspur Plaza)",
-        roadBoundary: "Corte Madera Creek Multi-Use Path (Larkspur Plaza to Bon Air lagoon outfall)",
-        crownBoundary: "Low paved sections of multi-use path",
-        gutterBoundary: "Path margins & low creek bank trail",
-        gutter: 6.40,    // Low margin & access parking
+        name: "Corte Madera Creek Pathway (Kentfield / Larkspur)",
+        roadBoundary: "Corte Madera Creek Multi-Use Pathway (near Bon Air / Kentfield corridor)",
+        crownBoundary: "Paved multi-use levee pathway",
+        gutterBoundary: "Low marsh shoreline trail margins & approach ramps",
+        gutter: 6.40,    // Low shoreline margin & approach
         sagGutter: 6.40,
-        frontGutter: 6.45,
-        yellow: 6.50,
-        crown: 6.60,    // Path & access crown
-        priusSag: 6.80,
-        stall: 7.50,
+        frontGutter: 7.20,
+        yellow: 7.50,
+        crown: 8.00,    // Paved path overflow threshold
+        priusSag: 8.50,
+        stall: 8.20,
         lagMinutes: 60
+      },
+      larkspurnorth: {
+        name: "Larkspur Plaza Dr North (#617 / Heather Gardens)",
+        roadBoundary: "Larkspur Plaza Drive north corridor (#617 area to lagoon access)",
+        crownBoundary: "Larkspur Plaza Dr north roadway center travel lane",
+        gutterBoundary: "Larkspur Plaza Dr north curb gutters & parking stalls",
+        crown: 7.41,     // Pavement crown (7.41' NAVD88)
+        gutter: 7.10,    // Storm drain inverts & low curb pan (7.10')
+        sagGutter: 7.10,
+        frontGutter: 7.20,
+        yellow: 7.25,
+        priusSag: 7.90,  // 7.41' + 0.49' (5.9" clearance) = 7.90'
+        stall: 7.80,
+        lagMinutes: 240
       },
       sanrafaelcanal: {
         name: "Canal St & Spinnaker Way (San Rafael Canal)",
@@ -3642,10 +3657,43 @@
         gutter: 7.28,
         desc: "Concave sag on Larkspur Plaza Dr near Heather Way. Drains 1-4 surcharge at 7.28'; road crown overhauls at 7.42'.",
         poly: [
-          [37.94025, -122.53560],
-          [37.94034, -122.53545],
-          [37.93940, -122.53460],
-          [37.93930, -122.53478]
+          [37.94025, -122.53562],
+          [37.94008, -122.53542],
+          [37.93988, -122.53522],
+          [37.93972, -122.53504],
+          [37.93954, -122.53482],
+          [37.93935, -122.53458],
+          [37.93924, -122.53470],
+          [37.93943, -122.53495],
+          [37.93962, -122.53518],
+          [37.93978, -122.53535],
+          [37.93998, -122.53555],
+          [37.94017, -122.53575]
+        ]
+      },
+      {
+        id: 'larkspurnorth',
+        city: 'Larkspur',
+        name: 'Larkspur Plaza Dr North (#617 / Heather Gardens)',
+        shortName: 'Larkspur Plaza North',
+        lat: 37.9412446786265,
+        lon: -122.5338748717734,
+        crown: 7.41,
+        gutter: 7.10,
+        desc: "Frequent neighborhood tidal flooding hotspot at northern Larkspur Plaza Drive (#617 / Heather Gardens). Low curb gutters surcharge at 7.10'; roadway center breaches at 7.41'.",
+        poly: [
+          [37.94170, -122.53420],
+          [37.94154, -122.53402],
+          [37.94136, -122.53388],
+          [37.94118, -122.53378],
+          [37.94098, -122.53370],
+          [37.94078, -122.53365],
+          [37.94076, -122.53380],
+          [37.94095, -122.53386],
+          [37.94115, -122.53394],
+          [37.94132, -122.53405],
+          [37.94148, -122.53418],
+          [37.94166, -122.53434]
         ]
       },
       {
@@ -3659,27 +3707,43 @@
         gutter: 7.60,
         desc: "Elevated residential boardwalk deck (8.04') on east bank of creek slough.",
         poly: [
-          [37.94110, -122.53325],
-          [37.94115, -122.53270],
-          [37.94035, -122.53260],
-          [37.94030, -122.53315]
+          [37.94125, -122.53308],
+          [37.94108, -122.53296],
+          [37.94088, -122.53286],
+          [37.94068, -122.53280],
+          [37.94048, -122.53278],
+          [37.94028, -122.53282],
+          [37.94028, -122.53298],
+          [37.94048, -122.53294],
+          [37.94068, -122.53296],
+          [37.94088, -122.53302],
+          [37.94108, -122.53312],
+          [37.94124, -122.53322]
         ]
       },
       {
         id: 'creek',
-        city: 'Larkspur',
-        name: 'Corte Madera Creek Path (Slough Outfall)',
-        shortName: 'Creek Path',
-        lat: 37.940701,
-        lon: -122.533743,
-        crown: 6.60,
+        city: 'Kentfield / Larkspur',
+        name: 'Corte Madera Creek Pathway (Kentfield / Larkspur)',
+        shortName: 'Corte Madera Pathway',
+        lat: 37.94570944366057,
+        lon: -122.53807352607274,
+        crown: 8.00,
         gutter: 6.40,
-        desc: "Tidal marsh shoreline path and drainage headwall. Inundated on routine monthly high tides.",
+        desc: "Official Corte Madera Creek paved multi-use pathway between Larkspur and Kentfield. Low shoreline trail sections flood during winter king tides above 6.50' NAVD88.",
         poly: [
-          [37.94120, -122.53420],
-          [37.94125, -122.53360],
-          [37.94020, -122.53350],
-          [37.94015, -122.53410]
+          [37.94665, -122.53915],
+          [37.94638, -122.53880],
+          [37.94608, -122.53845],
+          [37.94575, -122.53805],
+          [37.94545, -122.53765],
+          [37.94518, -122.53725],
+          [37.94508, -122.53735],
+          [37.94535, -122.53775],
+          [37.94565, -122.53815],
+          [37.94598, -122.53855],
+          [37.94628, -122.53890],
+          [37.94655, -122.53925]
         ]
       },
       {
@@ -3693,10 +3757,18 @@
         gutter: 3.50,
         desc: "Historic tidal marsh subsidence basin off US-101 southbound exit. Relies on Town storm drainage pump station.",
         poly: [
-          [37.94010, -122.51890],
-          [37.93990, -122.51770],
-          [37.93885, -122.51790],
-          [37.93905, -122.51910]
+          [37.94035, -122.51865],
+          [37.94012, -122.51838],
+          [37.93982, -122.51818],
+          [37.93952, -122.51808],
+          [37.93918, -122.51812],
+          [37.93885, -122.51828],
+          [37.93895, -122.51855],
+          [37.93924, -122.51840],
+          [37.93954, -122.51835],
+          [37.93982, -122.51845],
+          [37.94008, -122.51865],
+          [37.94026, -122.51890]
         ]
       },
       {
@@ -3710,10 +3782,16 @@
         gutter: 3.90,
         desc: "Residential frontage road and parking stalls along Lucky Drive low basin.",
         poly: [
-          [37.93970, -122.51930],
-          [37.93950, -122.51810],
-          [37.93870, -122.51830],
-          [37.93890, -122.51950]
+          [37.93992, -122.51922],
+          [37.93968, -122.51896],
+          [37.93938, -122.51876],
+          [37.93908, -122.51866],
+          [37.93875, -122.51866],
+          [37.93870, -122.51890],
+          [37.93904, -122.51890],
+          [37.93934, -122.51900],
+          [37.93964, -122.51920],
+          [37.93988, -122.51945]
         ]
       },
       {
@@ -3727,10 +3805,15 @@
         gutter: 7.00,
         desc: "Major commuter parking lot and US-101 highway underpass at head of Richardson Bay. Sheet-floods when tides exceed 7.00'.",
         poly: [
-          [37.88160, -122.52000],
-          [37.88140, -122.51800],
-          [37.87950, -122.51830],
-          [37.87980, -122.52030]
+          [37.88170, -122.51975],
+          [37.88142, -122.51875],
+          [37.88108, -122.51812],
+          [37.88040, -122.51806],
+          [37.87972, -122.51835],
+          [37.87955, -122.51918],
+          [37.87982, -122.52015],
+          [37.88048, -122.52022],
+          [37.88118, -122.52002]
         ]
       },
       {
@@ -3744,10 +3827,14 @@
         gutter: 7.10,
         desc: "Key highway intersection on Shoreline Hwy (SR-1). Low road shoulder and commercial parking margins flood at 7.10'.",
         poly: [
-          [37.88700, -122.52620],
-          [37.88680, -122.52420],
-          [37.88520, -122.52440],
-          [37.88540, -122.52640]
+          [37.88715, -122.52575],
+          [37.88668, -122.52462],
+          [37.88618, -122.52412],
+          [37.88562, -122.52426],
+          [37.88536, -122.52508],
+          [37.88572, -122.52618],
+          [37.88628, -122.52648],
+          [37.88682, -122.52628]
         ]
       },
       {
@@ -3761,10 +3848,16 @@
         gutter: 5.20,
         desc: "Low-lying San Rafael Canal District frontage road and access corridor. Tidal bowl subsidence causes canal to overtop bank onto Canal Street during winter king tides above 6.00'.",
         poly: [
-          [37.96720, -122.50420],
-          [37.96690, -122.50020],
-          [37.96480, -122.50050],
-          [37.96510, -122.50450]
+          [37.96730, -122.50410],
+          [37.96715, -122.50280],
+          [37.96700, -122.50150],
+          [37.96680, -122.50020],
+          [37.96645, -122.49900],
+          [37.96620, -122.49915],
+          [37.96655, -122.50035],
+          [37.96675, -122.50165],
+          [37.96690, -122.50295],
+          [37.96705, -122.50425]
         ]
       }
     ];
@@ -3818,16 +3911,16 @@
 
       // Plot All Marin County Surveyed Hotspots & Physical Flood Borders
       MARIN_MAP_HOTSPOTS.forEach(site => {
-        // Physical Surveyed Footprint / Flood Border Polygon
+                // Physical Surveyed Footprint / Flood Border Polygon
         if (site.poly) {
           const poly = L.polygon(site.poly, {
             className: 'flood-polygon-border',
             color: '#22c55e',
-            weight: 1.5,
-            dashArray: '3, 6',
-            fillColor: '#22c55e',
-            fillOpacity: 0.06,
-            opacity: 0.4
+            weight: 2,
+            dashArray: '5, 5',
+            fillColor: '#38bdf8',
+            fillOpacity: 0.12,
+            opacity: 0.8
           }).addTo(floodMapInstance);
           mapPolygons[site.id] = poly;
         }
@@ -3956,27 +4049,27 @@
         marker.setIcon(icon);
         marker.setPopupContent(generateMapPopupHtml(site, twl));
 
-        // Update Physical Flood Border Polygon based on ground height
+                // Update Physical Flood Border Polygon based on ground height
         if (poly) {
           if (twl >= site.crown) {
             const depthIn = ((twl - site.crown) * 12).toFixed(1);
             poly.setStyle({
               color: '#ef4444',
               weight: 3.5,
-              dashArray: null,
-              fillColor: '#ef4444',
-              fillOpacity: 0.45,
+              dashArray: '5, 5',
+              fillColor: '#0284c7',
+              fillOpacity: 0.50,
               opacity: 1
             });
             poly.bindTooltip(`🚨 <b>${site.shortName} FLOOD BORDER</b><br>Crown Submerged (+${depthIn}" deep)`, { sticky: true });
           } else if (twl >= site.gutter) {
             const depthIn = ((twl - site.gutter) * 12).toFixed(1);
             poly.setStyle({
-              color: '#f59e0b',
+              color: '#f97316',
               weight: 2.5,
               dashArray: '5, 5',
-              fillColor: '#f59e0b',
-              fillOpacity: 0.25,
+              fillColor: '#38bdf8',
+              fillOpacity: 0.32,
               opacity: 0.95
             });
             poly.bindTooltip(`⚠️ <b>${site.shortName} GUTTER BORDER</b><br>Curbs & Inverts Wet (+${depthIn}")`, { sticky: true });
@@ -3984,11 +4077,11 @@
             const marginFt = (site.crown - twl).toFixed(2);
             poly.setStyle({
               color: '#22c55e',
-              weight: 1.5,
-              dashArray: '3, 6',
-              fillColor: '#22c55e',
-              fillOpacity: 0.05,
-              opacity: 0.4
+              weight: 2,
+              dashArray: '5, 5',
+              fillColor: '#38bdf8',
+              fillOpacity: 0.12,
+              opacity: 0.8
             });
             poly.bindTooltip(`🟢 <b>${site.shortName} CLEAR</b><br>${marginFt} ft margin to crown`, { sticky: true });
           }
