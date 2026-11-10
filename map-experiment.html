@@ -495,94 +495,248 @@
     // Surveyed Marin County Benchmarks (Calibrated Ground Truth)
     const MARIN_BENCHMARKS = [
       {
-        id: 'larkspurnorth',
-        city: 'Larkspur',
-        name: 'Larkspur Plaza Dr North (#617 / Heather Gardens)',
-        shortName: 'Larkspur Plaza North',
-        lat: 37.941245,
-        lon: -122.533875,
-        crownNavd: 7.41,
-        gutterNavd: 7.10,
-        desc: "Frequent neighborhood tidal flooding hotspot at northern Larkspur Plaza Drive (#617 / Heather Gardens). Low curb gutters surcharge at 7.10' NAVD88 (7.19' MLLW); roadway center breaches at 7.41' NAVD88 (7.50' MLLW)."
+            "id": "larkspur",
+            "city": "Larkspur",
+            "name": "Larkspur Plaza Dr (Sag & Crosswalk near Heather Way)",
+            "shortName": "Larkspur Sag",
+            "lat": 37.93975,
+            "lon": -122.535078,
+            "desc": "Concave road sag on Larkspur Plaza Dr near Heather Way. Drains 1-4 surcharge at 7.28' NAVD88; road crown overhauls at 7.42' NAVD88.",
+            "crownNavd": 7.42,
+            "gutterNavd": 7.28
       },
       {
-        id: 'larkspur',
-        city: 'Larkspur',
-        name: 'Larkspur Plaza Dr (Sag & Crosswalk near Heather Way)',
-        shortName: 'Larkspur Sag',
-        lat: 37.939750,
-        lon: -122.535078,
-        crownNavd: 7.42,
-        gutterNavd: 7.28,
-        desc: "Concave road sag on Larkspur Plaza Dr near Heather Way. Drains 1-4 surcharge at 7.28' NAVD88 (7.37' MLLW); road crown overhauls at 7.42' NAVD88 (7.51' MLLW)."
+            "id": "larkspurnorth",
+            "city": "Larkspur",
+            "name": "Larkspur Plaza Dr North (#617 / Heather Gardens)",
+            "shortName": "Larkspur Plaza North",
+            "lat": 37.941245,
+            "lon": -122.533875,
+            "desc": "Frequent neighborhood tidal flooding hotspot. Low curb gutters surcharge at 7.10' NAVD88; roadway center breaches at 7.41' NAVD88.",
+            "crownNavd": 7.41,
+            "gutterNavd": 7.1
       },
       {
-        id: 'boardwalk',
-        city: 'Larkspur',
-        name: 'Boardwalk One (at Corte Madera Creek)',
-        shortName: 'Boardwalk One',
-        lat: 37.940714,
-        lon: -122.532933,
-        crownNavd: 8.04,
-        gutterNavd: 7.60,
-        desc: "Elevated residential boardwalk deck (8.04' NAVD88 / 8.13' MLLW) on east bank of creek slough."
+            "id": "boardwalk",
+            "city": "Larkspur",
+            "name": "Boardwalk One (at Corte Madera Creek)",
+            "shortName": "Boardwalk One",
+            "lat": 37.940714,
+            "lon": -122.532933,
+            "desc": "Elevated residential boardwalk deck (8.04' NAVD88 / 8.13' MLLW) on east bank of creek slough.",
+            "crownNavd": 8.04,
+            "gutterNavd": 7.6
       },
       {
-        id: 'creek',
-        city: 'Kentfield / Larkspur',
-        name: 'Corte Madera Creek Pathway (Kentfield / Larkspur)',
-        shortName: 'Corte Madera Pathway',
-        lat: 37.945709,
-        lon: -122.538074,
-        crownNavd: 8.00,
-        gutterNavd: 7.20,
-        desc: "Official Corte Madera Creek paved multi-use pathway between Larkspur and Kentfield. Low shoreline trail sections flood during winter tides above 7.20' NAVD88 (7.29' MLLW); paved crest at 8.00' NAVD88 (8.09' MLLW)."
+            "id": "creek",
+            "city": "Kentfield / Larkspur",
+            "name": "Corte Madera Creek Pathway (Kentfield / Larkspur)",
+            "shortName": "Corte Madera Pathway",
+            "lat": 37.945709,
+            "lon": -122.538074,
+            "desc": "Official Corte Madera Creek paved multi-use pathway between Larkspur and Kentfield. Low shoreline marsh approach floods above 7.20' NAVD88; paved crest at 8.00'.",
+            "crownNavd": 8.0,
+            "gutterNavd": 7.2
       },
       {
-        id: 'luckyfrontage',
-        city: 'Corte Madera',
-        name: 'Lucky Dr Residential Frontage (Corte Madera)',
-        shortName: 'Lucky Frontage',
-        lat: 37.939194,
-        lon: -122.518536,
-        crownNavd: 7.70,
-        gutterNavd: 7.25,
-        desc: "Residential frontage road and parking stalls along Lucky Drive low basin."
+            "id": "luckyfrontage",
+            "city": "Corte Madera",
+            "name": "Lucky Dr Residential Frontage (Corte Madera)",
+            "shortName": "Lucky Frontage",
+            "lat": 37.939194,
+            "lon": -122.518536,
+            "desc": "Residential frontage road and parking stalls along Lucky Drive low basin.",
+            "crownNavd": 7.7,
+            "gutterNavd": 7.25
       },
       {
-        id: 'manzanita',
-        city: 'Mill Valley',
-        name: 'Manzanita Park & Ride (Shoreline Hwy)',
-        shortName: 'Manzanita P&R',
-        lat: 37.880500,
-        lon: -122.519000,
-        crownNavd: 7.20,
-        gutterNavd: 7.00,
-        desc: "Major commuter parking lot and US-101 highway underpass at head of Richardson Bay. Sheet-floods when tides exceed 7.00' NAVD88 (7.09' MLLW)."
+            "id": "cortemaderatc",
+            "city": "Corte Madera",
+            "name": "Corte Madera Town Center (Nordstrom Rack / Safeway)",
+            "shortName": "Corte Madera TC",
+            "lat": 37.927331,
+            "lon": -122.511951,
+            "desc": "Low-lying shopping center parking lot and access drives along Tamal Vista Blvd.",
+            "crownNavd": 7.2,
+            "gutterNavd": 6.67
       },
       {
-        id: 'tam',
-        city: 'Mill Valley',
-        name: 'Tam Junction (Shoreline Hwy & Almonte)',
-        shortName: 'Tam Junction',
-        lat: 37.886000,
-        lon: -122.525000,
-        crownNavd: 7.35,
-        gutterNavd: 7.10,
-        desc: "Key highway intersection on Shoreline Hwy (SR-1). Low road shoulder and commercial parking margins flood at 7.10' NAVD88 (7.19' MLLW)."
+            "id": "traderjoescm",
+            "city": "Corte Madera",
+            "name": "Trader Joe's Parking Lot (Corte Madera)",
+            "shortName": "Trader Joe's CM",
+            "lat": 37.937486,
+            "lon": -122.515957,
+            "desc": "Commercial parking lot along San Clemente / Madera Blvd low drainage basin.",
+            "crownNavd": 7.3,
+            "gutterNavd": 6.8
       },
       {
-        id: 'sanrafaelcanal',
-        city: 'San Rafael',
-        name: 'Canal St & Spinnaker Way (San Rafael Canal)',
-        shortName: 'San Rafael Canal',
-        lat: 37.965800,
-        lon: -122.502000,
-        crownNavd: 7.45,
-        gutterNavd: 7.20,
-        desc: "San Rafael Canal District subsidence bowl. Shoreline berms, bulkheads, and tide gates protect the street bowl up to 7.45' NAVD88 (7.54' MLLW); overtopping into Canal Street occurs during winter king tides above 7.45' NAVD88 (7.54' MLLW)."
+            "id": "manzanita",
+            "city": "Mill Valley",
+            "name": "Manzanita Park & Ride (Shoreline Hwy)",
+            "shortName": "Manzanita P&R",
+            "lat": 37.8805,
+            "lon": -122.519,
+            "desc": "Major commuter parking lot and US-101 highway underpass at head of Richardson Bay. Sheet-floods when tides exceed 7.00' NAVD88.",
+            "crownNavd": 7.2,
+            "gutterNavd": 7.0
+      },
+      {
+            "id": "tam",
+            "city": "Mill Valley",
+            "name": "Tam Junction (Shoreline Hwy & Almonte)",
+            "shortName": "Tam Junction",
+            "lat": 37.886,
+            "lon": -122.525,
+            "desc": "Key highway intersection on Shoreline Hwy (SR-1). Low road shoulder and commercial parking margins flood at 7.10' NAVD88.",
+            "crownNavd": 7.35,
+            "gutterNavd": 7.1
+      },
+      {
+            "id": "millvalleyhwyoff",
+            "city": "Mill Valley",
+            "name": "US-101 Northbound Off-Ramp at Shoreline Hwy (Mill Valley)",
+            "shortName": "Mill Valley Off-Ramp",
+            "lat": 37.879089,
+            "lon": -122.514551,
+            "desc": "Shoreline Hwy interchange off-ramp directly bordering Richardson Bay intertidal marsh.",
+            "crownNavd": 7.15,
+            "gutterNavd": 6.95
+      },
+      {
+            "id": "sanrafaelcanal",
+            "city": "San Rafael",
+            "name": "Canal St & Spinnaker Way (San Rafael Canal)",
+            "shortName": "San Rafael Canal",
+            "lat": 37.9658,
+            "lon": -122.502,
+            "desc": "San Rafael Canal District subsidence bowl. Shoreline berms, bulkheads, and tide gates protect the street bowl up to 7.45' NAVD88; overtopping occurs above 7.45'.",
+            "crownNavd": 7.45,
+            "gutterNavd": 7.2
+      },
+      {
+            "id": "sanrafaelcreek",
+            "city": "San Rafael",
+            "name": "San Rafael Creek Upper Channel (Downtown / Grand Ave)",
+            "shortName": "San Rafael Creek",
+            "lat": 37.96807,
+            "lon": -122.510085,
+            "desc": "San Rafael Creek tidal slough crossing near Grand Ave in central San Rafael.",
+            "crownNavd": 13.13,
+            "gutterNavd": 11.5
+      },
+      {
+            "id": "sanrafael3rdhwy101",
+            "city": "San Rafael",
+            "name": "3rd Street under US-101 (Downtown San Rafael)",
+            "shortName": "3rd St @ Hwy 101",
+            "lat": 37.970545,
+            "lon": -122.522397,
+            "desc": "Major downtown arterial underpass beneath US-101 freeway viaduct.",
+            "crownNavd": 9.56,
+            "gutterNavd": 8.8
+      },
+      {
+            "id": "santavenetiapump3",
+            "city": "San Rafael",
+            "name": "Gallinas Creek Levee at Pump Station 3 (Santa Venetia)",
+            "shortName": "Santa Venetia Pump 3",
+            "lat": 38.010279,
+            "lon": -122.526572,
+            "desc": "Santa Venetia timber-reinforced berm and pump station along tidal Gallinas Creek.",
+            "crownNavd": 8.5,
+            "gutterNavd": 6.32
+      },
+      {
+            "id": "novatocreekhwy37",
+            "city": "Novato",
+            "name": "Novato Creek at SR-37 (Novato)",
+            "shortName": "Novato Creek @ Hwy 37",
+            "lat": 38.087747,
+            "lon": -122.534436,
+            "desc": "Novato Creek tidal slough crossing under State Route 37.",
+            "crownNavd": 7.5,
+            "gutterNavd": 7.1
+      },
+      {
+            "id": "novatobaccaglio",
+            "city": "Novato",
+            "name": "Baccaglio Basin Flood Detention (Novato)",
+            "shortName": "Baccaglio Basin",
+            "lat": 38.097536,
+            "lon": -122.566479,
+            "desc": "Novato municipal stormwater detention basin and flood bypass.",
+            "crownNavd": 7.5,
+            "gutterNavd": 6.59
+      },
+      {
+            "id": "hwy37petalumariver",
+            "city": "Black Point",
+            "name": "SR-37 Highway Crossing at Petaluma River",
+            "shortName": "Hwy 37 @ Petaluma River",
+            "lat": 38.123802,
+            "lon": -122.493651,
+            "desc": "Major North Bay commuter highway crossing over Petaluma River tidal estuary.",
+            "crownNavd": 8.5,
+            "gutterNavd": 6.8
+      },
+      {
+            "id": "tolaycreeksearspt",
+            "city": "Sears Point",
+            "name": "Tolay Creek Shoreline (Sears Point / San Pablo Bay)",
+            "shortName": "Tolay Creek Shore",
+            "lat": 38.152318,
+            "lon": -122.445391,
+            "desc": "San Pablo Bay marsh restoration levee and coastal trail along Tolay Creek.",
+            "crownNavd": 9.82,
+            "gutterNavd": 8.5
+      },
+      {
+            "id": "stinsonbeach1",
+            "city": "Stinson Beach",
+            "name": "Stinson Beach Central Parking & Park",
+            "shortName": "Stinson Beach Lot",
+            "lat": 37.898903,
+            "lon": -122.644374,
+            "desc": "Coastal beach parking lot behind foredunes; ocean wave runup and storm surge zone.",
+            "crownNavd": 13.41,
+            "gutterNavd": 12.0
+      },
+      {
+            "id": "stinsonbeach2",
+            "city": "Stinson Beach",
+            "name": "Stinson Beach North / Bolinas Lagoon Shoreline",
+            "shortName": "Bolinas Lagoon Shore",
+            "lat": 37.907234,
+            "lon": -122.675681,
+            "desc": "Bolinas Lagoon tidal edge along Shoreline Hwy (SR-1).",
+            "crownNavd": 11.33,
+            "gutterNavd": 9.5
+      },
+      {
+            "id": "inverness1",
+            "city": "Inverness",
+            "name": "Sir Francis Drake Blvd Shoreline (Tomales Bay / Inverness)",
+            "shortName": "Inverness Shoreline",
+            "lat": 38.10241,
+            "lon": -122.857032,
+            "desc": "Low road shoulder of Sir Francis Drake Blvd bordering Tomales Bay.",
+            "crownNavd": 7.8,
+            "gutterNavd": 7.4
+      },
+      {
+            "id": "oceansroar",
+            "city": "Dillon Beach",
+            "name": "Dillon Beach Ocean Shore (Ocean's Roar)",
+            "shortName": "Dillon Beach Shore",
+            "lat": 38.221339,
+            "lon": -122.922192,
+            "desc": "Open Pacific ocean shoreline and beach access road at Dillon Beach.",
+            "crownNavd": 12.23,
+            "gutterNavd": 10.0
       }
-    ];
+];
 
     
     function toggleLegendCollapse() {
@@ -600,11 +754,8 @@
       // Centered on Central/South Marin County
       devMapInstance = L.map('devMap', {
         zoomControl: false,
-        maxBounds: [
-          [37.80, -122.65],
-          [38.05, -122.40]
-        ],
-        minZoom: 11,
+        maxBounds: [[37.70, -123.08], [38.35, -122.35]],
+        minZoom: 9,
         maxZoom: 21
       }).setView([37.935, -122.528], 13);
 
