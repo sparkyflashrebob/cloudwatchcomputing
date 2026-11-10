@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cwc-wet-v45';
+const CACHE_NAME = 'cwc-wet-v46';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
