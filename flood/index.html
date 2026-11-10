@@ -1719,17 +1719,18 @@
       <div class="setting-group">
         <label style="display:flex; justify-content:space-between; align-items:center;">
           <span>Marin County Hotspots (by City)</span>
-          <span style="font-size:0.75rem; color:var(--text-muted);" id="hotspotCountBadge">7 Hotspots Available</span>
+          <span style="font-size:0.75rem; color:var(--text-muted);" id="hotspotCountBadge">10 Hotspots Available</span>
         </label>
         <select id="selectHotspot" class="styled-dropdown" onchange="selectLocation(this.value)">
           <optgroup label="Larkspur">
             <option value="larkspur" selected>📍 Larkspur Plaza Dr (at Heather Way / Sag Crosswalk) — Crown 7.42'</option>
             <option value="boardwalk">📍 Boardwalk One (at Corte Madera Creek) — Deck 8.04'</option>
+            <option value="greenbraeboardwalk">📍 Greenbrae Boardwalk — Boardwalk Deck 7.43'</option>
             <option value="creek">📍 Corte Madera Creek Path (Tidal Slough) — Crest 6.60'</option>
           </optgroup>
           <optgroup label="Corte Madera">
-            <option value="luckyramp">📍 Lucky Dr at US-101 Off-Ramp — Exit Dip 3.78'</option>
             <option value="luckyfrontage">📍 Lucky Dr Residential Frontage — Roadway 4.19'</option>
+            <option value="cortemaderatownpark">📍 Corte Madera Town Park — Park/Field 9.00'</option>
           </optgroup>
           <optgroup label="Mill Valley / Tam Valley">
             <option value="manzanita">📍 Manzanita Park &amp; Ride (Shoreline Hwy &amp; US-101) — Lot 7.20'</option>
@@ -1752,16 +1753,23 @@
             </div>
             <span>✓</span>
           </div>
+                    <div class="select-card" id="loc-greenbraeboardwalk" onclick="selectLocation('greenbraeboardwalk')">
+            <div>
+              <div class="select-card-name">📍 Greenbrae Boardwalk (Corte Madera Creek)</div>
+              <div class="select-card-detail">Greenbrae • Deck: 7.43' | Low Path: 6.90'</div>
+            </div>
+          </div>
           <div class="select-card" id="loc-boardwalk" onclick="selectLocation('boardwalk')">
             <div>
               <div class="select-card-name">📍 Boardwalk One (at Corte Madera Creek)</div>
               <div class="select-card-detail">Larkspur • Residential Deck: 8.04' | Bank: 7.60'</div>
             </div>
           </div>
-          <div class="select-card" id="loc-luckyramp" onclick="selectLocation('luckyramp')">
+          </div>
+                    <div class="select-card" id="loc-cortemaderatownpark" onclick="selectLocation('cortemaderatownpark')">
             <div>
-              <div class="select-card-name">📍 Lucky Dr at US-101 Off-Ramp</div>
-              <div class="select-card-detail">Corte Madera • Exit Ramp Dip: 3.78' (Tidal/Rain Flood Zone)</div>
+              <div class="select-card-name">📍 Corte Madera Town Park</div>
+              <div class="select-card-detail">Corte Madera • Park/Field: 9.00' | Perimeter: 8.20'</div>
             </div>
           </div>
           <div class="select-card" id="loc-luckyfrontage" onclick="selectLocation('luckyfrontage')">
@@ -1978,6 +1986,50 @@
   <script>
     // Configuration & Ground Truth Constants
     const THRESHOLDS = {
+      cortemaderatownpark: {
+        name: "Corte Madera Town Park",
+        roadBoundary: "Town Park grounds, pathway & perimeter",
+        crownBoundary: "Park elevation / center pathways",
+        gutterBoundary: "Low perimeter curb & drainage edges",
+        headwallSeep: 8.00,
+        sagGutter: 8.20,
+        gutter: 8.20,
+        drain1: 8.50,
+        frontGutter: 8.20,
+        houseGutter: 8.20,
+        frontStall: 8.60,
+        walkwayBase: 8.80,
+        crown: 9.00,
+        higherPatch: 9.20,
+        highCrown: 9.40,
+        priusSag: 9.49,
+        stall: 9.20,
+        streetHighPoint: 9.50,
+        damageLevel: 10.00,
+        lagMinutes: 120
+      },
+      greenbraeboardwalk: {
+        name: "Greenbrae Boardwalk (Corte Madera Creek)",
+        roadBoundary: "Boardwalk path and shoreline approach along Corte Madera Creek",
+        crownBoundary: "Boardwalk wooden deck and raised path",
+        gutterBoundary: "Shoreline access margin & low pilings base",
+        headwallSeep: 6.80,
+        sagGutter: 6.90,
+        gutter: 6.90,
+        drain1: 7.15,
+        frontGutter: 6.90,
+        houseGutter: 6.90,
+        frontStall: 7.20,
+        walkwayBase: 7.30,
+        crown: 7.43,
+        higherPatch: 7.60,
+        highCrown: 7.75,
+        priusSag: 7.92,
+        stall: 7.60,
+        streetHighPoint: 8.00,
+        damageLevel: 8.50,
+        lagMinutes: 180
+      },
       larkspur: {
         name: "Larkspur Plaza Dr (at Heather Way / Sag Crosswalk)",
         roadBoundary: "Heather Way to Pedestrian Crosswalk (approx. 120 ft sag corridor, full roadway width)",
