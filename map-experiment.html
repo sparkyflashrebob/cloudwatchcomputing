@@ -199,6 +199,27 @@
       gap: 4px;
     }
 
+    /* Leaflet Layer Control Dark Styling */
+    .leaflet-control-layers {
+      background: rgba(15, 23, 42, 0.88) !important;
+      backdrop-filter: blur(12px) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 10px !important;
+      color: var(--text) !important;
+      font-size: 0.78rem !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5) !important;
+      padding: 6px 10px !important;
+    }
+    .leaflet-control-layers label {
+      color: var(--text) !important;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
     /* Custom Leaflet Marker Styling */
     .custom-marker-pin {
       width: 28px;
@@ -409,12 +430,31 @@
         zoomControl: false
       }).setView([37.915, -122.528], 13);
 
-      // Clean dark CartoDB tiles
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: 'abcd',
+      // Basemap options (100% free, NO API key required)
+      const osmStandard = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxZoom: 19
-      }).addTo(map);
+      });
+
+      const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri, USGS, DeLorme',
+        maxZoom: 19
+      });
+
+      const esriDark = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+        maxZoom: 16
+      });
+
+      // Default to OpenStreetMap Standard (crisp street & waterway names, zero API key)
+      osmStandard.addTo(map);
+
+      // Basemap switcher so user can toggle between street, topo/coastal, or dark
+      L.control.layers({
+        "🗺️ Street Map (OSM)": osmStandard,
+        "⛰️ Coastal & Topo (Esri)": esriTopo,
+        "🌙 Dark Canvas (Esri)": esriDark
+      }, null, { position: 'bottomleft', collapsed: false }).addTo(map);
 
       L.control.zoom({ position: 'bottomright' }).addTo(map);
 
