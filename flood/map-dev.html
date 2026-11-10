@@ -6,7 +6,8 @@
   <title>🛠️ Marin County Coastal Flood Topography Dev Lab</title>
   
   <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -300,6 +301,78 @@
       box-shadow: 0 8px 30px rgba(0,0,0,0.6);
       display: none;
     }
+  
+    /* Mobile-first and dynamic viewport optimizations */
+    html, body {
+      height: 100%;
+      height: 100dvh;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    #devMap {
+      flex: 1 1 auto;
+      min-height: 280px;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      z-index: 10;
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: 6px 10px;
+        gap: 6px;
+      }
+      .brand h1 {
+        font-size: 0.88rem;
+      }
+      .control-bar {
+        padding: 6px 10px;
+        gap: 6px;
+      }
+      .elevation-display {
+        padding: 4px 10px;
+      }
+      .elevation-val {
+        font-size: 1.15rem;
+      }
+      .preset-group {
+        gap: 4px;
+        overflow-x: auto;
+        max-width: 100%;
+        padding-bottom: 2px;
+      }
+      .preset-btn {
+        padding: 4px 7px;
+        font-size: 0.70rem;
+      }
+      .slider-wrap {
+        min-width: 140px;
+      }
+      .btn-link {
+        padding: 4px 8px;
+        font-size: 0.72rem;
+      }
+      .floating-legend {
+        bottom: 10px !important;
+        left: 8px !important;
+        right: 8px !important;
+        max-width: calc(100vw - 16px) !important;
+        padding: 6px 10px !important;
+        font-size: 0.70rem !important;
+      }
+      .inspector-card {
+        top: auto !important;
+        bottom: 8px !important;
+        left: 8px !important;
+        right: 8px !important;
+        width: auto !important;
+        max-width: calc(100vw - 16px) !important;
+      }
+    }
+    
   </style>
 </head>
 <body>
@@ -358,9 +431,10 @@
   <div id="devMap"></div>
 
   <!-- Floating Legend -->
-  <div class="floating-legend">
+  <div class="floating-legend" id="floatingLegend">
+    <div style="font-weight:700; font-size:0.8rem; margin-bottom:2px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="toggleLegendCollapse()">
     <div style="font-weight:700; font-size:0.8rem; margin-bottom:2px; display:flex; justify-content:space-between;">
-      <span>🗺️ Topographic Inundation</span>
+      <span>🗺️ Legend &amp; Layers <span style="font-size:0.68rem; opacity:0.7;">(Tap to toggle)</span></span>
       <span style="color:var(--cyan); font-family:var(--mono);" id="legendElevation">7.25' MLLW</span>
     </div>
     <div class="legend-row">
@@ -396,7 +470,7 @@
   </div>
 
   <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
 
   <script>
     // NOAA Golden Gate Datum Conversion:
@@ -515,7 +589,19 @@
       }
     ];
 
+    
+    function toggleLegendCollapse() {
+      const leg = document.getElementById('floatingLegend');
+      if (leg) leg.classList.toggle('collapsed');
+    }
+
     function initDevMap() {
+      if (typeof L === 'undefined') {
+        setTimeout(initDevMap, 150);
+        return;
+      }
+      const mapContainer = document.getElementById('devMap');
+      if (!mapContainer || devMapInstance) return;
       // Centered on Central/South Marin County
       devMapInstance = L.map('devMap', {
         zoomControl: false,
@@ -610,9 +696,12 @@
       devMapInstance.on('click', e => {
         inspectMapClick(e.latlng.lat, e.latlng.lng);
       });
+    
+      setTimeout(() => { if (devMapInstance) devMapInstance.invalidateSize(); }, 200);
+      setTimeout(() => { if (devMapInstance) devMapInstance.invalidateSize(); }, 600);
+      setTimeout(() => { if (devMapInstance) devMapInstance.invalidateSize(); }, 1200);
     }
-
-    function generateMarkerHtml(site, navd, mllw) {
+function generateMarkerHtml(site, navd, mllw) {
       let statusClass = 'green';
       let statusIcon = '✓';
       let tagText = '';
@@ -847,8 +936,17 @@
       });
     }
 
+    window.addEventListener('resize', () => {
+      if (devMapInstance) devMapInstance.invalidateSize();
+    });
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => { if (devMapInstance) devMapInstance.invalidateSize(); }, 350);
+    });
     window.addEventListener('DOMContentLoaded', () => {
       initDevMap();
+    });
+    window.addEventListener('load', () => {
+      setTimeout(() => { if (devMapInstance) devMapInstance.invalidateSize(); }, 200);
     });
   </script>
 </body>
