@@ -1389,6 +1389,7 @@
           <span style="font-size:0.75rem; color:var(--cyan); font-family:var(--mono);" id="mapTideLabel">TWL: 7.25 ft NAVD88</span>
         </div>
         <div style="display: flex; gap: 6px; align-items: center; margin-left: auto; flex-wrap: wrap;">
+          <button type="button" id="btnToggleInundation" class="chip-btn active" style="padding: 4px 10px; font-size: 0.72rem;" onclick="toggleMapInundationLayer(event)">🌊 LiDAR Flood Layer</button>
           <button type="button" id="btnToggleBadges" class="chip-btn active" style="padding: 4px 10px; font-size: 0.72rem;" onclick="toggleMapElevationBadges(event)">📏 Elevation Badges</button>
           <button type="button" id="btnMapGps" class="chip-btn" style="padding: 4px 10px; font-size: 0.72rem;" onclick="locateUserOnMap(event)">📍 My GPS</button>
           <button type="button" id="btnFsMap" class="chip-btn" style="padding: 4px 10px; font-size: 0.72rem;" onclick="toggleMapFullscreen(event)"><span class="fs-icon">⤢</span> Enlarge Map</button>
@@ -1396,11 +1397,12 @@
         </div>
       </div>
       <div id="floodMap"></div>
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 0.72rem; color: var(--text-muted); flex-wrap: wrap; gap: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 0.72rem; color: var(--text-muted); flex-wrap: wrap; gap: 8px;">
         <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-          <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#22c55e;margin-right:4px;vertical-align:middle;"></span>🟢 Clear (Tide &lt; Ground)</span>
-          <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#f59e0b;margin-right:4px;vertical-align:middle;"></span>🟠 Gutter Wet (Invert Surcharged)</span>
-          <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#ef4444;margin-right:4px;vertical-align:middle;"></span>🔴 Roadway / Trail Flooded</span>
+          <span><span style="display:inline-block;width:10px;height:10px;background:#0284c7;opacity:0.75;margin-right:5px;vertical-align:middle;border-radius:2px;"></span>🌊 NOAA LiDAR Flood Overlay</span>
+          <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#22c55e;margin-right:4px;vertical-align:middle;"></span>🟢 Clear (Ground &amp; Inverts Dry)</span>
+          <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#f59e0b;margin-right:4px;vertical-align:middle;"></span>🟠 Gutters Wet (Crown Passable)</span>
+          <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#ef4444;margin-right:4px;vertical-align:middle;"></span>🔴 Roadway Overtopped</span>
         </div>
         <div>
           <span>Synced with 48h Tide Scrubber ⏱️</span>
@@ -3639,7 +3641,7 @@
       }
 
       // Synchronize Marin County Flood & Elevation Map with Hydrograph Scrubber
-      updateFloodMap(twl);
+      updateFloodMap(point.twl);
     }
 
     // ==========================================
@@ -3649,24 +3651,24 @@
       {
         id: 'larkspur',
         city: 'Larkspur',
-        name: 'Larkspur Plaza Dr (Sag & Crosswalk)',
+        name: 'Larkspur Plaza Dr (Sag & Crosswalk near Heather Way)',
         shortName: 'Larkspur Sag',
         lat: 37.939750,
         lon: -122.535078,
         crown: 7.42,
         gutter: 7.28,
-        desc: "Concave sag on Larkspur Plaza Dr near Heather Way. Drains 1-4 surcharge at 7.28'; road crown overhauls at 7.42'."
+        desc: "Concave road sag on Larkspur Plaza Dr near Heather Way. Drains 1-4 surcharge at 7.28' NAVD88; road crown overhauls at 7.42' NAVD88."
       },
       {
         id: 'larkspurnorth',
         city: 'Larkspur',
         name: 'Larkspur Plaza Dr North (#617 / Heather Gardens)',
         shortName: 'Larkspur Plaza North',
-        lat: 37.9412446786265,
-        lon: -122.5338748717734,
+        lat: 37.941245,
+        lon: -122.533875,
         crown: 7.41,
         gutter: 7.10,
-        desc: "Frequent neighborhood tidal flooding hotspot at northern Larkspur Plaza Drive (#617 / Heather Gardens). Low curb gutters surcharge at 7.10'; roadway center breaches at 7.41'."
+        desc: "Frequent neighborhood tidal flooding hotspot at northern Larkspur Plaza Drive (#617 / Heather Gardens). Low curb gutters surcharge at 7.10' NAVD88; roadway center breaches at 7.41' NAVD88."
       },
       {
         id: 'boardwalk',
@@ -3677,39 +3679,39 @@
         lon: -122.532933,
         crown: 8.04,
         gutter: 7.60,
-        desc: "Elevated residential boardwalk deck (8.04') on east bank of creek slough."
+        desc: "Elevated residential boardwalk deck (8.04' NAVD88 / 8.13' MLLW) on east bank of creek slough."
       },
       {
         id: 'creek',
         city: 'Kentfield / Larkspur',
         name: 'Corte Madera Creek Pathway (Kentfield / Larkspur)',
         shortName: 'Corte Madera Pathway',
-        lat: 37.94570944366057,
-        lon: -122.53807352607274,
+        lat: 37.945709,
+        lon: -122.538074,
         crown: 8.00,
-        gutter: 6.40,
-        desc: "Official Corte Madera Creek paved multi-use pathway between Larkspur and Kentfield. Low shoreline trail sections flood during winter king tides above 6.50' NAVD88."
+        gutter: 7.20,
+        desc: "Official Corte Madera Creek paved multi-use pathway between Larkspur and Kentfield. Low shoreline trail sections flood during winter tides above 7.20' NAVD88; paved crest at 8.00' NAVD88."
       },
       {
         id: 'luckyramp',
         city: 'Corte Madera',
-        name: 'Lucky Dr at US-101 Off-Ramp',
+        name: 'Lucky Dr at US-101 Off-Ramp (Corte Madera)',
         shortName: 'Lucky Dr Ramp',
         lat: 37.939360,
         lon: -122.518280,
-        crown: 3.78,
-        gutter: 3.50,
-        desc: "Historic tidal marsh subsidence basin off US-101 southbound exit. Relies on Town storm drainage pump station."
+        crown: 7.60,
+        gutter: 7.15,
+        desc: "Historic tidal subsidence basin off US-101 southbound exit. Low shoulders take seepage at 7.15' NAVD88; overtopping occurs above 7.60' NAVD88."
       },
       {
         id: 'luckyfrontage',
         city: 'Corte Madera',
-        name: 'Lucky Dr Residential Frontage',
+        name: 'Lucky Dr Residential Frontage (Corte Madera)',
         shortName: 'Lucky Frontage',
         lat: 37.939194,
         lon: -122.518536,
-        crown: 4.19,
-        gutter: 3.90,
+        crown: 7.70,
+        gutter: 7.25,
         desc: "Residential frontage road and parking stalls along Lucky Drive low basin."
       },
       {
@@ -3721,7 +3723,7 @@
         lon: -122.519000,
         crown: 7.20,
         gutter: 7.00,
-        desc: "Major commuter parking lot and US-101 highway underpass at head of Richardson Bay. Sheet-floods when tides exceed 7.00'."
+        desc: "Major commuter parking lot and US-101 highway underpass at head of Richardson Bay. Sheet-floods when tides exceed 7.00' NAVD88."
       },
       {
         id: 'tam',
@@ -3732,7 +3734,7 @@
         lon: -122.525000,
         crown: 7.35,
         gutter: 7.10,
-        desc: "Key highway intersection on Shoreline Hwy (SR-1). Low road shoulder and commercial parking margins flood at 7.10'."
+        desc: "Key highway intersection on Shoreline Hwy (SR-1). Low road shoulder and commercial parking margins flood at 7.10' NAVD88."
       },
       {
         id: 'sanrafaelcanal',
@@ -3743,7 +3745,7 @@
         lon: -122.502000,
         crown: 5.70,
         gutter: 5.20,
-        desc: "Low-lying San Rafael Canal District frontage road and access corridor. Tidal bowl subsidence causes canal to overtop bank onto Canal Street during winter king tides above 6.00'."
+        desc: "Low-lying San Rafael Canal District frontage road and access corridor. Tidal bowl subsidence causes canal to overtop bank onto Canal Street during winter king tides above 5.70' NAVD88."
       }
     ];
 
@@ -3751,19 +3753,26 @@
     let mapMarkers = {};
     let mapGpsMarker = null;
     let showElevationBadges = true;
+    let showInundation = true;
+    let activeInundationLayer = null;
+    let inundationLayer1ft = null;
+    let inundationLayer2ft = null;
+    let inundationLayer3ft = null;
+
     function initFloodMap() {
       const container = document.getElementById('floodMap');
       if (!container || floodMapInstance || typeof L === 'undefined') return;
 
-      // Centered on Marin County (San Rafael down through Richardson Bay)
+      // Centered on Central/South Marin County
       floodMapInstance = L.map('floodMap', {
         zoomControl: false,
         maxBounds: [
           [37.80, -122.65],
           [38.05, -122.40]
         ],
-        minZoom: 11
-      }).setView([37.928, -122.518], 12);
+        minZoom: 11,
+        maxZoom: 21
+      }).setView([37.935, -122.528], 13);
 
       // Free, open basemap options (Zero API keys required)
       const osmStandard = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -3777,63 +3786,110 @@
       });
 
       const esriDark = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'Tiles &copy; Esri &mdash; DeLorme, NAVTEQ',
-        maxZoom: 16
+        attribution: 'Tiles &copy; Esri Dark Canvas',
+        maxNativeZoom: 16,
+        maxZoom: 21
       });
 
-      osmStandard.addTo(floodMapInstance);
+      const esriSatellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri World Imagery',
+        maxZoom: 19
+      });
 
-      L.control.layers({
-        "🗺️ Street Map (OSM)": osmStandard,
-        "⛰️ Coastal & Topo (Esri)": esriTopo,
-        "🌙 Dark Canvas (Esri)": esriDark
-      }, null, { position: 'bottomleft', collapsed: true }).addTo(floodMapInstance);
+      // Default basemap
+      esriTopo.addTo(floodMapInstance);
 
+      // Official NOAA LiDAR Coastal Inundation Layers
+      // maxNativeZoom: 16 and maxZoom: 21 allow Leaflet to oversample and zoom down to parcel level without losing the overlay
+      inundationLayer1ft = L.tileLayer('https://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_1ft/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '&copy; NOAA Digital Coast LiDAR Inundation',
+        opacity: 0.75,
+        maxNativeZoom: 16,
+        maxZoom: 21
+      });
+
+      inundationLayer2ft = L.tileLayer('https://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_2ft/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '&copy; NOAA Digital Coast LiDAR Inundation',
+        opacity: 0.75,
+        maxNativeZoom: 16,
+        maxZoom: 21
+      });
+
+      inundationLayer3ft = L.tileLayer('https://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_3ft/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '&copy; NOAA Digital Coast LiDAR Inundation',
+        opacity: 0.75,
+        maxNativeZoom: 16,
+        maxZoom: 21
+      });
+
+      if (showInundation) {
+        inundationLayer1ft.addTo(floodMapInstance);
+        activeInundationLayer = inundationLayer1ft;
+      }
+
+      // Add Base Layer Control
+      const baseMaps = {
+        "⛰️ Coastal Topo": esriTopo,
+        "🗺️ Street Map": osmStandard,
+        "🌙 Dark Night": esriDark,
+        "🛰️ Satellite Imagery": esriSatellite
+      };
+
+      const overlayMaps = {
+        "🌊 NOAA LiDAR Flood Overlay": inundationLayer1ft
+      };
+
+      L.control.layers(baseMaps, overlayMaps, { position: 'topright' }).addTo(floodMapInstance);
+
+      // Zoom control at bottom right
       L.control.zoom({ position: 'bottomright' }).addTo(floodMapInstance);
 
-      // Plot All Marin County Surveyed Hotspots & Physical Flood Borders
-      MARIN_MAP_HOTSPOTS.forEach(site => {
-                
+      // Add Marin County Hotspots Markers
+      const initialTwl = (typeof currentPoint !== 'undefined' && currentPoint && currentPoint.twl) ? currentPoint.twl : 7.00;
 
-        // Custom HTML Marker with floating Elevation & Water Level Tag
-        const customIcon = L.divIcon({
+      MARIN_MAP_HOTSPOTS.forEach(site => {
+        const markerIcon = L.divIcon({
           className: 'custom-marker',
-          html: generateMapPinHtml(site, 7.25),
+          html: generateMapPinHtml(site, initialTwl),
           iconSize: [30, 30],
           iconAnchor: [15, 15]
         });
 
-        const marker = L.marker([site.lat, site.lon], { icon: customIcon }).addTo(floodMapInstance);
-        marker.bindPopup(generateMapPopupHtml(site, 7.25));
+        const marker = L.marker([site.lat, site.lon], { icon: markerIcon }).addTo(floodMapInstance);
+        marker.bindPopup(generateMapPopupHtml(site, initialTwl), {
+          maxWidth: 290,
+          className: 'custom-map-popup'
+        });
+
         mapMarkers[site.id] = marker;
       });
 
-      window.addEventListener('resize', () => {
+      setTimeout(() => {
         if (floodMapInstance) floodMapInstance.invalidateSize();
-      });
+      }, 400);
     }
 
     function generateMapPinHtml(site, twl) {
       let status = 'green';
       let icon = '🚗';
-      let statusText = 'Dry';
+      let statusText = '';
       let statusColor = 'green';
 
       if (twl >= site.crown) {
         status = 'red';
-        icon = '🌊';
+        icon = '🚨';
         const depthIn = ((twl - site.crown) * 12).toFixed(1);
-        statusText = `+${depthIn}" Submerged`;
+        statusText = `ROADWAY SUBMERGED (+${depthIn}")`;
         statusColor = 'red';
       } else if (twl >= site.gutter) {
         status = 'yellow';
         icon = '⚠️';
         const depthIn = ((twl - site.gutter) * 12).toFixed(1);
-        statusText = `+${depthIn}" Gutters Wet`;
+        statusText = `GUTTERS WET (+${depthIn}") • ROAD CLEAR`;
         statusColor = 'yellow';
       } else {
         const marginFt = (site.crown - twl).toFixed(2);
-        statusText = `Clear (${marginFt}' margin)`;
+        statusText = `100% CLEAR (${marginFt}' MARGIN)`;
         statusColor = 'green';
       }
 
@@ -3842,9 +3898,9 @@
           <div class="elevation-water-badge ${status}" id="badge-${site.id}">
             <span class="badge-loc">${site.shortName}</span>
             <div class="badge-metrics">
-              <span class="ground-span">Ground: ${site.crown.toFixed(2)}'</span>
+              <span class="ground-span" title="Surveyed Roadway Crown Elevation">👑 Crown: ${site.crown.toFixed(2)}'</span>
               <span style="opacity:0.4;">|</span>
-              <span class="water-span ${statusColor}">Water: ${twl.toFixed(2)}'</span>
+              <span class="water-span ${statusColor}" title="Regional Tide Water Elevation">🌊 Water: ${twl.toFixed(2)}'</span>
             </div>
             <div class="badge-status-row" style="color: ${status === 'red' ? '#f87171' : (status === 'yellow' ? '#fde047' : '#86efac')}">
               ${statusText}
@@ -3857,41 +3913,61 @@
 
     function generateMapPopupHtml(site, twl) {
       let status = 'green';
-      let badgeLabel = '🟢 ROADWAY & SIDEWALK 100% CLEAR';
+      let badgeLabel = '🟢 ROADWAY &amp; GUTTERS 100% CLEAR';
       let color = '#22c55e';
       let diffHtml = '';
+
+      const mllw = twl + 0.09;
+      const crownMllw = site.crown + 0.09;
+      const gutterMllw = site.gutter + 0.09;
 
       if (twl >= site.crown) {
         status = 'red';
         const depthIn = ((twl - site.crown) * 12).toFixed(1);
-        badgeLabel = `🔴 ROADWAY SUBMERGED (+${depthIn}")`;
+        badgeLabel = `🔴 ROADWAY OVERTOPPED (+${depthIn}")`;
         color = '#ef4444';
-        diffHtml = `<div style="margin:4px 0; color:#fca5a5; font-weight:700;">🌊 Water Depth on Crown: +${depthIn}" (Exceeds Clearance)</div>`;
+        diffHtml = `<div style="margin-top: 6px; padding: 4px 8px; background: rgba(239, 68, 68, 0.15); border-left: 3px solid #ef4444; border-radius: 4px; font-weight: 700; color: #f87171;">
+          Water is overtopping road crown by +${depthIn} inches (${(twl - site.crown).toFixed(2)} ft). Impassable for low sedans.
+        </div>`;
       } else if (twl >= site.gutter) {
         status = 'yellow';
         const depthIn = ((twl - site.gutter) * 12).toFixed(1);
-        badgeLabel = `⚠️ LOW CURB GUTTERS WET (+${depthIn}")`;
+        const marginFt = (site.crown - twl).toFixed(2);
+        badgeLabel = `🟠 GUTTERS WET (+${depthIn}") • ROADWAY PASSABLE`;
         color = '#f59e0b';
-        diffHtml = `<div style="margin:4px 0; color:#fde047; font-weight:700;">🟡 Water in Gutter Pan: +${depthIn}" (Center Lane Passable)</div>`;
+        diffHtml = `<div style="margin-top: 6px; padding: 4px 8px; background: rgba(245, 158, 11, 0.15); border-left: 3px solid #f59e0b; border-radius: 4px; font-weight: 600; color: #fbbf24;">
+          Curb inverts taking water (+${depthIn} in). Center crown is <b>CLEAR by ${marginFt} ft</b>.
+        </div>`;
       } else {
         const marginFt = (site.crown - twl).toFixed(2);
-        diffHtml = `<div style="margin:4px 0; color:#86efac; font-weight:700;">🟢 Ground Clearance Margin: ${marginFt} ft dry</div>`;
+        diffHtml = `<div style="margin-top: 6px; padding: 4px 8px; background: rgba(34, 197, 94, 0.12); border-left: 3px solid #22c55e; border-radius: 4px; color: #86efac;">
+          Entire roadway and curb invert are clear with <b>${marginFt} ft dry margin</b>.
+        </div>`;
       }
 
       return `
-        <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; min-width:210px; max-width:275px; padding:2px;">
-          <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.5px; color:#94a3b8; font-weight:700;">${site.city}, Marin County</div>
-          <div style="font-size:0.92rem; font-weight:800; color:#fff; margin:2px 0 6px;">${site.name}</div>
-          <div style="display:inline-block; font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:999px; margin-bottom:8px; background:rgba(255,255,255,0.08); border:1px solid ${color}; color:${color};">
+        <div style="font-family: var(--font); color: var(--text-primary); font-size: 0.8rem; line-height: 1.35;">
+          <div style="font-weight: 800; font-size: 0.95rem; margin-bottom: 2px; color: var(--cyan);">${site.name}</div>
+          <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 8px;">📍 ${site.city}, Marin County</div>
+          <div style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 800; background: ${color}22; color: ${color}; border: 1px solid ${color}66; margin-bottom: 6px;">
             ${badgeLabel}
           </div>
-          <div style="background:rgba(0,0,0,0.3); border-radius:6px; padding:6px 8px; font-size:0.72rem; font-family:var(--mono); line-height:1.4; margin-bottom:6px;">
-            <div>Surveyed Crown: <b style="color:var(--cyan);">${site.crown.toFixed(2)}' NAVD88</b></div>
-            <div>Gutter Pan / Drain: <b>${site.gutter.toFixed(2)}' NAVD88</b></div>
-            <div>Current Water Level: <b style="color:#fff;">${twl.toFixed(2)}' NAVD88</b></div>
-          </div>
           ${diffHtml}
-          <div style="font-size:0.7rem; color:#94a3b8; margin-top:6px; line-height:1.3;">
+          <div style="margin-top: 8px; font-size: 0.74rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 6px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+              <span style="color: var(--text-muted);">👑 Road Crown Elevation:</span>
+              <span style="font-family: var(--mono); font-weight: 700;">${site.crown.toFixed(2)}' NAVD88 (${crownMllw.toFixed(2)}' MLLW)</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+              <span style="color: var(--text-muted);">📐 Curb Gutter Invert:</span>
+              <span style="font-family: var(--mono); font-weight: 700;">${site.gutter.toFixed(2)}' NAVD88 (${gutterMllw.toFixed(2)}' MLLW)</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--text-muted);">🌊 Regional Tide Level:</span>
+              <span style="font-family: var(--mono); font-weight: 800; color: ${color};">${twl.toFixed(2)}' NAVD88 (${mllw.toFixed(2)}' MLLW)</span>
+            </div>
+          </div>
+          <div style="margin-top: 8px; font-size: 0.70rem; color: var(--text-muted); line-height: 1.25; font-style: italic;">
             ${site.desc}
           </div>
         </div>
@@ -3901,8 +3977,42 @@
     function updateFloodMap(twl) {
       if (!floodMapInstance) return;
 
+      const mllw = twl + 0.09;
       const lbl = document.getElementById('mapTideLabel');
-      if (lbl) lbl.textContent = `TWL: ${twl.toFixed(2)} ft NAVD88`;
+      if (lbl) lbl.textContent = `Tide: ${mllw.toFixed(2)}' MLLW (${twl.toFixed(2)}' NAVD88)`;
+
+      // Dynamically select and scale NOAA LiDAR Inundation layer based on tide elevation:
+      if (showInundation) {
+        let targetLayer = inundationLayer1ft;
+        let layerOpacity = 0.75;
+
+        if (mllw >= 8.40) {
+          targetLayer = inundationLayer3ft;
+          layerOpacity = 0.85;
+        } else if (mllw >= 7.65) {
+          targetLayer = inundationLayer2ft;
+          layerOpacity = 0.80;
+        } else if (mllw >= 7.00) {
+          targetLayer = inundationLayer1ft;
+          // Interpolate opacity from 0.35 at 7.00' MLLW to 0.75 at 7.65' MLLW
+          layerOpacity = 0.35 + ((mllw - 7.00) / 0.65) * 0.40;
+        } else {
+          // Subtle low tide baseline
+          targetLayer = inundationLayer1ft;
+          layerOpacity = 0.12;
+        }
+
+        if (activeInundationLayer !== targetLayer) {
+          if (activeInundationLayer && floodMapInstance.hasLayer(activeInundationLayer)) {
+            floodMapInstance.removeLayer(activeInundationLayer);
+          }
+          targetLayer.addTo(floodMapInstance);
+          activeInundationLayer = targetLayer;
+        }
+        if (activeInundationLayer) {
+          activeInundationLayer.setOpacity(layerOpacity);
+        }
+      }
 
       MARIN_MAP_HOTSPOTS.forEach(site => {
         const marker = mapMarkers[site.id];
@@ -3917,12 +4027,25 @@
         });
         marker.setIcon(icon);
         marker.setPopupContent(generateMapPopupHtml(site, twl));
-
-                
       });
     }
 
-    
+    function toggleMapInundationLayer(e) {
+      if (e) e.stopPropagation();
+      const btn = document.getElementById('btnToggleInundation');
+      showInundation = !showInundation;
+      if (showInundation) {
+        if (btn) btn.classList.add('active');
+        if (activeInundationLayer && !floodMapInstance.hasLayer(activeInundationLayer)) {
+          activeInundationLayer.addTo(floodMapInstance);
+        }
+      } else {
+        if (btn) btn.classList.remove('active');
+        if (activeInundationLayer && floodMapInstance.hasLayer(activeInundationLayer)) {
+          floodMapInstance.removeLayer(activeInundationLayer);
+        }
+      }
+    }
 
     function toggleMapElevationBadges(e) {
       if (e) e.stopPropagation();
