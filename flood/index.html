@@ -1975,8 +1975,75 @@
       );
     }
 
-    // 48-Hour Rolling Timeline Generator (288 Points: -24h to +24h, Centered on NOW at Index 144)
-    // 48-Hour Rolling Timeline Generator (288 Points: -24h to +24h, Centered on NOW at Index 144)
+    // Vehicle Selection Switcher (Updates 3D/SVG Model Across Both Views)
+    function selectVehicle(key, clr) {
+      activeVehicleKey = key;
+      activeVehicleClearance = clr;
+      try {
+        localStorage.setItem('floodwatch_veh_key', key);
+      } catch (e) {}
+
+      document.querySelectorAll('#veh-prius, #veh-sedan, #veh-suv, #veh-truck').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById('veh-' + key);
+      if (target) target.classList.add('active');
+
+      applyVehicleAndCarView();
+      updateUI();
+    }
+
+    function switchPriusView(view, ev) {
+      switchCarView(view, ev);
+    }
+
+    function switchCarView(view, ev) {
+      if (ev) {
+        if (ev.preventDefault) ev.preventDefault();
+        if (ev.stopPropagation) ev.stopPropagation();
+      }
+      currentCarView = view;
+      try {
+        localStorage.setItem('floodwatch_car_view', view);
+      } catch (e) {}
+      applyVehicleAndCarView();
+    }
+
+    function applyVehicleAndCarView() {
+      // Hide all vehicle groups
+      const allGroups = document.querySelectorAll('.vehicle-svg-group');
+      allGroups.forEach(g => {
+        g.style.display = 'none';
+        g.setAttribute('display', 'none');
+        g.setAttribute('visibility', 'hidden');
+      });
+
+      // Show active vehicle and active view
+      const activeGroupId = `svgVeh_${activeVehicleKey}_${currentCarView}`;
+      const activeGroup = document.getElementById(activeGroupId);
+      if (activeGroup) {
+        activeGroup.style.display = 'inline';
+        activeGroup.setAttribute('display', 'inline');
+        activeGroup.setAttribute('visibility', 'visible');
+      }
+
+      // Update View Buttons
+      const btnSide = document.getElementById('btnViewSide');
+      const btnFront = document.getElementById('btnViewFront');
+      if (currentCarView === 'front') {
+        if (btnSide) btnSide.classList.remove('active');
+        if (btnFront) btnFront.classList.add('active');
+      } else {
+        if (btnSide) btnSide.classList.add('active');
+        if (btnFront) btnFront.classList.remove('active');
+      }
+
+      // Update Vehicle Card Label
+      const vInfo = VEHICLES[activeVehicleKey] || VEHICLES.prius;
+      const labelVeh = document.getElementById('labelVehicleClearance');
+      if (labelVeh) {
+        labelVeh.textContent = `${vInfo.name} (${vInfo.clearance}" CLR)`;
+      }
+    }
+
     function generate48HourTimeline(predArray, obsArray) {
       const data = [];
       const now = new Date();
@@ -2613,6 +2680,12 @@
         }
       }
 
+      // Calculate Roadway Crown & Gutter Depths across all zones
+      const effectiveCrownDepthIn = isRising ? ((twl >= 7.38) ? Math.max(0.5, (twl - 7.38) * 12) : 0.0) : Math.max(0, (streetLevel - cfg.crown) * 12);
+      const effectiveSagGutterDepthIn = isRising ? ((twl >= cfg.sagGutter) ? Math.max(0.2, (twl - cfg.sagGutter) * 12) : 0.0) : Math.max(0, (streetLevel - cfg.sagGutter) * 12);
+      const effectiveFrontGutterDepthIn = isRising ? ((twl >= cfg.frontGutter) ? Math.max(0.2, (twl - cfg.frontGutter) * 12) : 0.0) : Math.max(0, (streetLevel - cfg.frontGutter) * 12);
+      const maxGutterDepthIn = Math.max(effectiveSagGutterDepthIn, effectiveFrontGutterDepthIn);
+
       // Update Zone 3 (Pedestrian Crosswalk & Sidewalk Dip) Card
       const valCrosswalkEl = document.getElementById('valCrosswalkDepth');
       const crosswalkStatusEl = document.getElementById('crosswalkStatusText');
@@ -2639,13 +2712,6 @@
           valCrosswalkSubEl.textContent = `Curb ramps & crosswalk dry and passable on foot`;
         }
       }
-      }
-
-      // Roadway Crown & Vehicle Clearance Updates
-      const effectiveCrownDepthIn = isRising ? ((twl >= 7.38) ? Math.max(0.5, (twl - 7.38) * 12) : 0.0) : Math.max(0, (streetLevel - cfg.crown) * 12);
-      const effectiveSagGutterDepthIn = isRising ? ((twl >= cfg.sagGutter) ? Math.max(0.2, (twl - cfg.sagGutter) * 12) : 0.0) : Math.max(0, (streetLevel - cfg.sagGutter) * 12);
-      const effectiveFrontGutterDepthIn = isRising ? ((twl >= cfg.frontGutter) ? Math.max(0.2, (twl - cfg.frontGutter) * 12) : 0.0) : Math.max(0, (streetLevel - cfg.frontGutter) * 12);
-      const maxGutterDepthIn = Math.max(effectiveSagGutterDepthIn, effectiveFrontGutterDepthIn);
 
       // 1. Update Card in Zone 1 (Roadway Crown & Prius Clearance Card)
       if (effectiveCrownDepthIn >= Math.min(activeVehicleClearance, 4.8)) {
@@ -3085,7 +3151,7 @@
     // Startup Initialization
     document.addEventListener('DOMContentLoaded', () => {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=40').catch(() => {});
+        navigator.serviceWorker.register('./sw.js?v=42').catch(() => {});
       }
       applyVehicleAndCarView();
       initHydrographDragScrub();
