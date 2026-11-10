@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud Watch Computing • Environmental Intelligence & Civic Tech</title>
+  <meta name="description" content="Cloud Watch Computing builds high-craft environmental intelligence, hyper-local flood modeling, and civic resilience applications.">
+  <meta name="theme-color" content="#090d16">
+  <link rel="icon" href="flood/favicon.ico">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(17, 24, 39, 0.75);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --cyan: #38bdf8;
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --purple: #c084fc;
+      --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+    }
+    header {
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .brand-icon {
+      font-size: 1.8rem;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 6px 10px;
+      border-radius: 12px;
+    }
+    .brand-title h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .brand-title p {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .hero {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 60px 24px 40px;
+      text-align: center;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--cyan);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      margin-bottom: 24px;
+      font-family: var(--mono);
+    }
+    .hero h2 {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #f8fafc 30%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 36px;
+      line-height: 1.6;
+    }
+    .featured-grid {
+      max-width: 1040px;
+      margin: 0 auto 60px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 28px;
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    }
+    .card-featured {
+      grid-column: 1 / -1;
+      background: linear-gradient(145deg, rgba(17, 24, 39, 0.9), rgba(15, 23, 42, 0.75));
+      border: 1px solid rgba(56, 189, 248, 0.35);
+    }
+    .card-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--cyan);
+      margin-bottom: 12px;
+      font-family: var(--mono);
+    }
+    .card-title {
+      font-size: 1.45rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .card-desc {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 22px;
+    }
+    .card-meta-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .card-meta-item span {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .card-meta-item strong {
+      font-size: 0.88rem;
+      color: #e2e8f0;
+      font-family: var(--mono);
+    }
+    .btn-launch {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--cyan);
+      color: #090d16;
+      font-weight: 800;
+      font-size: 0.95rem;
+      padding: 14px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.35);
+    }
+    .btn-launch:hover {
+      background: #7dd3fc;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+    }
+    footer {
+      margin-top: auto;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 24px 32px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="/" class="brand">
+      <div class="brand-icon">☁️</div>
+      <div class="brand-title">
+        <h1>Cloud Watch Computing</h1>
+        <p>Civic Tech • Environmental Intelligence</p>
+      </div>
+    </a>
+    <div style="display:flex; gap:14px; align-items:center;">
+      <a href="/download/" style="color:var(--text-muted); text-decoration:none; font-size:0.85rem; font-weight:600;">Install & Download</a>
+      <a href="/flood/" class="btn-launch" style="padding: 8px 18px; font-size: 0.82rem;">Launch Flood Watch WET 🌊</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="badge">🌐 Hyper-Local Civic Software Studio</div>
+      <h2>High-Craft Computational Tools<br/>Grounded in Physical Reality.</h2>
+      <p>
+        Cloud Watch Computing builds real-time micro-topographic environmental intelligence, 
+        tidal modeling, and community resilience applications for coastal neighborhoods.
+      </p>
+    </section>
+
+    <section class="featured-grid">
+      <!-- FLAGSHIP APPLICATION: LARKSPUR FLOODWATCH -->
+      <div class="card card-featured">
+        <div>
+          <div class="card-tag">🌊 Flagship Live Application • v35</div>
+          <h3 class="card-title">Flood Watch WET</h3>
+          <p class="card-desc">
+            A hyper-local micro-topographic flood intelligence model for Larkspur Plaza Drive and Corte Madera Creek. 
+            Engineered with 100% geodetic NAVD88 geodetic datum precision, live atmospheric surge tracking, 
+            culvert hydraulic ingress delays, and two-phase drainage lag modeling.
+          </p>
+
+          <div class="card-meta-list">
+            <div class="card-meta-item">
+              <span>Primary Datum</span>
+              <strong>NAVD88 Geodetic</strong>
+            </div>
+            <div class="card-meta-item">
+              <span>Drainage Lag</span>
+              <strong>4.5h Pan Retention</strong>
+            </div>
+            <div class="card-meta-item">
+              <span>Alert Engine</span>
+              <strong>Condition SMS</strong>
+            </div>
+            <div class="card-meta-item">
+              <span>Live Feed</span>
+              <strong>NOAA 9414290/863</strong>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+          <a href="/flood/" class="btn-launch">
+            <span>Open Flood Watch WET App</span>
+            <span>➔</span>
+          </a>
+          <span style="font-size:0.8rem; color:var(--text-muted); font-family:var(--mono);">
+            Also available at: <a href="https://cloudwatchcomputing.com/flood/" style="color:var(--cyan); text-decoration:none;">/flood/</a>
+          </span>
+        </div>
+      </div>
+
+      <!-- PILLAR 2: COMMUNITY CIVIC APPS -->
+      <div class="card">
+        <div>
+          <div class="card-tag" style="color:var(--green);">🌱 Civic Resilience</div>
+          <h3 class="card-title">Community Micro-Grids</h3>
+          <p class="card-desc">
+            Extending hyper-local environmental models to coastal communities across Marin County and the San Francisco Bay Area.
+          </p>
+        </div>
+        <div style="font-size:0.78rem; color:var(--text-muted); font-family:var(--mono);">
+          In active development • Larkspur • Tam Valley • Manzanita
+        </div>
+      </div>
+
+      <!-- PILLAR 3: AUDIO & COMPUTATION -->
+      <div class="card">
+        <div>
+          <div class="card-tag" style="color:var(--purple);">🎵 Audio Technology</div>
+          <h3 class="card-title">Acoustic & Production Tools</h3>
+          <p class="card-desc">
+            Computational audio utilities, DSP analysis, and synthesis workflow automations built for modern music creators.
+          </p>
+        </div>
+        <div style="font-size:0.78rem; color:var(--text-muted); font-family:var(--mono);">
+          Studio Research & Development
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 Cloud Watch Computing • Marin County, California • Built with Open Civic Data & NOAA Geodetic Feeds</p>
+  </footer>
+
+</body>
+</html>

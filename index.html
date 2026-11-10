@@ -2,313 +2,3170 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cloud Watch Computing • Environmental Intelligence & Civic Tech</title>
-  <meta name="description" content="Cloud Watch Computing builds high-craft environmental intelligence, hyper-local flood modeling, and civic resilience applications.">
-  <meta name="theme-color" content="#090d16">
-  <link rel="icon" href="flood/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Flood Watch WET • Weather • Event • Tide & FloodWatch</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="favicon.ico">
+  <meta name="theme-color" content="#0b0f19">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Larkspur WET">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --bg: #090d16;
-      --card-bg: rgba(17, 24, 39, 0.75);
-      --card-border: rgba(255, 255, 255, 0.1);
-      --text-main: #f8fafc;
+      --bg: #0b0f19;
+      --card-bg: rgba(22, 30, 49, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-glow: rgba(56, 189, 248, 0.1);
+      --text: #f1f5f9;
       --text-muted: #94a3b8;
       --cyan: #38bdf8;
-      --green: #22c55e;
       --amber: #f59e0b;
-      --purple: #c084fc;
-      --mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --red: #ef4444;
+      --green: #10b981;
+      --purple: #a855f7;
+      --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --mono: 'JetBrains Mono', monospace;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
       background-color: var(--bg);
-      color: var(--text-main);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
       background-image: 
-        radial-gradient(circle at 15% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
-        radial-gradient(circle at 85% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.06) 0px, transparent 50%);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      padding-bottom: 70px;
     }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    /* Top App Header */
     header {
-      padding: 24px 32px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(10px);
+      padding: 12px 0 16px;
     }
+
     .brand {
       display: flex;
       align-items: center;
       gap: 12px;
-      text-decoration: none;
-      color: inherit;
     }
-    .brand-icon {
-      font-size: 1.8rem;
-      background: rgba(56, 189, 248, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      padding: 6px 10px;
+
+    .app-icon {
+      width: 44px;
+      height: 44px;
       border-radius: 12px;
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+      font-size: 22px;
     }
+
     .brand-title h1 {
-      font-size: 1.25rem;
+      font-size: 1.15rem;
       font-weight: 800;
       letter-spacing: -0.02em;
+      color: #fff;
     }
+
     .brand-title p {
-      font-size: 0.76rem;
-      color: var(--text-muted);
+      font-size: 0.75rem;
+      color: var(--cyan);
+      font-weight: 600;
       letter-spacing: 0.04em;
       text-transform: uppercase;
-      font-weight: 600;
     }
-    .hero {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 60px 24px 40px;
-      text-align: center;
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
     }
-    .badge {
-      display: inline-flex;
+
+    .btn-icon {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
       align-items: center;
-      gap: 6px;
-      background: rgba(56, 189, 248, 0.1);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      color: var(--cyan);
-      font-size: 0.8rem;
-      font-weight: 700;
-      padding: 6px 14px;
-      border-radius: 9999px;
-      margin-bottom: 24px;
-      font-family: var(--mono);
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s;
     }
-    .hero h2 {
-      font-size: clamp(2.2rem, 5vw, 3.5rem);
-      font-weight: 800;
-      line-height: 1.15;
-      letter-spacing: -0.03em;
-      margin-bottom: 20px;
-      background: linear-gradient(135deg, #f8fafc 30%, #94a3b8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+
+    .btn-icon:hover {
+      background: rgba(255, 255, 255, 0.12);
     }
-    .hero p {
-      font-size: 1.1rem;
-      color: var(--text-muted);
-      max-width: 680px;
-      margin: 0 auto 36px;
-      line-height: 1.6;
-    }
-    .featured-grid {
-      max-width: 1040px;
-      margin: 0 auto 60px;
-      padding: 0 24px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
-    }
-    .card {
+
+    /* Status Banner */
+    .status-hero {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 20px;
-      padding: 28px;
-      backdrop-filter: blur(12px);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: all 0.25s ease;
+      padding: 20px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
       position: relative;
       overflow: hidden;
+      transition: border-color 0.3s;
     }
-    .card:hover {
-      border-color: rgba(56, 189, 248, 0.4);
-      transform: translateY(-2px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+
+    .status-hero.red {
+      border-color: rgba(239, 68, 68, 0.5);
+      background: linear-gradient(180deg, rgba(239, 68, 68, 0.12) 0%, var(--card-bg) 100%);
     }
-    .card-featured {
-      grid-column: 1 / -1;
-      background: linear-gradient(145deg, rgba(17, 24, 39, 0.9), rgba(15, 23, 42, 0.75));
-      border: 1px solid rgba(56, 189, 248, 0.35);
+
+    .status-hero.yellow {
+      border-color: rgba(245, 158, 11, 0.5);
+      background: linear-gradient(180deg, rgba(245, 158, 11, 0.12) 0%, var(--card-bg) 100%);
     }
-    .card-tag {
+
+    .status-hero.green {
+      border-color: rgba(16, 185, 129, 0.5);
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.12) 0%, var(--card-bg) 100%);
+    }
+
+    .status-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .badge-pill.red {
+      background: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    .badge-pill.yellow {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fcd34d;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+
+    .badge-pill.green {
+      background: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 10px currentColor;
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .hero-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+
+    .hero-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-bottom: 14px;
+    }
+
+    .countdown-bar {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .countdown-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .countdown-val {
+      font-family: var(--mono);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* Metric Grid */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .metric-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 14px;
+      backdrop-filter: blur(12px);
+    }
+
+    .metric-meta {
+      display: flex;
+      justify-content: space-between;
       font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+
+    .metric-val {
+      font-family: var(--mono);
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .metric-val span {
+      font-size: 0.8rem;
+      font-family: var(--font);
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .metric-sub {
+      font-size: 0.75rem;
+      margin-top: 4px;
+      color: var(--cyan);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Time Scrubber Card */
+    .scrubber-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .scrubber-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .scrubber-title {
+      font-size: 0.82rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--cyan);
-      margin-bottom: 12px;
-      font-family: var(--mono);
-    }
-    .card-title {
-      font-size: 1.45rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-    .card-desc {
-      font-size: 0.92rem;
       color: var(--text-muted);
-      line-height: 1.55;
-      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    .card-meta-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 12px;
-      margin-bottom: 24px;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 14px 18px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
+
+    .scrubber-time-badge {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--cyan);
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-weight: 700;
     }
-    .card-meta-item span {
-      display: block;
+
+    .slider-container {
+      position: relative;
+      margin: 12px 0 6px;
+    }
+
+    input[type=range] {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      outline: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.8);
+      cursor: pointer;
+      border: 2px solid #fff;
+    }
+
+    .scrubber-quick-ticks {
+      display: flex;
+      justify-content: space-between;
       font-size: 0.7rem;
       color: var(--text-muted);
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-    .card-meta-item strong {
-      font-size: 0.88rem;
-      color: #e2e8f0;
       font-family: var(--mono);
+      padding-top: 4px;
     }
-    .btn-launch {
+
+    .scrubber-btn-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 12px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .chip-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 0.72rem;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chip-btn.active, .chip-btn:hover {
+      background: var(--cyan);
+      color: #0b0f19;
+      font-weight: 700;
+    }
+
+    /* Road Cross Section SVG */
+    .cross-section-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .svg-wrapper {
+      width: 100%;
+      border-radius: 12px;
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 10px;
+    }
+
+    /* Chart Card */
+    .chart-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 240px;
+      width: 100%;
+    }
+
+    /* Responsive Landscape Mode (Phone Auto-Rotate) */
+    @media (orientation: landscape) {
+      .container {
+        max-width: 100% !important;
+        max-width: 1100px !important;
+        padding: 12px 24px !important;
+      }
+      .chart-container {
+        min-height: 280px !important;
+      }
+      .svg-wrapper svg {
+        min-height: 220px;
+      }
+    }
+
+    /* Enlarge & Fullscreen Toggle Buttons */
+    .btn-fs-toggle {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: var(--cyan);
+      border-radius: 8px;
+      padding: 5px 12px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
-      background: var(--cyan);
-      color: #090d16;
-      font-weight: 800;
-      font-size: 0.95rem;
-      padding: 14px 28px;
-      border-radius: 12px;
-      text-decoration: none;
+      gap: 6px;
       transition: all 0.2s ease;
-      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.35);
+      touch-action: manipulation;
     }
-    .btn-launch:hover {
-      background: #7dd3fc;
+    .btn-fs-toggle:hover {
+      background: rgba(56, 189, 248, 0.25);
+      border-color: var(--cyan);
       transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
     }
-    footer {
-      margin-top: auto;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 24px 32px;
+    .btn-fs-toggle:active {
+      transform: translateY(0);
+    }
+
+    /* Zoom Controls for Enlarge View */
+    .zoom-btn-group {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-left: 6px;
+    }
+    .zoom-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      padding: 4px 10px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .zoom-btn:hover, .zoom-btn.active {
+      background: rgba(56, 189, 248, 0.2);
+      color: var(--cyan);
+    }
+
+    /* Fullscreen Overlay Mode */
+    .chart-card.is-fullscreen,
+    .cross-section-card.is-fullscreen {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: 100vw !important;
+      max-height: 100vh !important;
+      z-index: 99999 !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+      border: none !important;
+      background: #090d16fa !important;
+      backdrop-filter: blur(14px) !important;
+      -webkit-backdrop-filter: blur(14px) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      padding: 14px 18px !important;
+      box-sizing: border-box !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+    }
+
+    .chart-card.is-fullscreen .card-title,
+    .cross-section-card.is-fullscreen .card-title {
+      font-size: 1.05rem;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      flex-shrink: 0;
+    }
+
+    .chart-card.is-fullscreen .chart-container {
+      flex: 1 1 auto;
+      min-height: 260px;
+      max-height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chart-card.is-fullscreen svg#hydrographSvg {
+      width: 100% !important;
+      height: 100% !important;
+      max-height: 60vh !important;
+    }
+
+    .cross-section-card.is-fullscreen .svg-wrapper {
+      flex: 1 1 auto;
+      width: 100% !important;
+      min-height: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      -webkit-overflow-scrolling: touch !important;
+      touch-action: pan-x pan-y pinch-zoom;
+      padding: 10px 0;
+    }
+
+    .cross-section-card.is-fullscreen svg#roadSvg {
+      min-width: 740px !important;
+      width: 100% !important;
+      height: auto !important;
+      max-height: 72vh !important;
+      display: block;
+      transition: min-width 0.2s ease;
+    }
+    .cross-section-card.is-fullscreen svg#roadSvg.zoom-15x {
+      min-width: 1100px !important;
+    }
+    .cross-section-card.is-fullscreen svg#roadSvg.zoom-2x {
+      min-width: 1480px !important;
+    }
+
+    .chart-fullscreen-controls {
+      display: none;
+      flex-shrink: 0;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .chart-card.is-fullscreen .chart-fullscreen-controls {
+      display: block !important;
+    }
+
+    .fs-status-banner {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-top: 8px;
       text-align: center;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #ffffff;
+      font-family: var(--mono);
+    }
+
+    .fs-rotate-tip {
+      font-size: 0.74rem;
+      color: #94a3b8;
+      text-align: center;
+      margin-top: 6px;
+    }
+
+    .chart-hint-badge {
+      font-size: 0.72rem;
+      color: var(--cyan);
+      cursor: pointer;
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Photo Proof Calibration Gallery */
+    .gallery-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .photo-item {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+      background: #000;
+      cursor: pointer;
+    }
+
+    .photo-item img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s;
+    }
+
+    .photo-item:hover img {
+      transform: scale(1.04);
+    }
+
+    .photo-tag {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.85) 100%);
+      padding: 14px 8px 6px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    /* Location / Vehicle Selector Drawer / Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 480px;
+      padding: 22px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .modal-header h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .setting-group {
+      margin-bottom: 18px;
+    }
+
+    .setting-group label {
+      display: block;
+      font-size: 0.8rem;
       color: var(--text-muted);
+      margin-bottom: 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .select-card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .select-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 12px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+    }
+
+    .select-card.active {
+      border-color: var(--cyan);
+      background: rgba(56, 189, 248, 0.1);
+    }
+
+    .select-card-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .select-card-detail {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Threshold Reference Table */
+    .threshold-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+      margin-top: 10px;
+    }
+
+    .threshold-table th, .threshold-table td {
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .threshold-table th {
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+    }
+
+    .threshold-table td.val {
+      font-family: var(--mono);
+      font-weight: 700;
+    }
+
+    /* PWA Install Toast */
+    .install-banner {
+      background: linear-gradient(90deg, #0284c7, #6366f1);
+      border-radius: 14px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
       font-size: 0.82rem;
+      font-weight: 600;
+      box-shadow: 0 4px 16px rgba(2, 132, 199, 0.3);
+    }
+
+    .install-banner button {
+      background: #fff;
+      color: #0b0f19;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.78rem;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <a href="/" class="brand">
-      <div class="brand-icon">☁️</div>
-      <div class="brand-title">
-        <h1>Cloud Watch Computing</h1>
-        <p>Civic Tech • Environmental Intelligence</p>
-      </div>
-    </a>
-    <div style="display:flex; gap:14px; align-items:center;">
-      <a href="/download/" style="color:var(--text-muted); text-decoration:none; font-size:0.85rem; font-weight:600;">Install & Download</a>
-      <a href="/flood/" class="btn-launch" style="padding: 8px 18px; font-size: 0.82rem;">Launch Flood Watch WET 🌊</a>
-    </div>
-  </header>
+  <div class="container">
 
-  <main>
-    <section class="hero">
-      <div class="badge">🌐 Hyper-Local Civic Software Studio</div>
-      <h2>High-Craft Computational Tools<br/>Grounded in Physical Reality.</h2>
-      <p>
-        Cloud Watch Computing builds real-time micro-topographic environmental intelligence, 
-        tidal modeling, and community resilience applications for coastal neighborhoods.
-      </p>
+    <!-- Top Header -->
+    <header>
+      <div class="brand">
+        <div class="app-icon">🌊</div>
+        <div class="brand-title">
+          <h1>Flood Watch WET</h1>
+          <p>Weather • Event • Tide & FloodWatch</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-icon" title="Refresh App & Live NOAA Data" onclick="hardReloadApp()">🔄</button>
+        <button class="btn-icon" title="Settings & Thresholds" onclick="openSettings()">⚙️</button>
+      </div>
+    </header>
+
+    <!-- PWA Install Banner -->
+    <div id="pwaBanner" class="install-banner" style="display:none;">
+      <div>📱 Install as Android App on your Home Screen!</div>
+      <button onclick="installPWA()">Install</button>
+    </div>
+
+    <!-- MAIN LIVE STATUS HERO BANNER -->
+    <section class="status-hero red" id="heroBanner">
+      <div class="status-header-row">
+        <div class="badge-pill red" id="statusBadge">
+          <span class="pulse-dot"></span>
+          <span id="statusBadgeText">SMALL CAR IMPASSABLE</span>
+        </div>
+        <div style="font-size:0.75rem; color:var(--text-muted); font-family:var(--mono);" id="currentLocationName">
+          Larkspur Plaza Dr
+        </div>
+      </div>
+      <div class="hero-title" id="heroTitle">Crosswalk Sag Impassable for Small Cars</div>
+      <div class="hero-desc" id="heroDesc">
+        Water over the crosswalk dip exceeds 5.9 inches ground clearance. Road impassable for small cars and low-clearance sedans.
+      </div>
+      <div class="countdown-bar">
+        <div class="countdown-label" id="countdownLabel">ESTIMATED SMALL CAR CLEARANCE:</div>
+        <div class="countdown-val" id="countdownVal">Calculating...</div>
+      </div>
     </section>
 
-    <section class="featured-grid">
-      <!-- FLAGSHIP APPLICATION: LARKSPUR FLOODWATCH -->
-      <div class="card card-featured">
-        <div>
-          <div class="card-tag">🌊 Flagship Live Application • v35</div>
-          <h3 class="card-title">Flood Watch WET</h3>
-          <p class="card-desc">
-            A hyper-local micro-topographic flood intelligence model for Larkspur Plaza Drive and Corte Madera Creek. 
-            Engineered with 100% geodetic NAVD88 geodetic datum precision, live atmospheric surge tracking, 
-            culvert hydraulic ingress delays, and two-phase drainage lag modeling.
-          </p>
+    <!-- LIVE METRICS GRID -->
+    <section class="metric-grid">
+      <!-- Total Water Level -->
+      <div class="metric-card">
+        <div class="metric-meta">
+          <span>Total Water Level</span>
+          <span id="tideTrendIcon">⬇️ FALLING</span>
+        </div>
+        <div class="metric-val" id="valTWL">
+          7.51 <span>ft NAVD88</span>
+        </div>
+        <div class="metric-sub" id="valTWLMLLW">
+          Station 9414874: 7.45' MLLW
+        </div>
+      </div>
 
-          <div class="card-meta-list">
-            <div class="card-meta-item">
-              <span>Primary Datum</span>
-              <strong>NAVD88 Geodetic</strong>
+      <!-- Active Storm Surge -->
+      <div class="metric-card">
+        <div class="metric-meta">
+          <span>Active Surge</span>
+          <span style="color:var(--amber);">KELVIN WAVE</span>
+        </div>
+        <div class="metric-val" id="valSurge" style="color:var(--amber);">
+          +1.38 <span>ft</span>
+        </div>
+        <div class="metric-sub" style="color:var(--text-muted);" id="valSurgeSub">
+          Golden Gate Observed vs Ast
+        </div>
+      </div>
+
+      <!-- Road Crown Water Depth (Crown SAG in Road) -->
+      <div class="metric-card">
+        <div class="metric-meta">
+          <span>Crown (SAG in Road: 7.42')</span>
+          <span id="crownStatusText">CLEAR</span>
+        </div>
+        <div class="metric-val" id="valCrownDepth">
+          0.0 <span>in dry</span>
+        </div>
+        <div class="metric-sub" id="valCrownSub">
+          Sag Area (Drains 2, 3 &amp; 4: 7.15') • Travel Lane: 7.42'
+        </div>
+      </div>
+
+      <!-- Vehicle Clearance Gauge -->
+      <div class="metric-card">
+        <div class="metric-meta">
+          <span id="labelVehicleClearance">Small Car Sag (5.9" CLR)</span>
+          <span id="valPriusStatusText" style="color:var(--green);">CLEAR</span>
+        </div>
+        <div class="metric-val" id="valPriusClearance" style="color:var(--green);">
+          5.9 <span>in clr</span>
+        </div>
+        <div class="metric-sub" id="valPriusDepth">
+          Travel lane dry
+        </div>
+      </div>
+
+      <!-- Front Street Gutters & Front Parking Metric -->
+      <div class="metric-card">
+        <div class="metric-meta">
+          <span>Front Street Gutters (Parking)</span>
+          <span id="frontParkingStatusText" style="color:var(--green);">100% DRY</span>
+        </div>
+        <div class="metric-val" id="valFrontParkingDepth">
+          0.0 <span>in dry</span>
+        </div>
+        <div class="metric-sub" id="valFrontParkingSub">
+          Front of House (#326) • Breaches at 7.55' TWL
+        </div>
+      </div>
+
+      <!-- Back Lot Carport Metric -->
+      <div class="metric-card">
+        <div class="metric-meta">
+          <span>Back Lot Carport (#86)</span>
+          <span id="carportStatusText" style="color:var(--green);">SAFE (DRY)</span>
+        </div>
+        <div class="metric-val" id="valCarportMargin" style="color:var(--green);">
+          +3.2 <span>in margin</span>
+        </div>
+        <div class="metric-sub" id="valCarportSub">
+          Slab: 7.75' | Direct lagoon inlet
+        </div>
+      </div>
+    </section>
+
+    <!-- TIME TRAVEL SCRUBBER (48-HOUR ROLLING WINDOW CENTERED ON LIVE NOW) -->
+    <section class="scrubber-card">
+      <div class="scrubber-header">
+        <div class="scrubber-title">
+          <span>⏱️ 48-Hour Tide Scrubber (Centered on Live Now)</span>
+        </div>
+        <div class="scrubber-time-badge" id="scrubberTimeBadge">
+          LIVE: --:--
+        </div>
+      </div>
+      <div class="slider-container">
+        <input type="range" id="timeSlider" min="0" max="288" value="144" oninput="onScrub(this.value)">
+      </div>
+      <div class="scrubber-quick-ticks">
+        <span id="tickPast24">-24h Past</span>
+        <span id="tickPast12">-12h</span>
+        <span id="tickLiveNow" style="color:var(--cyan); font-weight:bold;">📍 LIVE NOW</span>
+        <span id="tickNext12">+12h</span>
+        <span id="tickNext24">+24h Forecast</span>
+      </div>
+      <div class="scrubber-btn-row">
+        <button class="chip-btn active" id="btnSnapLive" onclick="snapTime('now')">📍 Live Now (Center)</button>
+        <button class="chip-btn" id="btnSnapNextHigh" onclick="snapTime('nexthigh')">▲ Next High Tide Peak</button>
+        <button class="chip-btn" onclick="snapTime('impassable')">⚠️ Sag Impassable (7.55')</button>
+        <button class="chip-btn" onclick="snapTime('cleared')">✅ Road Cleared (< 6.95')</button>
+        <button class="chip-btn" onclick="snapTime('oct30_peak')">📜 Oct 30 Peak (3:24 PM)</button>
+        <button class="chip-btn" onclick="snapTime('oct30_lag')">📸 Oct 30 Lag (7:34 PM)</button>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE ROAD CROSS-SECTION SIMULATOR (SVG) -->
+    <section class="cross-section-card" id="roadCard">
+      <div class="card-title" style="flex-wrap: wrap; gap: 8px;">
+        <div>
+          <span>🚗 Front Parking & Small Car Clearance Simulator (Front Gutters: 7.55')</span>
+          <span style="font-size:0.75rem; color:var(--cyan); font-family:var(--mono);" id="crossSectionTideLabel">TWL: 7.73 ft</span>
+        </div>
+        <div style="display: flex; gap: 6px; align-items: center; margin-left: auto;">
+          <span style="font-size: 0.72rem; color: var(--text-muted);">View:</span>
+          <button type="button" id="btnViewSide" class="chip-btn active" style="padding: 4px 10px; font-size: 0.72rem;" onclick="switchPriusView('side', event)">🚗 Side Profile</button>
+          <button type="button" id="btnViewFront" class="chip-btn" style="padding: 4px 10px; font-size: 0.72rem;" onclick="switchPriusView('front', event)">🚘 Front</button>
+          <div class="zoom-btn-group" id="roadZoomGroup" style="display:none;">
+            <button type="button" class="zoom-btn active" id="btnZoom1" onclick="setRoadZoom(1)">1x</button>
+            <button type="button" class="zoom-btn" id="btnZoom15" onclick="setRoadZoom(1.5)">1.5x</button>
+            <button type="button" class="zoom-btn" id="btnZoom2" onclick="setRoadZoom(2)">2x</button>
+          </div>
+          <button type="button" class="btn-fs-toggle" id="btnFsRoad" onclick="toggleRoadFullscreen(event)" title="Enlarge Simulator to Fullscreen">
+            <span class="fs-icon">⤢</span> <span class="fs-text">Enlarge</span>
+          </button>
+        </div>
+      </div>
+      <div class="svg-wrapper" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+        <svg id="roadSvg" viewBox="0 0 740 260" style="width: 100%; min-width: 620px; height: auto; display: block;">
+          <defs>
+            <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.75"/>
+              <stop offset="100%" stop-color="#0284c7" stop-opacity="0.88"/>
+            </linearGradient>
+            <linearGradient id="pavementGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#334155"/>
+              <stop offset="100%" stop-color="#1e293b"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Elevation Reference Grid Lines Calibrated to Front Street Gutters (7.55' Base Y=223.0) -->
+          <!-- 8.86' Interior Damage Level Y=191.7 -->
+          <line x1="35" y1="191.7" x2="710" y2="191.7" stroke="rgba(244, 63, 94, 0.4)" stroke-dasharray="3,3" stroke-width="1"/>
+          <text x="30" y="194.7" fill="#fb7185" font-size="8" text-anchor="end" font-family="monospace">8.86'</text>
+
+          <!-- 8.50' Reference Line Y=200.3 -->
+          <line x1="35" y1="200.3" x2="710" y2="200.3" stroke="rgba(255,255,255,0.08)" stroke-dasharray="2,2"/>
+          <text x="30" y="203.3" fill="#64748b" font-size="8" text-anchor="end" font-family="monospace">8.50'</text>
+
+          <!-- 8.26' Door Sill (7.55' + 8.5") Y=206.1 -->
+          <line x1="35" y1="206.1" x2="710" y2="206.1" stroke="#f59e0b" stroke-dasharray="2,2" stroke-width="1.2"/>
+
+          <!-- 8.15' Carport Slab (Bay #86) Y=208.7 -->
+          <line x1="35" y1="208.7" x2="710" y2="208.7" stroke="#a855f7" stroke-dasharray="3,3" stroke-width="1.2"/>
+
+          <!-- 8.04' Small Car / Prius 5.9" Clearance Y=211.3 -->
+          <line x1="35" y1="211.3" x2="710" y2="211.3" stroke="#ef4444" stroke-dasharray="3,3" stroke-width="1.2"/>
+
+          <!-- 8.00' Reference Line Y=212.3 -->
+          <line x1="35" y1="212.3" x2="710" y2="212.3" stroke="rgba(255,255,255,0.08)" stroke-dasharray="2,2"/>
+          <text x="30" y="215.3" fill="#64748b" font-size="8" text-anchor="end" font-family="monospace">8.00'</text>
+
+          <!-- 7.75' Front Parking Stall Apron Y=218.2 -->
+          <line x1="35" y1="218.2" x2="710" y2="218.2" stroke="#38bdf8" stroke-dasharray="3,3" stroke-width="1"/>
+
+          <!-- 7.55' Front Street Gutters (Andy's Parking Base) Y=223.0 -->
+          <line x1="35" y1="223.0" x2="710" y2="223.0" stroke="#34d399" stroke-dasharray="2,2" stroke-width="1.8"/>
+          <text x="30" y="226.0" fill="#34d399" font-size="8.5" font-weight="bold" text-anchor="end" font-family="monospace">7.55' Base</text>
+
+          <!-- Pavement Terrain Polygon (Larkspur Plaza Dr Cross-Section) -->
+          <polygon points="30,260 30,223 430,223 530,208.4 580,216 600,197.9 710,197.9 710,260" fill="url(#pavementGrad)"/>
+          
+          <!-- Carport Reference Markers Directly in Front of Vehicle -->
+          <g id="svgCarportMarkers">
+            <!-- 2nd Dashed Line: Carport Damage Level (8.86' = 8.15' Slab + 8.5" Door Sill) -->
+            <line x1="420" y1="191.7" x2="710" y2="191.7" stroke="#f43f5e" stroke-width="1.8" stroke-dasharray="5,3"/>
+            <rect x="425" y="181.7" width="195" height="18" rx="4" fill="#311219" stroke="#f43f5e" stroke-width="1.2"/>
+            <text x="522" y="193.8" fill="#fb7185" font-size="8" font-weight="bold" font-family="monospace" text-anchor="middle">Carport Damage Level (8.86' | +8.5")</text>
+
+            <!-- 1st Dashed Line: Carport Slab (Bay #86 = 8.15') -->
+            <line x1="420" y1="208.7" x2="710" y2="208.7" stroke="#a855f7" stroke-width="1.8" stroke-dasharray="5,3"/>
+            <rect x="425" y="198.7" width="150" height="18" rx="4" fill="#1e1b4b" stroke="#a855f7" stroke-width="1.2"/>
+            <text x="500" y="210.8" fill="#c084fc" font-size="8" font-weight="bold" font-family="monospace" text-anchor="middle">Carport Bay #86 (8.15' Slab)</text>
+
+            <text x="565" y="219" fill="#94a3b8" font-size="8" text-anchor="middle">Front Parking Stall Apron (7.75')</text>
+          </g>
+
+          <!-- ============================================================ -->
+          <!-- ============================================================ -->
+          <!-- 4 AUTHENTIC VEHICLE SILHOUETTES TO TRUE PHYSICAL SCALE        -->
+          <!-- 1. Small Car (Prius 5.9") 2. Sedan (6.5") 3. SUV (8.1") 4. Truck (9.4") -->
+          <!-- ============================================================ -->
+
+          <!-- 1. SMALL CAR / PRIUS (Gen 5: 5.9" CLR, 56.3" H, 181.1" L) -->
+          <g id="svgVeh_prius_side" class="vehicle-svg-group">
+            <circle cx="125" cy="197.65" r="25.35" fill="#090d16" stroke="#38bdf8" stroke-width="1.8"/>
+            <circle cx="340" cy="197.65" r="25.35" fill="#090d16" stroke="#38bdf8" stroke-width="1.8"/>
+            <path d="M 56,195 C 52,186 54,175 60,166 L 68,164 C 100,140 145,123 195,115 C 220,111.1 245,111.1 268,114 C 298,122 332,142 358,162 C 380,175 402,188 414,195 C 416,197 416,201 414,204 C 408,210 398,212 378,212 L 366,212 A 26,26 0 0,0 314,211.3 L 151,211.3 A 26,26 0 0,0 99,212 L 68,212 C 60,212 56,205 56,195 Z" fill="rgba(15, 23, 42, 0.45)" stroke="#38bdf8" stroke-width="1.8"/>
+            <path d="M 345,161 L 324,139 L 324,161 Z" fill="rgba(56, 189, 248, 0.12)" stroke="#94a3b8" stroke-width="1"/>
+            <path d="M 320,138 C 295,127 268,119 236,117 L 236,161 L 320,161 Z" fill="rgba(56, 189, 248, 0.12)" stroke="#94a3b8" stroke-width="1"/>
+            <rect x="233" y="117" width="5" height="44" fill="#334155" stroke="#64748b" stroke-width="0.8"/>
+            <path d="M 230,117 C 196,120 162,130 138,145 L 138,161 L 230,161 Z" fill="rgba(56, 189, 248, 0.12)" stroke="#94a3b8" stroke-width="1"/>
+            <line x1="90" y1="206.1" x2="370" y2="206.1" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,2"/>
+            <text x="235" y="202" fill="#fcd34d" font-size="7.5" font-weight="bold" text-anchor="middle">Door Sill (7.41' | +8.5" Above Gutter)</text>
+            <line x1="151" y1="211.3" x2="314" y2="211.3" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text x="235" y="221" fill="#f87171" font-size="7.5" font-weight="bold" text-anchor="middle">5.9" Ground Clearance</text>
+            <text x="240" y="100" fill="#38bdf8" font-size="7.5" font-weight="bold" text-anchor="middle">Small Car / Prius (56.3" Height To Scale)</text>
+          </g>
+
+          <g id="svgVeh_prius_front" class="vehicle-svg-group" display="none" visibility="hidden">
+            <rect x="120" y="86" width="190" height="18" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="1"/>
+            <text x="215" y="98" fill="#38bdf8" font-size="8" font-weight="bold" font-family="monospace" text-anchor="middle">FRONT VIEW: SMALL CAR (5.9" CLR)</text>
+            <rect x="148" y="196.65" width="24" height="26.35" rx="4" fill="#090d16" stroke="#38bdf8" stroke-width="1.8"/>
+            <rect x="258" y="191.65" width="24" height="26.35" rx="4" fill="#090d16" stroke="#38bdf8" stroke-width="1.8"/>
+            <path d="M 142,190 C 136,175 142,150 152,138 L 168,118 C 188,111.1 242,111.1 262,118 L 278,138 C 288,150 294,175 288,190 C 284,208 274,211.3 258,211.3 L 172,211.3 C 156,211.3 146,208 142,190 Z" fill="rgba(15, 23, 42, 0.55)" stroke="#38bdf8" stroke-width="1.8"/>
+            <path d="M 170,140 L 180,121 C 196,117 234,117 250,121 L 260,140 Z" fill="rgba(56, 189, 248, 0.18)" stroke="#94a3b8" stroke-width="1.2"/>
+            <line x1="142" y1="206.1" x2="288" y2="206.1" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text x="215" y="202" fill="#fcd34d" font-size="7.5" font-weight="bold" text-anchor="middle">Door Sill (7.41')</text>
+            <line x1="172" y1="211.3" x2="258" y2="211.3" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="2,2"/>
+            <text x="215" y="220" fill="#f87171" font-size="7" font-weight="bold" text-anchor="middle">5.9" Clearance</text>
+          </g>
+
+          <!-- 2. STANDARD SEDAN (Camry: 6.5" CLR, 56.9" H, 192.1" L) -->
+          <g id="svgVeh_sedan_side" class="vehicle-svg-group" display="none" visibility="hidden">
+            <circle cx="120" cy="197.2" r="25.8" fill="#090d16" stroke="#38bdf8" stroke-width="1.8"/>
+            <circle cx="345" cy="197.2" r="25.8" fill="#090d16" stroke="#38bdf8" stroke-width="1.8"/>
+            <path d="M 50,196 C 46,188 50,178 56,174 L 140,172 L 195,142 C 220,126 248,110 275,109.9 L 315,112 C 342,122 368,142 388,166 L 420,174 C 428,178 432,185 432,194 C 430,202 422,208 405,210 L 372,210 A 27,27 0 0,0 318,210.1 L 147,210.1 A 27,27 0 0,0 93,210 L 62,210 C 54,210 50,204 50,196 Z" fill="rgba(15, 23, 42, 0.45)" stroke="#38bdf8" stroke-width="1.8"/>
+            <path d="M 365,165 L 325,120 L 285,116 L 205,118 L 155,165 Z" fill="rgba(56, 189, 248, 0.12)" stroke="#94a3b8" stroke-width="1"/>
+            <line x1="250" y1="116" x2="250" y2="165" stroke="#475569" stroke-width="1.2"/>
+            <line x1="90" y1="204.8" x2="380" y2="204.8" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,2"/>
+            <text x="235" y="201" fill="#fcd34d" font-size="7.5" font-weight="bold" text-anchor="middle">Door Sill (7.47' | +9.1" Above Gutter)</text>
+            <line x1="147" y1="210.1" x2="318" y2="210.1" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text x="235" y="219" fill="#f87171" font-size="7.5" font-weight="bold" text-anchor="middle">6.5" Ground Clearance</text>
+            <text x="240" y="98" fill="#38bdf8" font-size="7.5" font-weight="bold" text-anchor="middle">Standard Sedan / Camry (56.9" Height To Scale)</text>
+          </g>
+
+          <g id="svgVeh_sedan_front" class="vehicle-svg-group" display="none" visibility="hidden">
+            <rect x="120" y="86" width="190" height="18" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="1"/>
+            <text x="215" y="98" fill="#38bdf8" font-size="8" font-weight="bold" font-family="monospace" text-anchor="middle">FRONT VIEW: SEDAN (6.5" CLR)</text>
+            <rect x="146" y="196.2" width="25" height="26.8" rx="4" fill="#090d16" stroke="#38bdf8" stroke-width="1.8"/>
+            <rect x="256" y="191.2" width="25" height="26.8" rx="4" fill="#090d16" stroke="#38bdf8" stroke-width="1.8"/>
+            <path d="M 140,190 C 134,175 140,150 150,136 L 166,116 C 186,109.9 238,109.9 258,116 L 274,136 C 284,150 290,175 284,190 C 280,208 270,210.1 254,210.1 L 170,210.1 C 154,210.1 144,208 140,190 Z" fill="rgba(15, 23, 42, 0.55)" stroke="#38bdf8" stroke-width="1.8"/>
+            <path d="M 168,138 L 178,119 C 196,114 234,114 252,119 L 262,138 Z" fill="rgba(56, 189, 248, 0.18)" stroke="#94a3b8" stroke-width="1.2"/>
+            <line x1="140" y1="204.8" x2="284" y2="204.8" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text x="212" y="201" fill="#fcd34d" font-size="7.5" font-weight="bold" text-anchor="middle">Door Sill (7.47')</text>
+            <line x1="170" y1="210.1" x2="254" y2="210.1" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="2,2"/>
+            <text x="212" y="219" fill="#f87171" font-size="7" font-weight="bold" text-anchor="middle">6.5" Clearance</text>
+          </g>
+
+          <!-- 3. CROSSOVER SUV (Corolla Cross: 8.1" CLR, 64.9" H, 175.6" L) -->
+          <g id="svgVeh_suv_side" class="vehicle-svg-group" display="none" visibility="hidden">
+            <circle cx="128" cy="195.5" r="27.5" fill="#090d16" stroke="#38bdf8" stroke-width="1.8"/>
+            <circle cx="338" cy="195.5" r="27.5" fill="#090d16" stroke="#38bdf8" stroke-width="1.8"/>
+            <path d="M 62,192 C 58,180 60,155 64,136 L 76,116 C 88,104 105,97 130,95 L 285,94 C 315,96 338,118 358,142 L 398,158 C 412,164 416,172 416,184 C 414,196 406,204 390,206 L 366,206 A 28,28 0 0,0 310,206.9 L 156,206.9 A 28,28 0 0,0 100,206 L 74,206 C 66,206 62,200 62,192 Z" fill="rgba(15, 23, 42, 0.45)" stroke="#38bdf8" stroke-width="1.8"/>
+            <line x1="120" y1="90" x2="280" y2="90" stroke="#94a3b8" stroke-width="2.5"/>
+            <line x1="140" y1="90" x2="140" y2="95" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="260" y1="90" x2="260" y2="95" stroke="#94a3b8" stroke-width="2"/>
+            <path d="M 345,142 L 305,103 L 138,103 L 88,124 L 88,148 L 345,148 Z" fill="rgba(56, 189, 248, 0.12)" stroke="#94a3b8" stroke-width="1"/>
+            <line x1="220" y1="103" x2="220" y2="148" stroke="#475569" stroke-width="1.2"/>
+            <line x1="90" y1="200.0" x2="380" y2="200.0" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,2"/>
+            <text x="235" y="196" fill="#fcd34d" font-size="7.5" font-weight="bold" text-anchor="middle">Door Sill (7.67' | +11.5" Above Gutter)</text>
+            <line x1="156" y1="206.9" x2="310" y2="206.9" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text x="235" y="216" fill="#f87171" font-size="7.5" font-weight="bold" text-anchor="middle">8.1" Ground Clearance</text>
+            <text x="240" y="82" fill="#38bdf8" font-size="7.5" font-weight="bold" text-anchor="middle">Crossover SUV / Corolla Cross (64.9" H To Scale)</text>
+          </g>
+
+          <g id="svgVeh_suv_front" class="vehicle-svg-group" display="none" visibility="hidden">
+            <rect x="120" y="70" width="190" height="18" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="1"/>
+            <text x="215" y="82" fill="#38bdf8" font-size="8" font-weight="bold" font-family="monospace" text-anchor="middle">FRONT VIEW: SUV (8.1" CLR)</text>
+            <rect x="145" y="194.5" width="26" height="28.5" rx="4" fill="#090d16" stroke="#38bdf8" stroke-width="1.8"/>
+            <rect x="255" y="189.5" width="26" height="28.5" rx="4" fill="#090d16" stroke="#38bdf8" stroke-width="1.8"/>
+            <line x1="165" y1="90" x2="185" y2="90" stroke="#94a3b8" stroke-width="2.5"/>
+            <line x1="237" y1="90" x2="257" y2="90" stroke="#94a3b8" stroke-width="2.5"/>
+            <path d="M 139,188 C 132,170 138,140 148,120 L 162,100 C 182,94 240,94 260,100 L 274,120 C 284,140 290,170 283,188 C 278,206 268,206.9 252,206.9 L 170,206.9 C 154,206.9 144,206 139,188 Z" fill="rgba(15, 23, 42, 0.55)" stroke="#38bdf8" stroke-width="1.8"/>
+            <path d="M 166,122 L 176,104 C 196,98 230,98 248,104 L 258,122 Z" fill="rgba(56, 189, 248, 0.18)" stroke="#94a3b8" stroke-width="1.2"/>
+            <line x1="139" y1="200.0" x2="283" y2="200.0" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text x="211" y="196" fill="#fcd34d" font-size="7.5" font-weight="bold" text-anchor="middle">Door Sill (7.67')</text>
+            <line x1="170" y1="206.9" x2="252" y2="206.9" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="2,2"/>
+            <text x="211" y="216" fill="#f87171" font-size="7" font-weight="bold" text-anchor="middle">8.1" Clearance</text>
+          </g>
+
+          <!-- 4. 4x4 TRUCK (Tacoma: 9.4" CLR, 70.6" H, 212.3" L) -->
+          <g id="svgVeh_truck_side" class="vehicle-svg-group" display="none" visibility="hidden">
+            <circle cx="125" cy="192.2" r="30.8" fill="#090d16" stroke="#38bdf8" stroke-width="1.8"/>
+            <circle cx="355" cy="192.2" r="30.8" fill="#090d16" stroke="#38bdf8" stroke-width="1.8"/>
+            <path d="M 48,186 L 48,145 L 210,145 L 222,110 C 230,95 245,84 270,82.7 L 330,82.7 C 352,85 365,102 375,125 L 428,142 C 438,146 442,154 442,170 C 440,186 432,198 418,202 L 388,202 A 33,33 0 0,0 322,204.3 L 158,204.3 A 33,33 0 0,0 92,202 L 58,202 C 50,202 48,194 48,186 Z" fill="rgba(15, 23, 42, 0.45)" stroke="#38bdf8" stroke-width="1.8"/>
+            <path d="M 360,126 L 328,92 L 235,92 L 228,140 L 360,140 Z" fill="rgba(56, 189, 248, 0.12)" stroke="#94a3b8" stroke-width="1"/>
+            <line x1="285" y1="92" x2="285" y2="140" stroke="#475569" stroke-width="1.2"/>
+            <line x1="52" y1="145" x2="210" y2="145" stroke="#38bdf8" stroke-width="1.5"/>
+            <line x1="90" y1="195.0" x2="400" y2="195.0" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,2"/>
+            <text x="240" y="191" fill="#fcd34d" font-size="7.5" font-weight="bold" text-anchor="middle">Door Sill (7.87' | +14.0" Above Gutter)</text>
+            <line x1="158" y1="204.3" x2="322" y2="204.3" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text x="240" y="214" fill="#f87171" font-size="7.5" font-weight="bold" text-anchor="middle">9.4" Ground Clearance</text>
+            <text x="270" y="72" fill="#38bdf8" font-size="7.5" font-weight="bold" text-anchor="middle">4x4 Truck / Tacoma (70.6" H To Scale)</text>
+          </g>
+
+          <g id="svgVeh_truck_front" class="vehicle-svg-group" display="none" visibility="hidden">
+            <rect x="120" y="60" width="190" height="18" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="1"/>
+            <text x="215" y="72" fill="#38bdf8" font-size="8" font-weight="bold" font-family="monospace" text-anchor="middle">FRONT VIEW: 4x4 TRUCK (9.4" CLR)</text>
+            <rect x="142" y="191.2" width="28" height="31.8" rx="4" fill="#090d16" stroke="#38bdf8" stroke-width="1.8"/>
+            <rect x="254" y="186.2" width="28" height="31.8" rx="4" fill="#090d16" stroke="#38bdf8" stroke-width="1.8"/>
+            <path d="M 137,185 C 130,165 135,135 145,110 L 160,89 C 180,82.7 244,82.7 264,89 L 279,110 C 289,135 294,165 287,185 C 282,204 270,204.3 252,204.3 L 172,204.3 C 154,204.3 142,204 137,185 Z" fill="rgba(15, 23, 42, 0.55)" stroke="#38bdf8" stroke-width="1.8"/>
+            <path d="M 164,115 L 176,96 C 196,90 232,90 252,96 L 264,115 Z" fill="rgba(56, 189, 248, 0.18)" stroke="#94a3b8" stroke-width="1.2"/>
+            <line x1="137" y1="195.0" x2="287" y2="195.0" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <text x="212" y="191" fill="#fcd34d" font-size="7.5" font-weight="bold" text-anchor="middle">Door Sill (7.87')</text>
+            <line x1="172" y1="204.3" x2="252" y2="204.3" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="2,2"/>
+            <text x="212" y="213" fill="#f87171" font-size="7" font-weight="bold" text-anchor="middle">9.4" Clearance</text>
+          </g>
+
+          <!-- Dynamic Water Layer (covers terrain across gutter and road up to waterY) -->
+          <path id="svgWaterLayer" d="M 30,260 L 30,223 Q 360,222.5 600,223 L 600,260 Z" fill="url(#waterGrad)" style="display:none;"/>
+
+          <!-- Dynamic Water Level Line Marker (Updated dynamically via updateSvgCrossSection) -->
+          <line id="svgWaterLine" x1="30" y1="223" x2="600" y2="223" stroke="#38bdf8" stroke-width="2" style="display:none;"/>
+          <polygon id="svgWaterMarker" points="600,223 612,218 612,228" fill="#38bdf8" style="display:none;"/>
+          <text id="svgWaterText" x="618" y="226" fill="#86efac" font-size="8.5" font-weight="bold" font-family="monospace">Water Level: 6.95' • Pavement 100% DRY</text>
+
+          <!-- In-Car Flood Warning Badge (Only displayed dynamically when water reaches sill/clearance) -->
+          <g id="svgSillAlert" transform="translate(235, 38)" style="display: none;">
+            <rect x="-95" y="-12" width="190" height="24" rx="6" fill="#ef4444" stroke="#ffffff" stroke-width="1.5"/>
+            <text id="svgSillAlertText" x="0" y="4" font-size="8.5" font-weight="bold" fill="#ffffff" text-anchor="middle">🚨 WATER OVER DOOR SILL</text>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- 48-HOUR HYDROGRAPH CHART (NATIVE RESPONSIVE SVG) -->
+    <section class="chart-card" id="chartCard">
+      <div class="card-title" style="flex-wrap: wrap; gap: 8px;">
+        <span>📈 48-Hour Tide & Street Drainage Forecast</span>
+        <div style="font-size:0.72rem; display:flex; gap:10px; font-family:var(--mono); align-items:center;">
+          <span style="color:#38bdf8;">━ Creek Tide</span>
+          <span style="color:#f97316;">╌ Street Lag</span>
+          <span style="color:#64748b;">┈ Ast</span>
+        </div>
+        <div style="margin-left: auto; display: flex; align-items: center; gap: 8px;">
+          <button type="button" class="btn-fs-toggle" id="btnFsChart" onclick="toggleChartFullscreen(event)" title="Enlarge Tide Chart to Fullscreen">
+            <span class="fs-icon">⤢</span> <span class="fs-text">Enlarge / Rotate</span>
+          </button>
+        </div>
+      </div>
+      <div class="chart-container" style="height: auto; min-height: 240px;">
+        <svg id="hydrographSvg" viewBox="0 0 600 240" style="width: 100%; height: auto; display: block; overflow: visible; touch-action: none; user-select: none;">
+          <defs>
+            <linearGradient id="twlGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.5"/>
+              <stop offset="60%" stop-color="#0284c7" stop-opacity="0.18"/>
+              <stop offset="100%" stop-color="#0284c7" stop-opacity="0.0"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Rolling 48-Hour Background Quadrants (Center = LIVE NOW at X=320) -->
+          <rect x="55" y="30" width="265" height="170" fill="rgba(15, 23, 42, 0.45)"/>
+          <text x="187" y="25" fill="#64748b" font-size="7.5" font-family="monospace" text-anchor="middle">← PAST 24 HOURS (OBSERVED)</text>
+          
+          <rect x="320" y="30" width="265" height="170" fill="rgba(30, 41, 59, 0.25)"/>
+          <text x="452" y="25" fill="#64748b" font-size="7.5" font-family="monospace" text-anchor="middle">NEXT 24 HOURS (FORECAST) →</text>
+
+          <!-- Fixed Center LIVE NOW Marker (X=320) -->
+          <line x1="320" y1="26" x2="320" y2="200" stroke="#38bdf8" stroke-width="2.2" stroke-dasharray="4,2"/>
+          <rect x="286" y="12" width="68" height="17" rx="4" fill="#0369a1" stroke="#38bdf8" stroke-width="1.2"/>
+          <text x="320" y="24.5" fill="#ffffff" font-size="8.5" font-weight="bold" font-family="monospace" text-anchor="middle">LIVE NOW</text>
+
+          <!-- Dynamic Next High Tide Dual Markers (Creek Crest + Street Sag Peak) -->
+          <g id="svgNextHighMarker" transform="translate(0, 0)">
+            <!-- Creek Peak Diamond (Cyan) -->
+            <polygon points="0,-5 5,0 0,5 -5,0" fill="#38bdf8" stroke="#ffffff" stroke-width="1"/>
+            <!-- Connecting Lag Line to Street Sag Peak -->
+            <line id="svgPeakLagLine" x1="0" y1="0" x2="16" y2="0" stroke="#fbbf24" stroke-dasharray="2,2" stroke-width="1.5"/>
+            <!-- Street Peak Circle (Amber, +24m lag) -->
+            <circle id="svgStreetPeakDot" cx="16" cy="0" r="4" fill="#fbbf24" stroke="#ffffff" stroke-width="1"/>
+            <!-- Combined Dual Badge -->
+            <rect id="svgNextHighBox" x="-60" y="-22" width="170" height="15" rx="3" fill="#0f172a" stroke="#38bdf8" stroke-width="1"/>
+            <text id="svgNextHighLabel" x="25" y="-11" fill="#f8fafc" font-size="7" font-weight="bold" font-family="system-ui, sans-serif" text-anchor="middle">▲ Creek Peak ➔ Street (+24m)</text>
+          </g>
+
+          <!-- Background Elevation Reference Grid Lines (NOAA Live Calibration) -->
+          <line x1="55" y1="41" x2="585" y2="41" stroke="rgba(255,255,255,0.06)" stroke-dasharray="2,2"/>
+          <text x="50" y="44" fill="#64748b" font-size="8.5" text-anchor="end" font-family="monospace">8.00'</text>
+
+          <line x1="55" y1="54" x2="585" y2="54" stroke="#a855f7" stroke-dasharray="3,3" stroke-width="1.2"/>
+          <text x="50" y="57" fill="#c084fc" font-size="9.5" text-anchor="end" font-family="monospace">7.75' Carport GL</text>
+
+          <line x1="55" y1="65" x2="585" y2="65" stroke="#ef4444" stroke-dasharray="3,3" stroke-width="1.2"/>
+          <text x="50" y="68" fill="#f87171" font-size="9.5" text-anchor="end" font-family="monospace">7.91' Small Car Sag</text>
+
+          <line x1="55" y1="77" x2="585" y2="77" stroke="#fbbf24" stroke-dasharray="3,3" stroke-width="1.2"/>
+          <text x="50" y="80" fill="#fcd34d" font-size="9.5" text-anchor="end" font-family="monospace">7.31' High Crown</text>
+
+          <line x1="55" y1="96" x2="585" y2="96" stroke="#f97316" stroke-dasharray="3,3" stroke-width="1.4"/>
+          <text x="50" y="99" fill="#fb923c" font-size="10.5" font-weight="bold" text-anchor="end" font-family="monospace">7.42' Sag Dip Crown</text>
+
+          <line x1="55" y1="110" x2="585" y2="110" stroke="#38bdf8" stroke-dasharray="2,2" stroke-width="1"/>
+          <text x="50" y="113" fill="#38bdf8" font-size="8.5" text-anchor="end" font-family="monospace">6.70' Gutter Invert</text>
+
+          <line x1="55" y1="200" x2="585" y2="200" stroke="rgba(255,255,255,0.08)"/>
+          <text x="50" y="203" fill="#64748b" font-size="8.5" text-anchor="end" font-family="monospace">5.00'</text>
+
+          <!-- 7.15' Street Gutter In Front of House -->
+          <line x1="55" y1="103" x2="585" y2="103" stroke="#06b6d4" stroke-dasharray="2,2" stroke-width="1.1"/>
+          <text x="50" y="106" fill="#22d3ee" font-size="10" font-weight="bold" text-anchor="end" font-family="monospace">7.15' Street Gutter</text>
+
+          <!-- Dynamic Wave Curves -->
+          <path id="svgTwlArea" d="" fill="url(#twlGrad)"/>
+          <path id="svgAstPath" d="" fill="none" stroke="#64748b" stroke-width="1.8" stroke-dasharray="4,4"/>
+          <path id="svgTwlPath" d="" fill="none" stroke="#38bdf8" stroke-width="2.8"/>
+          <!-- Street Surface Water Retention & Drainage Lag Curve -->
+          <path id="svgStreetPath" d="" fill="none" stroke="#f97316" stroke-width="2.2" stroke-dasharray="4,2"/>
+
+          <!-- Bottom Time Ticks -->
+          <g id="svgTimeTicks" font-size="9" fill="#94a3b8" font-family="monospace" text-anchor="middle">
+            <text x="55" y="222">12 AM</text>
+            <text x="143" y="222">4 AM</text>
+            <text x="231" y="222">8 AM</text>
+            <text x="320" y="222">12 PM</text>
+            <text x="408" y="222">4 PM</text>
+            <text x="496" y="222">8 PM</text>
+            <text x="585" y="222">12 AM</text>
+          </g>
+
+          <!-- Interactive Time Scrubber Indicator -->
+          <line id="svgScrubLine" x1="390" y1="18" x2="390" y2="202" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="4,2"/>
+          <circle id="svgScrubDot" cx="390" cy="74" r="6.5" fill="#f59e0b" stroke="#ffffff" stroke-width="2.5"/>
+          <g id="svgScrubBadge" transform="translate(390, 15)">
+            <rect x="-42" y="-16" width="84" height="20" rx="4" fill="#0f172a" stroke="#f59e0b" stroke-width="1.4"/>
+            <text id="svgScrubText" x="0" y="-2" font-size="10.5" font-weight="bold" fill="#fbbf24" font-family="monospace" text-anchor="middle">2:43 PM</text>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Dedicated Controls Visible in Fullscreen Enlarge Mode -->
+      <div class="chart-fullscreen-controls">
+        <div class="slider-container" style="margin-bottom: 8px;">
+          <input type="range" id="fsTimeSlider" min="0" max="288" value="144" oninput="onScrub(this.value)">
+        </div>
+        <div class="scrubber-btn-row" style="margin-bottom: 8px;">
+          <button type="button" class="btn-rotate-toggle" onclick="toggleSidewaysOrientation(event)">🔄 Turn Sideways (Landscape)</button>
+          <button class="chip-btn active" id="btnFsSnapLive" onclick="snapTime('now')">📍 Live Now</button>
+          <button class="chip-btn" id="btnFsSnapNextHigh" onclick="snapTime('nexthigh')">▲ Next High Tide Peak</button>
+          <button class="chip-btn" onclick="snapTime('impassable')">⚠️ Impassable (6.95')</button>
+          <button class="chip-btn" onclick="snapTime('cleared')">✅ Road Cleared (&lt; 6.95')</button>
+        </div>
+        <div id="fsStatusBanner" class="fs-status-banner">
+          LIVE: Water Level 7.39' NAVD88 • ROAD IMPASSIBLE (+5.3" on crown)
+        </div>
+        <div class="fs-rotate-tip">
+          💡 Tip: Rotate phone sideways (landscape) for the widest, largest view! Tap '✕ Exit' when done.
+        </div>
+      </div>
+    </section>
+
+    
+    <!-- CALIBRATED SAFE PARKING HAVENS (FROM ANDY'S PLACES KML) -->
+    <section class="card" style="margin-bottom: 16px;">
+      <div class="card-title">
+        <span>🅿️ Safe Parking Havens (Andy's Places Survey)</span>
+        <span style="font-size:0.75rem; color:var(--green); font-family:var(--mono);">High Ground Safe Havens</span>
+      </div>
+      <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
+        If tides threaten Front Parking (&gt; 7.55') or Carport #86 (&gt; 8.15'), these surveyed locations remain elevated and accessible:
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 10px;">
+          <div style="font-weight: 700; color: #6ee7b7; font-size: 0.85rem;">🅿️ Safe Parking 1 (Closest)</div>
+          <div style="font-size: 0.78rem; color: #cbd5e1; margin-top: 3px;">390 ft West • 37.94046, -122.53605</div>
+          <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 2px;">Elev: 2.24m GPS (Safe high ground)</div>
+        </div>
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 10px;">
+          <div style="font-weight: 700; color: #6ee7b7; font-size: 0.85rem;">🅿️ Safe Parking 2</div>
+          <div style="font-size: 0.78rem; color: #cbd5e1; margin-top: 3px;">750 ft Southeast • 37.93911, -122.53340</div>
+          <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 2px;">Elev: 1.84m GPS (Elevated bay)</div>
+        </div>
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 10px;">
+          <div style="font-weight: 700; color: #6ee7b7; font-size: 0.85rem;">🅿️ Safe Parking 4</div>
+          <div style="font-size: 0.78rem; color: #cbd5e1; margin-top: 3px;">850 ft Southeast • 37.93885, -122.53326</div>
+          <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 2px;">Elev: 2.27m GPS (High ridge)</div>
+        </div>
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 10px;">
+          <div style="font-weight: 700; color: #6ee7b7; font-size: 0.85rem;">🅿️ Safe Parking 3 (Highest)</div>
+          <div style="font-size: 0.78rem; color: #cbd5e1; margin-top: 3px;">1,090 ft South • 37.93795, -122.53388</div>
+          <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 2px;">Elev: 2.98m GPS (Extreme retreat)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOV 7 KING TIDE PEAK GROUND-TRUTH GALLERY (BATCH 18) -->
+    <section class="gallery-card">
+      <div class="card-title">
+        <span>📸 Nov 7 King Tide Peak Truth Sequence (10:06 - 10:07 AM)</span>
+        <span style="font-size:0.75rem; color:var(--text-muted);">Andy's Places Verification (7.47' Peak)</span>
+      </div>
+      <div class="gallery-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="photo-item" onclick="openPhoto('photos/20261107_100751.jpg', '10:07 AM PST — Front Street Gutters (General Front Parking / House #326) completely DRY (0.0 inches). Confirms front street gutters stay dry while sag area floods down street.')">
+          <img src="photos/20261107_100751.jpg" alt="10:07 AM Front Gutters Dry">
+          <div class="photo-tag" style="color:var(--green);">10:07 AM • Front Gutters 100% DRY</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/20261107_100702.jpg', '10:07 AM PST — Crown (SAG in Road) & Housing Complex Side flooded during high tide peak.')">
+          <img src="photos/20261107_100702.jpg" alt="10:07 AM Sag Flooded">
+          <div class="photo-tag" style="color:var(--red);">10:07 AM • Sag &amp; Complex Flooded</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/20261107_100628.jpg', '10:06 AM PST — Street Drains 2 & 3 taking water on housing complex side in sync with SAG peak.')">
+          <img src="photos/20261107_100628.jpg" alt="10:06 AM Drains 2 & 3">
+          <div class="photo-tag" style="color:var(--amber);">10:06 AM • Drains 2 &amp; 3 Filling</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOV 7 KING TIDE MORNING PEAK GALLERY -->
+    <section class="gallery-card">
+      <div class="card-title">
+        <span>📸 Nov 7 Morning King Tide Peak Sequence (Today)</span>
+        <span style="font-size:0.75rem; color:var(--text-muted);">Andy's Field Sequence (Peak 7.47' NAVD88)</span>
+      </div>
+      <div class="gallery-grid">
+        <div class="photo-item" onclick="openPhoto('photos/20261107_094945.jpg', '9:49 AM PST — Center Road Crown Passable & Dry. Water confined to gutters & low depressions while travel lane remains clear.')">
+          <img src="photos/20261107_094945.jpg" alt="9:49 AM Crown Passable">
+          <div class="photo-tag" style="color:var(--green);">9:49 AM • Crown Passable (Dry Center)</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/20261107_094927.jpg', '9:49 AM PST — Street gutters & parking stall aprons taking salt water (+3.8 inches in gutter). Travel lane open.')">
+          <img src="photos/20261107_094927.jpg" alt="9:49 AM Gutters Flooded">
+          <div class="photo-tag" style="color:var(--amber);">9:49 AM • Gutters Taking Water (+3.8&quot;)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOV 6 KING TIDE MORNING PEAK GALLERY -->
+    <section class="gallery-card">
+      <div class="card-title">
+        <span>📸 Nov 6 Morning King Tide Peak Sequence</span>
+        <span style="font-size:0.75rem; color:var(--text-muted);">Andy's Field Sequence (Peak 7.32' NAVD88)</span>
+      </div>
+      <div class="gallery-grid">
+        <div class="photo-item" onclick="openPhoto('photos/20261106_104026.jpg', '10:40 AM PST — Crosswalk sag dip flooded across travel lanes. Peak 7.32 ft NAVD88 overtopped crown (6.95 ft) by +4.4 inches.')">
+          <img src="photos/20261106_104026.jpg" alt="10:40 AM Sag Inundation">
+          <div class="photo-tag" style="color:var(--red);">10:40 AM • Sag Flooded (+4.4&quot;)</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/20261106_104052.jpg', '10:40 AM PST — Street gutters & parking stall aprons submerged (+5.6 inches in gutter) draining with marsh tailwater lag.')">
+          <img src="photos/20261106_104052.jpg" alt="10:40 AM Gutter Flood">
+          <div class="photo-tag" style="color:var(--amber);">10:40 AM • Gutters Flooded (+5.6&quot;)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOV 1 KING TIDE & DST CALIBRATION GALLERY -->
+    <section class="gallery-card">
+      <div class="card-title">
+        <span>📸 Nov 1 King Tide & DST Field Sequence</span>
+        <span style="font-size:0.75rem; color:var(--text-muted);">Andy's Daylight Saving Shift Photos (Peak 6.86')</span>
+      </div>
+      <div class="gallery-grid">
+        <div class="photo-item" onclick="openPhoto('photos/20261101_160900.jpg', '4:09 PM PST — Travel Lane Clear • Center road crown dry asphalt. Corte Madera Creek TWL 6.84 ft.')">
+          <img src="photos/20261101_160900.jpg" alt="4:09 PM Crown Dry">
+          <div class="photo-tag" style="color:var(--green);">4:09 PM • Crown Dry (6.84')</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/20261101_160946.jpg', '4:09 PM PST — Curb Gutters & Front Stalls Flooded (+1.7&quot;) • Backfilled from storm drains while crown remains clear.')">
+          <img src="photos/20261101_160946.jpg" alt="4:09 PM Gutters Flooded">
+          <div class="photo-tag" style="color:var(--amber);">4:09 PM • Gutters Flooded (+1.7&quot;)</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/20261101_161008.jpg', '4:10 PM PST — Standing Salt Water in Curb Line • Water reaching front stall aprons before road crown breaches.')">
+          <img src="photos/20261101_161008.jpg" alt="4:10 PM Stall Apron Water">
+          <div class="photo-tag" style="color:var(--amber);">4:10 PM • Stall Apron Ponding</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- OCT 31 GROUND-TRUTH & SURVEY GALLERY -->
+    <section class="gallery-card">
+      <div class="card-title">
+        <span>📸 Oct 31 Breach & Ground Survey Calibration</span>
+        <span style="font-size:0.75rem; color:var(--text-muted);">Andy's Field Sequence</span>
+      </div>
+      <div class="gallery-grid">
+        <div class="photo-item" onclick="openPhoto('photos/Larkspur_Elevation_and_Drain_Survey_Map_Oct31.jpg', 'Ground Survey & Drainage Topology Map — Larkspur Plaza Dr sag, #326 gutter, carport, and creek lagoon inlet.')">
+          <img src="photos/Larkspur_Elevation_and_Drain_Survey_Map_Oct31.jpg" alt="Elevation & Drain Survey Map">
+          <div class="photo-tag" style="color:var(--cyan);">Survey • Elevation & Drains</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/20261031_152825.jpg', '3:28 PM — Baseline dry road. Creek TWL 6.78 ft. Roadway clear.')">
+          <img src="photos/20261031_152825.jpg" alt="3:28 PM Dry">
+          <div class="photo-tag">3:28 PM • Dry Baseline (6.78')</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/20261031_155058.jpg', '3:50 PM — West swale filling, gutters wet, center crown dry. Creek TWL 7.25 ft.')">
+          <img src="photos/20261031_155058.jpg" alt="3:50 PM Gutters Wet">
+          <div class="photo-tag">3:50 PM • Swale Filling (7.25')</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/20261031_162830.jpg', '4:28 PM — Water reaches crown at sag dip, filling both lanes. Creek TWL 7.40 ft.')">
+          <img src="photos/20261031_162830.jpg" alt="4:28 PM Sag Breach">
+          <div class="photo-tag" style="color:var(--amber);">4:28 PM • Sag Crown Breach (7.40')</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/20261031_163158.jpg', '4:31 PM — Peak inundation across sag dip. Impassable for small passenger vehicles. Creek TWL 7.42 ft.')">
+          <img src="photos/20261031_163158.jpg" alt="4:31 PM Peak Impassable">
+          <div class="photo-tag" style="color:#fca5a5;">4:31 PM • Peak Impassable (7.42')</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/20261031_163429.jpg', '4:34 PM — West drainage swale/ditch overflowing and spilling onto travel lanes.')">
+          <img src="photos/20261031_163429.jpg" alt="4:34 PM Ditch Overflow">
+          <div class="photo-tag" style="color:var(--amber);">4:34 PM • Swale Overflow</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/20261031_163441.jpg', '4:34 PM — West drainage swale runoff streaming directly across asphalt.')">
+          <img src="photos/20261031_163441.jpg" alt="4:34 PM Swale Detail">
+          <div class="photo-tag" style="color:var(--amber);">4:34 PM • Swale Runoff Detail</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/20261031_163538.jpg', '4:35 PM — Street backfilling north toward #326 and front parking gutters.')">
+          <img src="photos/20261031_163538.jpg" alt="4:35 PM Parking Backfill">
+          <div class="photo-tag" style="color:var(--red);">4:35 PM • Front Stalls Backfilling</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/20261031_183342.jpg', '6:33 PM — Severe Drainage Lag: Creek tide receded to 4.88 ft, but Larkspur Plaza Dr curb gutters and front stalls remain flooded (+3.2 in) due to marsh tailwater.')">
+          <img src="photos/20261031_183342.jpg" alt="6:33 PM Gutters Flooded">
+          <div class="photo-tag" style="color:var(--red);">6:33 PM • Gutters Flooded (Lag!)</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/20261031_183331.jpg', '6:33 PM — Looking south toward sag dip: Center crown dry/passable, but curb gutters and front stall entrances deeply flooded.')">
+          <img src="photos/20261031_183331.jpg" alt="6:33 PM Sag View">
+          <div class="photo-tag" style="color:var(--amber);">6:33 PM • Crown Dry, Stalls Wet</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/20261031_183351.jpg', '6:33 PM — Detail of persistent ponding along curb line and stall aprons.')">
+          <img src="photos/20261031_183351.jpg" alt="6:33 PM Curb Detail">
+          <div class="photo-tag" style="color:var(--amber);">6:33 PM • Stall Aprons Wet</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GROUND-TRUTH CALIBRATION GALLERY -->
+    <section class="gallery-card">
+      <div class="card-title">
+        <span>📸 Oct 30 Ground-Truth Photo Calibration</span>
+        <span style="font-size:0.75rem; color:var(--text-muted);">Andy's Field Sequence</span>
+      </div>
+      <div class="gallery-grid">
+        <div class="photo-item" onclick="openPhoto('photos/stage1_1142am_dry.jpg', '11:42 AM — Baseline dry road. Tide 3.2 ft.')">
+          <img src="photos/stage1_1142am_dry.jpg" alt="11:42 AM Dry">
+          <div class="photo-tag">11:42 AM • Road Dry (3.2')</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/stage2_104pm_seep.jpg', '1:04 PM — Creek seeps into left gutter drain. Tide 6.70 ft.')">
+          <img src="photos/stage2_104pm_seep.jpg" alt="1:04 PM Seep">
+          <div class="photo-tag">1:04 PM • Gutter Seep (6.70')</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/stage3_133pm_gutter.jpg', '1:33 PM — Gutters wet, center crown dry. Traffic flowing. Tide 7.05 ft.')">
+          <img src="photos/stage3_133pm_gutter.jpg" alt="1:33 PM Gutter ponding">
+          <div class="photo-tag">1:33 PM • Gutters Wet (7.05')</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/stage4_243pm_impassable.jpg', '2:43 PM — Gold Standard: Crosswalk dip reaches 5.9 in depth. Small cars impassable! Tide 7.55 ft.')">
+          <img src="photos/stage4_243pm_impassable.jpg" alt="2:43 PM Small Car Impassable">
+          <div class="photo-tag" style="color:#fca5a5;">2:43 PM • Impassable Sag (7.55')</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/stage5_453pm_partial_crown.jpg', '4:53 PM — Tide 7.03 ft. Only high crown foreground exposed! Down the street, the sag dip is still 100% covered in salt water. Road NOT clear.')">
+          <img src="photos/stage5_453pm_partial_crown.jpg" alt="4:53 PM Sag Flooded">
+          <div class="photo-tag" style="color:var(--amber);">4:53 PM • Sag Still Flooded (7.03')</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/20261030_171218.jpg', '5:12 PM — Tide 6.95 ft. Crosswalk sag dip and curb gutters still completely flooded with standing salt water across roadway. Gutters not clear!')">
+          <img src="photos/20261030_171218.jpg" alt="5:12 PM Gutters & Sag Flooded">
+          <div class="photo-tag" style="color:var(--amber);">5:12 PM • Gutters & Sag Wet (6.95')</div>
+        </div>
+        <div class="photo-item" onclick="openPhoto('photos/20261030_193136.jpg', '7:34 PM — Extreme drainage lag. Bay tide receded to 2.6 ft, but Larkspur Plaza Dr curb gutters & front parking stalls remain deeply flooded (+2.4 in). Salt marsh storage & flat pipe grades trap water until ~9:30 PM. Cannot park in front stalls!')">
+          <img src="photos/20261030_193136.jpg" alt="7:34 PM Gutters & Parking Flooded">
+          <div class="photo-tag" style="color:var(--red);">7:34 PM • Gutters Flooded (Lag!)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CRITICAL THRESHOLD REFERENCE TABLE -->
+    <section class="cross-section-card">
+      <div class="card-title">
+        <span>📋 Calibrated Elevation Thresholds</span>
+      </div>
+      <table class="threshold-table">
+        <thead>
+          <tr>
+            <th>Feature / Benchmark</th>
+            <th>Elevation</th>
+            <th>Status / Impact</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Street Gutter Inverts</td>
+            <td class="val" style="color:var(--cyan);">6.70 ft</td>
+            <td>Water begins seeping into curb gutters (1:04 PM)</td>
+          </tr>
+          <tr>
+            <td><strong>Lowest Crown in Sag Dip</strong></td>
+            <td class="val" style="color:#f97316;"><strong>6.95 ft</strong></td>
+            <td><strong>True All-Street Clearance (Road covered in salt water until &lt; 6.95')</strong></td>
+          </tr>
+          <tr>
+            <td>High Road Crown (Foreground)</td>
+            <td class="val" style="color:#fbbf24;">7.31 ft</td>
+            <td>High ridge exposed, but sag dip ahead remains submerged (4:53 PM photo)</td>
+          </tr>
+          <tr>
+            <td><strong>Small Car Impassable (Sag)</strong></td>
+            <td class="val" style="color:var(--red);"><strong>7.55 ft</strong></td>
+            <td><strong>Travel lane depth &ge; 5.9" (Ground truth: 2:43 PM)</strong></td>
+          </tr>
+          <tr>
+            <td>Carport Stall #86 Floor (GL)</td>
+            <td class="val" style="color:var(--purple);">7.75 ft</td>
+            <td>Concrete floor. Kept dry today (peak was 7.70 ft)</td>
+          </tr>
+          <tr>
+            <td>Carport Door Sill Damage Level</td>
+            <td class="val" style="color:#f43f5e;">8.46 ft</td>
+            <td>+8.5" above carport GL where water enters parked car interior</td>
+          </tr>
+          <tr>
+            <td>SUV / Truck Impassable</td>
+            <td class="val" style="color:#f43f5e;">7.85 ft</td>
+            <td>High clearance vehicles &ge; 9" ground clearance</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </div>
+
+  <!-- SETTINGS MODAL -->
+  <div class="modal" id="settingsModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>⚙️ Location & Vehicle Settings</h2>
+        <button class="btn-icon" onclick="closeSettings()">✕</button>
+      </div>
+
+      <div class="setting-group">
+        <label>Reporting Location</label>
+        <div class="select-card-list">
+          <div class="select-card active" id="loc-larkspur" onclick="selectLocation('larkspur')">
+            <div>
+              <div class="select-card-name">📍 Larkspur Plaza Drive & Carport #86</div>
+              <div class="select-card-detail">Crown: 7.31' | Sag Dip: 7.55' | Stall: 7.75'</div>
             </div>
-            <div class="card-meta-item">
-              <span>Drainage Lag</span>
-              <strong>4.5h Pan Retention</strong>
+            <span>✓</span>
+          </div>
+          <div class="select-card" id="loc-manzanita" onclick="selectLocation('manzanita')">
+            <div>
+              <div class="select-card-name">📍 Manzanita Park & Ride (Shoreline Hwy)</div>
+              <div class="select-card-detail">Lot Floods: 7.20' | Impassable: 7.45'</div>
             </div>
-            <div class="card-meta-item">
-              <span>Alert Engine</span>
-              <strong>Condition SMS</strong>
+          </div>
+          <div class="select-card" id="loc-tam" onclick="selectLocation('tam')">
+            <div>
+              <div class="select-card-name">📍 Tam Junction (Almonte Blvd / SR-1)</div>
+              <div class="select-card-detail">Road Floods: 7.35' | Impassable: 7.60'</div>
             </div>
-            <div class="card-meta-item">
-              <span>Live Feed</span>
-              <strong>NOAA 9414290/863</strong>
+          </div>
+          <div class="select-card" id="loc-creek" onclick="selectLocation('creek')">
+            <div>
+              <div class="select-card-name">📍 Corte Madera Creek Multi-Use Path</div>
+              <div class="select-card-detail">Path Overtopped: 6.60'</div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
-          <a href="/flood/" class="btn-launch">
-            <span>Open Flood Watch WET App</span>
-            <span>➔</span>
-          </a>
-          <span style="font-size:0.8rem; color:var(--text-muted); font-family:var(--mono);">
-            Also available at: <a href="https://cloudwatchcomputing.com/flood/" style="color:var(--cyan); text-decoration:none;">/flood/</a>
-          </span>
+      <div class="setting-group">
+        <label>Vehicle Ground Clearance & Model</label>
+        <div class="select-card-list">
+          <div class="select-card active" id="veh-prius" onclick="selectVehicle('prius', 5.9)">
+            <div>
+              <div class="select-card-name">🚗 Small Car / Prius (5.9" Clearance • 56.3" Height)</div>
+              <div class="select-card-detail">Impassable at 7.55 ft NAVD88 in Sag Dip</div>
+            </div>
+            <span>✓</span>
+          </div>
+          <div class="select-card" id="veh-sedan" onclick="selectVehicle('sedan', 6.5)">
+            <div>
+              <div class="select-card-name">🚙 Standard Sedan / Camry (6.5" Clearance • 56.9" Height)</div>
+              <div class="select-card-detail">Impassable at 7.60 ft NAVD88 in Sag Dip</div>
+            </div>
+          </div>
+          <div class="select-card" id="veh-suv" onclick="selectVehicle('suv', 8.1)">
+            <div>
+              <div class="select-card-name">🚙 Crossover SUV / Corolla Cross (8.1" Clearance • 64.9" Height)</div>
+              <div class="select-card-detail">Impassable at 7.73 ft NAVD88 in Sag Dip</div>
+            </div>
+          </div>
+          <div class="select-card" id="veh-truck" onclick="selectVehicle('truck', 9.4)">
+            <div>
+              <div class="select-card-name">🛻 4x4 Truck / Tacoma (9.4" Clearance • 70.6" Height)</div>
+              <div class="select-card-detail">High Clearance • Impassable at 7.84 ft NAVD88</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- PILLAR 2: COMMUNITY CIVIC APPS -->
-      <div class="card">
-        <div>
-          <div class="card-tag" style="color:var(--green);">🌱 Civic Resilience</div>
-          <h3 class="card-title">Community Micro-Grids</h3>
-          <p class="card-desc">
-            Extending hyper-local environmental models to coastal communities across Marin County and the San Francisco Bay Area.
-          </p>
+      <!-- SMS & CONDITION NOTIFICATION PREFERENCES -->
+      <div class="setting-group" style="border-top: 1px solid rgba(255,255,255,0.12); padding-top: 18px; margin-top: 18px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <label style="margin-bottom:0;">🔔 Condition Alert & SMS Settings</label>
+          <span style="font-size:0.72rem; color:var(--cyan); font-family:var(--mono);">Automated Triggers</span>
         </div>
-        <div style="font-size:0.78rem; color:var(--text-muted); font-family:var(--mono);">
-          In active development • Larkspur • Tam Valley • Manzanita
+        <div style="font-size:0.76rem; color:var(--text-muted); margin-bottom:14px; line-height:1.45;">
+          Select the exact street conditions that trigger automated alerts. Register your mobile phone and carrier to receive real-time SMS texts during tidal surges:
         </div>
+
+        <!-- Phone & Carrier Inputs -->
+        <div style="display:grid; grid-template-columns: 1.1fr 1fr; gap:10px; margin-bottom:14px;">
+          <div>
+            <div style="font-size:0.72rem; color:#94a3b8; margin-bottom:4px; font-weight:600;">Mobile Phone #</div>
+            <input type="tel" id="alertPhoneInput" placeholder="(415) 555-1234" maxlength="14" oninput="formatPhoneNumber(this)" style="width:100%; box-sizing:border-box; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.18); border-radius:8px; padding:9px 11px; color:#f8fafc; font-size:0.88rem; outline:none; font-family:var(--mono);">
+          </div>
+          <div>
+            <div style="font-size:0.72rem; color:#94a3b8; margin-bottom:4px; font-weight:600;">Cell Carrier (for SMS)</div>
+            <select id="alertCarrierSelect" style="width:100%; box-sizing:border-box; background:#1e293b; border:1px solid rgba(255,255,255,0.18); border-radius:8px; padding:9px 10px; color:#f8fafc; font-size:0.84rem; outline:none; cursor:pointer;">
+              <option value="verizon">Verizon (@vtext.com)</option>
+              <option value="att">AT&T (@txt.att.net)</option>
+              <option value="tmobile">T-Mobile (@tmomail.net)</option>
+              <option value="googlefi">Google Fi (@msg.fi.google.com)</option>
+              <option value="xfinity">Xfinity Mobile (@vtext.com)</option>
+              <option value="spectrum">Spectrum Mobile (@vtext.com)</option>
+              <option value="other">Other / Direct API</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Condition Alert Checkboxes -->
+        <div style="font-size:0.72rem; color:#94a3b8; margin-bottom:6px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">
+          Select Desired Condition Alerts
+        </div>
+        <div class="alert-option-list" style="display:flex; flex-direction:column; gap:8px;">
+          <!-- Drain 1 Surcharge (7.28') -->
+          <label style="display:flex; gap:10px; align-items:flex-start; background:rgba(245, 158, 11, 0.08); border:1px solid rgba(245, 158, 11, 0.28); border-radius:10px; padding:10px 12px; cursor:pointer;">
+            <input type="checkbox" id="notifyDrain1" checked style="margin-top:2px; accent-color:#f59e0b; width:16px; height:16px;">
+            <div>
+              <div style="font-size:0.84rem; font-weight:700; color:#fbbf24;">⚠️ Drain #1 Surcharging & Gutter Flood (7.28')</div>
+              <div style="font-size:0.73rem; color:#cbd5e1; margin-top:2px; line-height:1.35;">
+                Alerts when Big Drain #1 surcharges onto the street and front stalls outside #326 begin flooding. Recommended for moving cars parked in front stalls.
+              </div>
+            </div>
+          </label>
+
+          <!-- Travel Lane Sag Crown Breach (7.42') -->
+          <label style="display:flex; gap:10px; align-items:flex-start; background:rgba(239, 68, 68, 0.08); border:1px solid rgba(239, 68, 68, 0.28); border-radius:10px; padding:10px 12px; cursor:pointer;">
+            <input type="checkbox" id="notifyCrownBreach" checked style="margin-top:2px; accent-color:#ef4444; width:16px; height:16px;">
+            <div>
+              <div style="font-size:0.84rem; font-weight:700; color:#f87171;">⛔ Crosswalk Sag Travel Lane Breach (7.42')</div>
+              <div style="font-size:0.73rem; color:#cbd5e1; margin-top:2px; line-height:1.35;">
+                Alerts when water breaches across the sag dip travel lanes (+2" depth). Roadway impassable for low-clearance vehicles.
+              </div>
+            </div>
+          </label>
+
+          <!-- Travel Lane Reopened & Clear (< 7.42') -->
+          <label style="display:flex; gap:10px; align-items:flex-start; background:rgba(34, 197, 94, 0.08); border:1px solid rgba(34, 197, 94, 0.28); border-radius:10px; padding:10px 12px; cursor:pointer;">
+            <input type="checkbox" id="notifyCrownClear" checked style="margin-top:2px; accent-color:#22c55e; width:16px; height:16px;">
+            <div>
+              <div style="font-size:0.84rem; font-weight:700; color:#4ade80;">🚗 Travel Lane Re-opened & Clear (&lt; 7.42')</div>
+              <div style="font-size:0.73rem; color:#cbd5e1; margin-top:2px; line-height:1.35;">
+                Alerts as soon as the center road crown sheds water and driving through Larkspur Plaza Dr is safe and passable again.
+              </div>
+            </div>
+          </label>
+
+          <!-- Early Heads-Up Seepage (7.10') -->
+          <label style="display:flex; gap:10px; align-items:flex-start; background:rgba(56, 189, 248, 0.06); border:1px solid rgba(56, 189, 248, 0.22); border-radius:10px; padding:10px 12px; cursor:pointer;">
+            <input type="checkbox" id="notifyEarlySeep" style="margin-top:2px; accent-color:#38bdf8; width:16px; height:16px;">
+            <div>
+              <div style="font-size:0.84rem; font-weight:700; color:#38bdf8;">ℹ️ Early Heads-Up: Inlet Full / Sidewalk Seep (7.10')</div>
+              <div style="font-size:0.73rem; color:#cbd5e1; margin-top:2px; line-height:1.35;">
+                Advance notice (~45 min before high peak) when ditch inlet fills and water begins seeping over sidewalk near concrete headwall.
+              </div>
+            </div>
+          </label>
+
+          <!-- Extreme Surge: Carport #86 (7.75') -->
+          <label style="display:flex; gap:10px; align-items:flex-start; background:rgba(168, 85, 247, 0.06); border:1px solid rgba(168, 85, 247, 0.22); border-radius:10px; padding:10px 12px; cursor:pointer;">
+            <input type="checkbox" id="notifyCarport" style="margin-top:2px; accent-color:#a855f7; width:16px; height:16px;">
+            <div>
+              <div style="font-size:0.84rem; font-weight:700; color:#c084fc;">🚨 Extreme King Tide: Carport #86 Threat (7.75')</div>
+              <div style="font-size:0.73rem; color:#cbd5e1; margin-top:2px; line-height:1.35;">
+                Emergency alert if major surge approaches back lot Carport Spot #86 ground slab.
+              </div>
+            </div>
+          </label>
+
+          <!-- Complete Gutter Clearance (<= 7.15') -->
+          <label style="display:flex; gap:10px; align-items:flex-start; background:rgba(34, 197, 94, 0.06); border:1px solid rgba(34, 197, 94, 0.22); border-radius:10px; padding:10px 12px; cursor:pointer;">
+            <input type="checkbox" id="notifyGutterClear" checked style="margin-top:2px; accent-color:#22c55e; width:16px; height:16px;">
+            <div>
+              <div style="font-size:0.84rem; font-weight:700; color:#4ade80;">✅ Complete All-Clear: Gutters Fully Dry (&le; 7.15')</div>
+              <div style="font-size:0.73rem; color:#cbd5e1; margin-top:2px; line-height:1.35;">
+                Alerts when 4.5-hour gutter retention lag completes and street gutters are 100% dry down to the pavement.
+              </div>
+            </div>
+          </label>
+        </div>
+
+        <!-- Android Native Notification Shortcut -->
+        <div style="margin-top:12px; padding:10px 12px; background:rgba(255,255,255,0.03); border:1px dashed rgba(255,255,255,0.15); border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-size:0.8rem; font-weight:600; color:#f8fafc;">📱 Android / Browser Push</div>
+            <div style="font-size:0.72rem; color:#94a3b8;">Receive notifications directly in Android / Chrome</div>
+          </div>
+          <button type="button" class="chip-btn" id="btnPushPermission" onclick="requestAndroidPushPermission()" style="font-size:0.75rem; padding:5px 10px; background:rgba(56, 189, 248, 0.15); border-color:var(--cyan); color:var(--cyan);">Enable Push</button>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display:flex; gap:8px; margin-top:14px; justify-content:flex-end; align-items:center;">
+          <button type="button" class="chip-btn" id="btnTestAlert" onclick="sendTestSmsAlert()" style="font-size:0.76rem; padding:6px 12px; background:rgba(56, 189, 248, 0.12); color:var(--cyan); border-color:var(--cyan);">🧪 Send Test Alert</button>
+          <button type="button" class="chip-btn active" id="btnSaveAlerts" onclick="saveAlertSettings()" style="font-size:0.76rem; padding:6px 16px;">💾 Save Preferences</button>
+        </div>
+        <div id="alertFeedbackBox" style="font-size:0.74rem; text-align:right; margin-top:6px; display:none;"></div>
       </div>
 
-      <!-- PILLAR 3: AUDIO & COMPUTATION -->
-      <div class="card">
-        <div>
-          <div class="card-tag" style="color:var(--purple);">🎵 Audio Technology</div>
-          <h3 class="card-title">Acoustic & Production Tools</h3>
-          <p class="card-desc">
-            Computational audio utilities, DSP analysis, and synthesis workflow automations built for modern music creators.
-          </p>
-        </div>
-        <div style="font-size:0.78rem; color:var(--text-muted); font-family:var(--mono);">
-          Studio Research & Development
-        </div>
+      <div style="text-align: right; margin-top: 16px;">
+        <button class="chip-btn active" style="padding: 8px 18px; font-size:0.85rem;" onclick="closeSettings()">Done</button>
       </div>
-    </section>
-  </main>
+    </div>
+  </div>
 
-  <footer>
-    <p>© 2026 Cloud Watch Computing • Marin County, California • Built with Open Civic Data & NOAA Geodetic Feeds</p>
-  </footer>
+  <!-- SCRIPT ENGINE -->
+  <script>
+    // Configuration & Ground Truth Constants
+    const THRESHOLDS = {
+      larkspur: {
+        name: "Larkspur Plaza Drive",
+        // Calibrated Ground Truth (from Nov 8 2026 Photos & KML Survey):
+        headwallSeep: 7.10, // Inlet full; water seeps over sidewalk near concrete headwall
+        sagGutter: 7.15, // Sag Area Gutters (Street Drains 2, 3, & 4 on complex side; fills first at 7.15')
+        gutter: 7.15,    // Sag gutter benchmark
+        drain1: 7.28,    // Big Drain #1 (Main roadway storm grate; surcharges heavily onto street at 7.28')
+        frontGutter: 7.28, // Front Street Gutters (KML 1.18m GPS: fills at 7.28', flooded in Nov 8 photos at 7.43')
+        houseGutter: 7.28, // Front Street Gutters in front of 326 Larkspur Plaza Dr (takes water at 7.28')
+        frontStall: 7.38,  // Front parking stall apron (submerged in Nov 8 photos at 7.43')
+        walkwayBase: 7.42, // Concrete walkway bottom slab at #326 (water touches walkway slab at 7.42')
+        crown: 7.42,    // Crown (SAG in Road) crosswalk travel lane overtopping threshold
+        higherPatch: 7.75, // Higher front parking patch
+        highCrown: 7.75, // High road crown ridge in foreground
+        priusSag: 7.91,  // Impassable for 5.9" clearance (7.42' crown + 0.49' / 5.9" = 7.91')
+        stall: 8.15,     // Back lot Carport Spot #86 slab ground level
+        streetHighPoint: 8.30, // Street High Point (road crest north of #326; last divide to submerge)
+        damageLevel: 8.86, // Interior damage level
+        lagMinutes: 270   // 4.5 hour drainage lag for curb gutters & front stalls
+      },
+      manzanita: {
+        name: "Manzanita Park & Ride",
+        gutter: 7.00,
+        yellow: 7.15,
+        crown: 7.20,
+        priusSag: 7.45,
+        stall: 7.80,
+        lagMinutes: 120
+      },
+      tam: {
+        name: "Tam Junction (SR-1)",
+        gutter: 7.10,
+        yellow: 7.25,
+        crown: 7.35,
+        priusSag: 7.60,
+        stall: 8.00,
+        lagMinutes: 150
+      },
+      creek: {
+        name: "Corte Madera Creek Path",
+        gutter: 6.40,
+        yellow: 6.50,
+        crown: 6.60,
+        priusSag: 6.80,
+        stall: 7.50,
+        lagMinutes: 60
+      }
+    };
 
+    const VEHICLES = {
+      prius: {
+        name: "Small Car / Prius",
+        clearance: 5.9,
+        sill: 7.41,
+        height: 56.3,
+        impassableTwl: 7.55
+      },
+      sedan: {
+        name: "Standard Sedan / Camry",
+        clearance: 6.5,
+        sill: 7.47,
+        height: 56.9,
+        impassableTwl: 7.60
+      },
+      suv: {
+        name: "Crossover SUV / Corolla Cross",
+        clearance: 8.1,
+        sill: 7.67,
+        height: 64.9,
+        impassableTwl: 7.73
+      },
+      truck: {
+        name: "4x4 Truck / Tacoma",
+        clearance: 9.4,
+        sill: 7.87,
+        height: 70.6,
+        impassableTwl: 7.84
+      }
+    };
+
+    let activeLocKey = 'larkspur';
+    let activeVehicleKey = 'prius';
+    try {
+      activeVehicleKey = localStorage.getItem('floodwatch_veh_key') || 'prius';
+    } catch(e) {}
+    let activeVehicleClearance = VEHICLES[activeVehicleKey] ? VEHICLES[activeVehicleKey].clearance : 5.9;
+    let currentCarView = 'side';
+    try {
+      currentCarView = localStorage.getItem('floodwatch_car_view') || 'side';
+    } catch(e) {}
+
+    let liveSurge = 1.38; // ft NAVD88
+    let tideTimeline = []; // 288 points: Index 0 = -24h, Index 144 = NOW, Index 288 = +24h
+    let currentScrubIdx = 144; // Starts at Center (LIVE NOW)
+    let nextHighTideObj = null;
+
+    // UI Navigation & Modals
+    function openSettings() {
+      document.getElementById('settingsModal').classList.add('open');
+    }
+    function closeSettings() {
+      document.getElementById('settingsModal').classList.remove('open');
+      updateUI();
+    }
+    function selectLocation(key) {
+      activeLocKey = key;
+      document.querySelectorAll('.select-card-list #loc-larkspur, #loc-manzanita, #loc-tam, #loc-creek').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById('loc-' + key);
+      if (target) target.classList.add('active');
+      updateUI();
+    }
+
+    // Vehicle Selection Switcher (Updates 3D/SVG Model Across Both Views)
+    function selectVehicle(key, clr) {
+      activeVehicleKey = key;
+      activeVehicleClearance = clr;
+      try {
+        localStorage.setItem('floodwatch_veh_key', key);
+      } catch (e) {}
+
+      document.querySelectorAll('#veh-prius, #veh-sedan, #veh-suv, #veh-truck').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById('veh-' + key);
+      if (target) target.classList.add('active');
+
+      applyVehicleAndCarView();
+      updateUI();
+    }
+
+    function switchPriusView(view, ev) {
+      switchCarView(view, ev);
+    }
+
+    function switchCarView(view, ev) {
+      if (ev) {
+        if (ev.preventDefault) ev.preventDefault();
+        if (ev.stopPropagation) ev.stopPropagation();
+      }
+      currentCarView = view;
+      try {
+        localStorage.setItem('floodwatch_car_view', view);
+      } catch (e) {}
+      applyVehicleAndCarView();
+    }
+
+    function applyVehicleAndCarView() {
+      // Hide all vehicle groups
+      const allGroups = document.querySelectorAll('.vehicle-svg-group');
+      allGroups.forEach(g => {
+        g.style.display = 'none';
+        g.setAttribute('display', 'none');
+        g.setAttribute('visibility', 'hidden');
+      });
+
+      // Show active vehicle and active view
+      const activeGroupId = `svgVeh_${activeVehicleKey}_${currentCarView}`;
+      const activeGroup = document.getElementById(activeGroupId);
+      if (activeGroup) {
+        activeGroup.style.display = 'inline';
+        activeGroup.setAttribute('display', 'inline');
+        activeGroup.setAttribute('visibility', 'visible');
+      }
+
+      // Update View Buttons
+      const btnSide = document.getElementById('btnViewSide');
+      const btnFront = document.getElementById('btnViewFront');
+      if (currentCarView === 'front') {
+        if (btnSide) btnSide.classList.remove('active');
+        if (btnFront) btnFront.classList.add('active');
+      } else {
+        if (btnSide) btnSide.classList.add('active');
+        if (btnFront) btnFront.classList.remove('active');
+      }
+
+      // Update Vehicle Card Label
+      const vInfo = VEHICLES[activeVehicleKey] || VEHICLES.prius;
+      const labelVeh = document.getElementById('labelVehicleClearance');
+      if (labelVeh) {
+        labelVeh.textContent = `${vInfo.name} (${vInfo.clearance}" CLR)`;
+      }
+    }
+
+    // 48-Hour Rolling Timeline Generator (288 Points: -24h to +24h, Centered on NOW at Index 144)
+    // 48-Hour Rolling Timeline Generator (288 Points: -24h to +24h, Centered on NOW at Index 144)
+    function generate48HourTimeline(predArray, obsArray) {
+      const data = [];
+      const now = new Date();
+      const nowMs = now.getTime();
+      const tenMinsMs = 10 * 60 * 1000;
+
+      for (let i = 0; i <= 288; i++) {
+        // Point time: i=0 is (now - 24h), i=144 is now, i=288 is (now + 24h)
+        const ptMs = nowMs + (i - 144) * tenMinsMs;
+        const ptDate = new Date(ptMs);
+
+        const h = ptDate.getHours();
+        const m = ptDate.getMinutes();
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const displayH = h % 12 === 0 ? 12 : h % 12;
+        const timeLabel = `${displayH}:${m < 10 ? '0' : ''}${m} ${ampm}`;
+        const dayLabel = ptDate.toLocaleDateString('en-US', { weekday: 'short' });
+
+        // Calculate astronomical tide from 6-minute predictions array with linear interpolation
+        let ast = calculateAstTideAt(ptDate, predArray);
+        
+        // Authoritative Total Water Level for Larkspur (Corte Madera Creek Station 9414874):
+        // TWL = Corte Madera Creek Astronomical Prediction + Active Regional Storm Surge Anomaly.
+        // Golden Gate (9414290) is used exclusively for computing the real-time surge anomaly (+1.44 ft).
+        // This ensures continuous, physically consistent water levels with zero phase lag errors.
+        let twl = ast + liveSurge;
+        let isPast = (i <= 144);
+
+        data.push({
+          idx: i,
+          timeMs: ptMs,
+          timeLabel: timeLabel,
+          dayLabel: dayLabel,
+          isPast: isPast,
+          ast: parseFloat(ast.toFixed(2)),
+          surge: liveSurge,
+          twl: parseFloat(twl.toFixed(2)),
+          streetTWL: 0.0
+        });
+      }
+
+      // Compute Calibrated Physical Street Drainage Lag across the timeline
+      // Larkspur Plaza Drive drainage physics:
+      // 1. Ingress Phase: Salt water backs up through storm drains when Creek TWL >= 6.70'.
+      //    Curb gutters and front stall aprons fill directly with the rising tide!
+      //    Center road crown (6.95') stays dry until storm swale breaches at ~7.38'.
+      // 2. Crest Phase: Street water level tracks Creek TWL while TWL >= 6.70'.
+      // 3. Receding Phase: Creek drops quickly, but flat storm pipes (0.23% grade) and salt marsh backwater
+      //    limit gravity drainage to ~0.035 ft (0.42 inches) per 10 minutes (4.5 hr drainage lag).
+      //    Street water stays retained on pavement and gutters until drained down to 6.70' (dry).
+      // Compute Calibrated Physical Street Drainage Lag across the timeline
+      // Larkspur Plaza Drive drainage physics:
+      // 1. Ingress Phase: Salt water enters curb gutters when Creek TWL >= 7.15'.
+      //    Big Drain #1 surcharges heavily onto street at >= 7.28'.
+      //    Sag travel lane crown overtopped at >= 7.42'.
+      // 2. Receding Phase:
+      //    Center road crown (camber cross-slope) sheds water rapidly (< 20 min).
+      //    Curb gutter pans have near-flat grade (0.15% longitudinal slope), retaining
+      //    residual puddle water (+1" to 2") that slowly drains/dissipates at ~0.010 ft/10min
+      //    over a 4.5-hour retention lag!
+      let activePonding = 0.0;
+      let hasGutterWater = false;
+      for (let i = 0; i < data.length; i++) {
+        const cur = data[i];
+        const next = (i < data.length - 1) ? data[i + 1] : cur;
+        const isRising = (next.twl > cur.twl + 0.015);
+
+        if (isRising) {
+          if (cur.twl >= 7.15) {
+            hasGutterWater = true;
+            activePonding = cur.twl;
+          } else {
+            activePonding = 0.0;
+          }
+        } else {
+          // Receding / Crest phase
+          if (cur.twl >= 7.15) {
+            hasGutterWater = true;
+            activePonding = Math.max(cur.twl, activePonding);
+          } else if (hasGutterWater && activePonding > 7.15) {
+            // Water draining with calibrated 4.5-hour gutter retention lag
+            const drainRatePer10Min = 0.010; // ~0.12 inches per 10 min
+            activePonding = Math.max(cur.twl, activePonding - drainRatePer10Min);
+            if (activePonding <= 7.15 && cur.twl <= 7.15) {
+              activePonding = 0.0; // Fully drained dry
+              hasGutterWater = false;
+            }
+          } else {
+            activePonding = 0.0;
+            hasGutterWater = false;
+          }
+        }
+
+        // streetTWL: If active water exists on pavement/gutters, track it. Otherwise baseline dry tracks Creek TWL.
+        cur.streetTWL = parseFloat((activePonding > 0 ? activePonding : cur.twl).toFixed(2));
+      }
+
+      return data;
+    }
+
+    // Helper: Find matching astronomical tide at given Date
+    // Helper: Precision Astronomical Tide Interpolation at given Date
+    function calculateAstTideAt(d, predArray) {
+      if (predArray && predArray.length > 0) {
+        const targetMs = d.getTime();
+        let left = 0;
+        let right = predArray.length - 1;
+
+        const tFirst = new Date(predArray[0].t.replace(' ', 'T')).getTime();
+        const tLast = new Date(predArray[right].t.replace(' ', 'T')).getTime();
+        if (targetMs <= tFirst) return parseFloat(predArray[0].v) + 0.06;
+        if (targetMs >= tLast) return parseFloat(predArray[right].v) + 0.06;
+
+        while (left <= right) {
+          const mid = Math.floor((left + right) / 2);
+          const tMid = new Date(predArray[mid].t.replace(' ', 'T')).getTime();
+          if (tMid === targetMs) {
+            return parseFloat(predArray[mid].v) + 0.06;
+          } else if (tMid < targetMs) {
+            left = mid + 1;
+          } else {
+            right = mid - 1;
+          }
+        }
+
+        const idx0 = Math.max(0, right);
+        const idx1 = Math.min(predArray.length - 1, left);
+        const t0 = new Date(predArray[idx0].t.replace(' ', 'T')).getTime();
+        const t1 = new Date(predArray[idx1].t.replace(' ', 'T')).getTime();
+        const v0 = parseFloat(predArray[idx0].v) + 0.06;
+        const v1 = parseFloat(predArray[idx1].v) + 0.06;
+
+        if (t1 === t0) return v0;
+        const frac = (targetMs - t0) / (t1 - t0);
+        return v0 + frac * (v1 - v0);
+      }
+      // Fallback harmonic model
+      const hrs = d.getHours() + d.getMinutes() / 60;
+      return 3.6 + 2.5 * Math.cos((hrs - 16.0) * 0.52);
+    }
+
+    // Helper: Find matching past observation
+    function findObservedAt(d, obsArray) {
+      if (!obsArray || !obsArray.length) return null;
+      const targetMs = d.getTime();
+      let best = null;
+      let minDiff = 15 * 60 * 1000; // within 15 mins
+      for (let o of obsArray) {
+        const oMs = new Date(o.t.replace(' ', 'T')).getTime();
+        const diff = Math.abs(oMs - targetMs);
+        if (diff < minDiff) {
+          minDiff = diff;
+          best = parseFloat(o.v);
+        }
+      }
+      return best;
+    }
+
+    // Apply Street Drainage Retention Lag across the 48-hour timeline
+    function applyStreetDrainageLag(timeline) {
+      for (let i = 1; i < timeline.length; i++) {
+        const prev = timeline[i - 1];
+        const cur = timeline[i];
+        // If water was high (> 6.70' gutter) and creek is falling, street water decays with retention
+        if (prev.twl > 6.70 && cur.twl < prev.twl) {
+          const maxDrainRatePer10Min = 0.035; // Maximum gravity drain drop per 10 minutes (calibrated to 4.5hr field lag)
+          const retained = prev.twl - maxDrainRatePer10Min;
+          if (retained > cur.twl && retained > 6.70) {
+            cur.twl = parseFloat(retained.toFixed(2));
+          }
+        }
+      }
+    }
+
+    // Find the Next High Tide peak on the forecast half of the 48h timeline
+    function findNextHighTide(timeline) {
+      if (!timeline || timeline.length <= 144) return null;
+      for (let i = 145; i < timeline.length - 1; i++) {
+        const prev = timeline[i - 1].twl;
+        const cur = timeline[i].twl;
+        const next = timeline[i + 1].twl;
+        if (cur >= prev && cur > next && cur > 6.4) {
+          const nowMs = new Date().getTime();
+          const diffMins = Math.max(0, Math.round((timeline[i].timeMs - nowMs) / (60 * 1000)));
+          const hRem = Math.floor(diffMins / 60);
+          const mRem = diffMins % 60;
+
+          // Calibrated Hydraulic Culvert Ingress Delay:
+          // Water continues pouring through storm culverts into the street basin for ~24 minutes
+          // after Corte Madera Creek crests, so Street Sag reaches peak depth ~24m later!
+          const streetLagMinutes = 24;
+          const streetPeakTimeMs = timeline[i].timeMs + (streetLagMinutes * 60 * 1000);
+          const streetDate = new Date(streetPeakTimeMs);
+          const sH = streetDate.getHours();
+          const sM = streetDate.getMinutes();
+          const sAmPm = sH >= 12 ? 'PM' : 'AM';
+          const sH12 = sH % 12 || 12;
+          const streetTimeLabel = `${timeline[i].dayLabel} ${sH12}:${sM < 10 ? '0' : ''}${sM} ${sAmPm}`;
+          
+          const streetDiffMins = diffMins + streetLagMinutes;
+          const sHRem = Math.floor(streetDiffMins / 60);
+          const sMRem = streetDiffMins % 60;
+
+          const hazard = cur >= 7.55 ? "Small Cars Impassable" : cur >= 7.42 ? "Sag Crown Breached" : cur >= 7.15 ? "Sag Gutters Wet" : "No Hazard";
+          return {
+            idx: i,
+            streetIdx: Math.min(timeline.length - 1, i + 2), // ~20 min step forward
+            timeLabel: `${timeline[i].dayLabel} ${timeline[i].timeLabel}`,
+            streetTimeLabel: streetTimeLabel,
+            twl: cur,
+            timeRemaining: `${hRem}h ${mRem < 10 ? '0' : ''}${mRem}m`,
+            streetTimeRemaining: `${sHRem}h ${sMRem < 10 ? '0' : ''}${sMRem}m`,
+            streetLagMinutes: streetLagMinutes,
+            hazard: hazard
+          };
+        }
+      }
+      return null;
+    }
+
+    // Fetch Live NOAA 24/7 (Golden Gate Observations + Corte Madera Creek Predictions)
+    async function fetchLiveNOAA() {
+      let obsData = [];
+      let predData = [];
+
+      try {
+        // Golden Gate Observed (Past 24 Hours)
+        const respObs = await fetch('https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?range=24&station=9414290&product=water_level&datum=NAVD&time_zone=lst_ldt&units=english&format=json');
+        const dObs = await respObs.json();
+        if (dObs.data && dObs.data.length > 0) {
+          obsData = dObs.data;
+          const latestObs = parseFloat(obsData[obsData.length - 1].v);
+          const latestTime = obsData[obsData.length - 1].t;
+
+          // Fetch matching prediction to determine live surge
+          const respPredGG = await fetch('https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&station=9414290&product=predictions&datum=NAVD&time_zone=lst_ldt&units=english&interval=6&format=json');
+          const dPredGG = await respPredGG.json();
+          if (dPredGG.predictions) {
+            const match = dPredGG.predictions.find(p => p.t.slice(11, 16) === latestTime.slice(11, 16)) || dPredGG.predictions[dPredGG.predictions.length - 1];
+            const pVal = parseFloat(match.v);
+            const surge = latestObs - pVal;
+            if (!isNaN(surge)) {
+              liveSurge = parseFloat(surge.toFixed(2));
+            }
+          }
+        }
+      } catch (e) {
+        console.log("NOAA Station 9414290 live fetch fallback:", e);
+      }
+
+      try {
+        // Authoritative Northern Bay NAVD88 Astronomical Predictions (72 Hours)
+        // Station 9414863 (Richmond / Inner Bay adjacent to Corte Madera Creek) provides native geodetic NAVD88,
+        // eliminating the 0.45 ft (5.4-inch) datum offset error inherent to subordinate MLLW predictions.
+        const now = new Date();
+        const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        const yStr = `${yesterday.getFullYear()}${String(yesterday.getMonth()+1).padStart(2,'0')}${String(yesterday.getDate()).padStart(2,'0')}`;
+        
+        const respCM = await fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=${yStr}&range=72&station=9414863&product=predictions&datum=NAVD&time_zone=lst_ldt&units=english&interval=6&format=json`);
+        const dCM = await respCM.json();
+        if (dCM.predictions && dCM.predictions.length > 0) {
+          predData = dCM.predictions;
+        } else {
+          // Fallback to Golden Gate Station 9414290 native NAVD88
+          const respGG = await fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=${yStr}&range=72&station=9414290&product=predictions&datum=NAVD&time_zone=lst_ldt&units=english&interval=6&format=json`);
+          const dGG = await respGG.json();
+          if (dGG.predictions && dGG.predictions.length > 0) predData = dGG.predictions;
+        }
+      } catch (e) {
+        console.log("NOAA Station 9414863 predictions fetch fallback:", e);
+      }
+
+      tideTimeline = generate48HourTimeline(predData, obsData);
+      nextHighTideObj = findNextHighTide(tideTimeline);
+
+      renderSvgHydrograph();
+      updateUI();
+    }
+
+    // Scrubber update handler
+    function onScrub(val) {
+      currentScrubIdx = parseInt(val);
+      const slider = document.getElementById('timeSlider');
+      if (slider && slider.value != currentScrubIdx) slider.value = currentScrubIdx;
+      const fsSlider = document.getElementById('fsTimeSlider');
+      if (fsSlider && fsSlider.value != currentScrubIdx) fsSlider.value = currentScrubIdx;
+      updateUI();
+    }
+
+    // Fullscreen Enlarge Handlers
+    function toggleChartFullscreen(e) {
+      if (e) e.stopPropagation();
+      const card = document.getElementById('chartCard');
+      const btn = document.getElementById('btnFsChart');
+      if (!card) return;
+
+      const isFs = card.classList.toggle('is-fullscreen');
+      if (isFs) {
+        document.body.style.overflow = 'hidden';
+        if (btn) btn.innerHTML = '<span class="fs-icon">✕</span> <span class="fs-text">Exit Fullscreen</span>';
+        const fsSlider = document.getElementById('fsTimeSlider');
+        if (fsSlider) fsSlider.value = currentScrubIdx;
+        try {
+          if (card.requestFullscreen && !document.fullscreenElement) {
+            card.requestFullscreen().catch(() => {});
+          }
+        } catch(err) {}
+      } else {
+        document.body.style.overflow = '';
+        if (btn) btn.innerHTML = '<span class="fs-icon">⤢</span> <span class="fs-text">Enlarge / Rotate</span>';
+        try {
+          if (document.fullscreenElement) {
+            document.exitFullscreen().catch(() => {});
+          }
+        } catch(err) {}
+      }
+      updateUI();
+    }
+
+    // In-App Sideways (Landscape) Orientation Toggle
+    function toggleSidewaysOrientation(e) {
+      if (e) e.stopPropagation();
+      const fsCard = document.querySelector('.chart-card.is-fullscreen, .cross-section-card.is-fullscreen');
+      if (fsCard) {
+        fsCard.classList.toggle('is-sideways');
+        const isSideways = fsCard.classList.contains('is-sideways');
+        document.querySelectorAll('.btn-rotate-toggle').forEach(btn => {
+          btn.innerHTML = isSideways ? '📱 View Upright (Portrait)' : '🔄 Turn Sideways (Landscape)';
+        });
+      }
+    }
+
+    function setRoadZoom(factor) {
+      const svg = document.getElementById('roadSvg');
+      if (!svg) return;
+      svg.classList.remove('zoom-15x', 'zoom-2x');
+      if (factor === 1.5) svg.classList.add('zoom-15x');
+      if (factor === 2) svg.classList.add('zoom-2x');
+
+      ['btnZoom1', 'btnZoom15', 'btnZoom2'].forEach(id => {
+        const b = document.getElementById(id);
+        if (b) b.classList.remove('active');
+      });
+      if (factor === 1) document.getElementById('btnZoom1')?.classList.add('active');
+      if (factor === 1.5) document.getElementById('btnZoom15')?.classList.add('active');
+      if (factor === 2) document.getElementById('btnZoom2')?.classList.add('active');
+    }
+
+    function toggleRoadFullscreen(e) {
+      if (e) e.stopPropagation();
+      const card = document.getElementById('roadCard');
+      const btn = document.getElementById('btnFsRoad');
+      const zoomGroup = document.getElementById('roadZoomGroup');
+      if (!card) return;
+
+      const isFs = card.classList.toggle('is-fullscreen');
+      // Ensure no sideways transform is applied
+      card.classList.remove('is-sideways');
+
+      if (isFs) {
+        document.body.style.overflow = 'hidden';
+        if (btn) btn.innerHTML = '<span class="fs-icon">✕</span> <span class="fs-text">Exit Fullscreen</span>';
+        if (zoomGroup) zoomGroup.style.display = 'inline-flex';
+        setRoadZoom(1);
+      } else {
+        document.body.style.overflow = '';
+        if (btn) btn.innerHTML = '<span class="fs-icon">⤢</span> <span class="fs-text">Enlarge</span>';
+        if (zoomGroup) zoomGroup.style.display = 'none';
+        setRoadZoom(1);
+      }
+    }
+
+    // Close fullscreen on ESC key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const chartCard = document.getElementById('chartCard');
+        if (chartCard && chartCard.classList.contains('is-fullscreen')) {
+          toggleChartFullscreen();
+        }
+        const roadCard = document.getElementById('roadCard');
+        if (roadCard && roadCard.classList.contains('is-fullscreen')) {
+          toggleRoadFullscreen();
+        }
+      }
+    });
+
+    // Touch & Mouse Drag Scrubbing directly across the Hydrograph SVG
+    let isDraggingHydro = false;
+    function initHydrographDragScrub() {
+      const svg = document.getElementById('hydrographSvg');
+      if (!svg) return;
+
+      function scrubFromPointer(evt) {
+        if (!tideTimeline || !tideTimeline.length) return;
+        const rect = svg.getBoundingClientRect();
+        const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+        const ratio = (clientX - rect.left) / rect.width;
+        const svgX = ratio * 600; // viewBox width 600
+        const xMin = 55;
+        const xMax = 585;
+        const clampedX = Math.max(xMin, Math.min(xMax, svgX));
+        const newIdx = Math.round(((clampedX - xMin) / (xMax - xMin)) * (tideTimeline.length - 1));
+        if (newIdx !== currentScrubIdx) {
+          onScrub(newIdx);
+        }
+      }
+
+      svg.addEventListener('pointerdown', (e) => {
+        isDraggingHydro = true;
+        try { svg.setPointerCapture(e.pointerId); } catch(err) {}
+        scrubFromPointer(e);
+      });
+
+      svg.addEventListener('pointermove', (e) => {
+        if (isDraggingHydro) {
+          scrubFromPointer(e);
+        }
+      });
+
+      svg.addEventListener('pointerup', (e) => {
+        isDraggingHydro = false;
+        try { svg.releasePointerCapture(e.pointerId); } catch(err) {}
+      });
+
+      svg.addEventListener('pointercancel', (e) => {
+        isDraggingHydro = false;
+      });
+    }
+
+    function getLivePointIdx() {
+      return 144; // Center index is always LIVE NOW in 48h centered window
+    }
+
+    // Snap Time Presets
+    function snapTime(preset) {
+      const slider = document.getElementById('timeSlider');
+      if (preset === 'now') {
+        currentScrubIdx = 144;
+      } else if (preset === 'nexthigh') {
+        if (nextHighTideObj) currentScrubIdx = nextHighTideObj.idx;
+      } else if (preset === 'impassable') {
+        // Find next point where TWL reaches active vehicle impassable threshold
+        const vInfo = VEHICLES[activeVehicleKey] || VEHICLES.prius;
+        for (let i = 144; i < tideTimeline.length; i++) {
+          if (tideTimeline[i].twl >= vInfo.impassableTwl) {
+            currentScrubIdx = i;
+            break;
+          }
+        }
+      } else if (preset === 'cleared') {
+        // Find point after next peak where road clears
+        if (nextHighTideObj) {
+          for (let i = nextHighTideObj.idx; i < tideTimeline.length; i++) {
+            if (tideTimeline[i].twl < 6.95) {
+              currentScrubIdx = i;
+              break;
+            }
+          }
+        }
+      } else if (preset === 'oct30_peak') {
+        // Find peak yesterday (~3:24 PM Oct 30)
+        currentScrubIdx = 38; // In past 24h
+      } else if (preset === 'oct30_lag') {
+        // 7:34 PM yesterday
+        currentScrubIdx = 63;
+      }
+      slider.value = currentScrubIdx;
+      updateUI();
+    }
+
+    // Dynamic Real-Time Countdown to Reopening or Next High Tide
+    function getStreetClearanceCountdown(thresholdKey) {
+      if (!tideTimeline.length) return "CLEAR NOW";
+      const cfg = THRESHOLDS[activeLocKey];
+      const targetElev = cfg[thresholdKey] || 6.70;
+      
+      // Look forward from currentScrubIdx for when streetTWL drops below targetElev
+      for (let i = currentScrubIdx; i < tideTimeline.length; i++) {
+        const sTWL = (tideTimeline[i].streetTWL !== undefined) ? tideTimeline[i].streetTWL : tideTimeline[i].twl;
+        if (sTWL <= targetElev) {
+          const diffMins = (i - currentScrubIdx) * 10;
+          if (diffMins <= 0) return "CLEAR NOW";
+          const h = Math.floor(diffMins / 60);
+          const m = diffMins % 60;
+          return `~${tideTimeline[i].timeLabel} (in ${h}h ${m < 10 ? '0' : ''}${m}m)`;
+        }
+      }
+      return "CLEARING SOON";
+    }
+
+    function getClearanceCountdown(currentTwl, isRising) {
+      if (isRising && nextHighTideObj) {
+        const creekTime = nextHighTideObj.timeLabel.includes(' ') ? nextHighTideObj.timeLabel.split(' ').slice(1).join(' ') : nextHighTideObj.timeLabel;
+        const streetTime = nextHighTideObj.streetTimeLabel.includes(' ') ? nextHighTideObj.streetTimeLabel.split(' ').slice(1).join(' ') : nextHighTideObj.streetTimeLabel;
+        return `<span style="color:#38bdf8; font-weight:700;">🌊 Creek Crest: ${creekTime} (${nextHighTideObj.twl.toFixed(2)}')</span> &nbsp;•&nbsp; <span style="color:#fbbf24; font-weight:700;">🚗 Sag Peak: ~${streetTime} (+24m lag)</span> <span style="color:#94a3b8; font-weight:normal;">(in ${nextHighTideObj.timeRemaining})</span>`;
+      }
+      return getStreetClearanceCountdown('gutter');
+    }
+
+    // Core Dynamic UI State Update
+    function updateUI() {
+      if (!tideTimeline.length) return;
+      const point = tideTimeline[currentScrubIdx];
+      const cfg = THRESHOLDS[activeLocKey];
+      const vInfo = VEHICLES[activeVehicleKey] || VEHICLES.prius;
+
+      // Update Scrubber Time Badge
+      const isScrubbing = (currentScrubIdx !== 144);
+      const badgeEl = document.getElementById('scrubberTimeBadge');
+      if (badgeEl) {
+        if (!isScrubbing) {
+          badgeEl.innerHTML = `<span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--green); margin-right:5px; box-shadow:0 0 6px var(--green);"></span>LIVE NOW: ${point.dayLabel} ${point.timeLabel}`;
+          badgeEl.style.borderColor = "rgba(34, 197, 94, 0.4)";
+          badgeEl.style.color = "var(--green)";
+        } else {
+          badgeEl.innerHTML = `<span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--amber); margin-right:5px;"></span>${point.isPast ? 'PAST' : 'FORECAST'}: ${point.dayLabel} ${point.timeLabel}`;
+          badgeEl.style.borderColor = "rgba(245, 158, 11, 0.4)";
+          badgeEl.style.color = "var(--amber)";
+        }
+      }
+      document.getElementById('currentLocationName').textContent = cfg.name;
+
+      // Metric calculations
+      const twl = point.twl;
+      const streetLevel = (point.streetTWL !== undefined) ? point.streetTWL : point.twl;
+      const effectiveTwl = streetLevel; // For fullscreen banner and clearance checks
+
+      document.getElementById('valTWL').innerHTML = `${twl.toFixed(2)} <span>ft NAVD88</span>`;
+      document.getElementById('valTWLMLLW').textContent = `Station 9414874: ${(twl - 0.06).toFixed(2)}' MLLW`;
+      document.getElementById('valSurge').innerHTML = `+${liveSurge.toFixed(2)} <span>ft</span>`;
+
+      // Compute Smoothed Trend over 30-min window (eliminates 1-step sensor noise)
+      const nextIdx = Math.min(tideTimeline.length - 1, currentScrubIdx + 1);
+      const lookAhead = Math.min(tideTimeline.length - 1, currentScrubIdx + 2);
+      const lookBehind = Math.max(0, currentScrubIdx - 2);
+      const windowDiff = tideTimeline[lookAhead].twl - tideTimeline[lookBehind].twl;
+      const singleDiff = tideTimeline[nextIdx].twl - twl;
+
+      // Physical progression relative to upcoming peak:
+      // Peak must be within imminent 6-hour tidal window (<= 36 steps) to prevent tomorrow's high peak from overriding today's falling trend
+      const isImminentPeak = nextHighTideObj && ((nextHighTideObj.idx - currentScrubIdx) <= 36) && ((nextHighTideObj.idx - currentScrubIdx) >= 0);
+      const isBeforePeak = isImminentPeak;
+      const isNearPeak = nextHighTideObj && Math.abs(currentScrubIdx - nextHighTideObj.idx) <= 1;
+
+      let isRising = false;
+      let isFalling = false;
+      const trendEl = document.getElementById('tideTrendIcon');
+
+      if (isNearPeak || (Math.abs(windowDiff) < 0.02 && Math.abs(singleDiff) < 0.01)) {
+        trendEl.textContent = "⏸️ HIGH SLACK / CRESTING";
+        isRising = isBeforePeak;
+        isFalling = !isBeforePeak;
+      } else if (windowDiff > 0.01 || (singleDiff > 0.01 && windowDiff >= 0)) {
+        isRising = true;
+        trendEl.textContent = "⬆️ RISING";
+      } else {
+        isFalling = true;
+        trendEl.textContent = "⬇️ FALLING";
+      }
+
+      // Zone 1: Roadway Center Crown at Sag Dip (7.42')
+      // Center crown has transverse camber slope, shedding water sideways into gutters as soon as water drops below 7.42'
+      const crownDeltaFt = (twl >= cfg.crown && streetLevel >= cfg.crown) ? (Math.min(streetLevel, twl) - cfg.crown) : (streetLevel >= cfg.crown ? streetLevel - cfg.crown : 0.0);
+      const crownDepthIn = Math.max(0, crownDeltaFt * 12);
+      const crownSubEl = document.getElementById('valCrownSub');
+      const crownStatusEl = document.getElementById('crownStatusText');
+      const valCrownEl = document.getElementById('valCrownDepth');
+
+      const valClrEl = document.getElementById('valPriusClearance');
+      const statusClrEl = document.getElementById('valPriusStatusText');
+      const depthClrEl = document.getElementById('valPriusDepth');
+
+      // Zone 2: Front Street Gutters & Front Parking (Front of House #326, Breaches at 7.28' TWL)
+      const frontGutterThresh = cfg.frontGutter || 7.28;
+      const frontGutterDeltaFt = streetLevel - frontGutterThresh;
+      const frontGutterDepthIn = Math.max(0, frontGutterDeltaFt * 12);
+      const houseGutterDepthIn = frontGutterDepthIn; // Alias for front gutter in front of #326
+      
+      const sagGutterThresh = cfg.sagGutter || 7.15;
+      const sagGutterDeltaFt = streetLevel - sagGutterThresh;
+      const sagGutterDepthIn = Math.max(0, sagGutterDeltaFt * 12);
+      const gutterDepthIn = sagGutterDepthIn; // Alias for sag gutter / low crosswalk drain
+
+      const frontParkingStatusEl = document.getElementById('frontParkingStatusText');
+      const valFrontParkingDepthEl = document.getElementById('valFrontParkingDepth');
+      const valFrontParkingSubEl = document.getElementById('valFrontParkingSub');
+
+      // Zone 3: Back Lot Carport (#86 Stall: 8.15' slab, direct lagoon inlet)
+      const carportMarginFt = cfg.stall - twl;
+      const carportMarginIn = carportMarginFt * 12;
+      const carportDepthIn = Math.max(0, (twl - cfg.stall) * 12);
+      const carportStatusEl = document.getElementById('carportStatusText');
+      const valCarportMarginEl = document.getElementById('valCarportMargin');
+      const valCarportSubEl = document.getElementById('valCarportSub');
+
+      // Update Zone 2 (Front Street Gutters in front of house / general front parking)
+      if (valFrontParkingDepthEl && frontParkingStatusEl && valFrontParkingSubEl) {
+        if (frontGutterDepthIn > 0) {
+          valFrontParkingDepthEl.innerHTML = `+${frontGutterDepthIn.toFixed(1)} <span>in gutter</span>`;
+          valFrontParkingDepthEl.style.color = "var(--red)";
+          frontParkingStatusEl.textContent = "GUTTER FLOODED";
+          frontParkingStatusEl.style.color = "var(--red)";
+          valFrontParkingSubEl.textContent = `Front street gutters taking water (+${frontGutterDepthIn.toFixed(1)}")`;
+        } else if (sagGutterDepthIn > 0) {
+          valFrontParkingDepthEl.innerHTML = `+${sagGutterDepthIn.toFixed(1)} <span>in gutter</span>`;
+          valFrontParkingDepthEl.style.color = "var(--amber)";
+          frontParkingStatusEl.textContent = "RESIDUAL PUDDLE";
+          frontParkingStatusEl.style.color = "var(--amber)";
+          valFrontParkingSubEl.textContent = `Front stalls clear • Standing water trapped in curb gutter pan (+${sagGutterDepthIn.toFixed(1)}")`;
+        } else {
+          valFrontParkingDepthEl.innerHTML = `0.0 <span>in (DRY)</span>`;
+          valFrontParkingDepthEl.style.color = "var(--green)";
+          frontParkingStatusEl.textContent = "100% DRY";
+          frontParkingStatusEl.style.color = "var(--green)";
+          valFrontParkingSubEl.textContent = `Front street gutters & parking stalls fully dry`;
+        }
+      }
+
+      // Update Zone 3 (Back Lot Carport) Card
+      if (valCarportMarginEl && carportStatusEl && valCarportSubEl) {
+        if (twl >= cfg.stall) {
+          valCarportMarginEl.innerHTML = `+${carportDepthIn.toFixed(1)} <span>in stall</span>`;
+          valCarportMarginEl.style.color = "var(--red)";
+          carportStatusEl.textContent = "WATER AT SLAB";
+          carportStatusEl.style.color = "var(--red)";
+          valCarportSubEl.textContent = `Carport Spot #86 overtopped!`;
+        } else {
+          valCarportMarginEl.innerHTML = `+${carportMarginIn.toFixed(1)} <span>in margin</span>`;
+          valCarportMarginEl.style.color = "var(--green)";
+          carportStatusEl.textContent = "SAFE (DRY)";
+          carportStatusEl.style.color = "var(--green)";
+          valCarportSubEl.textContent = `Slab: 7.75' | Direct lagoon inlet`;
+        }
+      }
+
+      // Roadway Crown & Vehicle Clearance Updates
+      if (isRising) {
+        // RISING PHASE:
+        if (twl >= 7.38) {
+          const dipDepthIn = Math.max(0.5, (twl - 7.38) * 12 + 1.0);
+          valCrownEl.innerHTML = `+${dipDepthIn.toFixed(1)} <span>in water</span>`;
+          crownStatusEl.textContent = "SUBMERGED";
+          crownStatusEl.style.color = "var(--red)";
+          if (crownSubEl) crownSubEl.textContent = `Breached at ~3:58 PM • Actively backfilling both lanes`;
+
+          const remClr = Math.max(0, activeVehicleClearance - dipDepthIn);
+          valClrEl.innerHTML = `${remClr.toFixed(1)} <span>in clr</span>`;
+          valClrEl.style.color = remClr < 2.0 ? "var(--red)" : "var(--amber)";
+          if (statusClrEl) {
+            statusClrEl.textContent = remClr < 1.5 ? "IMPASSABLE" : "REDUCED";
+            statusClrEl.style.color = remClr < 1.5 ? "var(--red)" : "var(--amber)";
+          }
+          if (depthClrEl) {
+            depthClrEl.textContent = `Sag dip water: ${dipDepthIn.toFixed(1)}" deep • Backfilling road`;
+            depthClrEl.style.color = "#fca5a5";
+          }
+        } else if (twl >= cfg.gutter) {
+          valCrownEl.innerHTML = `0.0 <span>in dry</span>`;
+          crownStatusEl.textContent = "DRY";
+          crownStatusEl.style.color = "var(--green)";
+          if (crownSubEl) crownSubEl.textContent = `Crown dry • Water filling storm pipes & curb gutters`;
+
+          valClrEl.innerHTML = `${activeVehicleClearance.toFixed(1)} <span>in clr</span>`;
+          valClrEl.style.color = "var(--green)";
+          if (statusClrEl) {
+            statusClrEl.textContent = "PASSABLE";
+            statusClrEl.style.color = "var(--green)";
+          }
+          if (depthClrEl) {
+            depthClrEl.textContent = `Road crown dry • Breach expected at 7.38'`;
+            depthClrEl.style.color = "var(--text-muted)";
+          }
+        } else {
+          valCrownEl.innerHTML = `0.0 <span>in dry</span>`;
+          crownStatusEl.textContent = "DRY";
+          crownStatusEl.style.color = "var(--green)";
+          if (crownSubEl) crownSubEl.textContent = `Roadway & curb gutters fully dry`;
+
+          valClrEl.innerHTML = `${activeVehicleClearance.toFixed(1)} <span>in clr</span>`;
+          valClrEl.style.color = "var(--green)";
+          if (statusClrEl) {
+            statusClrEl.textContent = "CLEAR";
+            statusClrEl.style.color = "var(--green)";
+          }
+          if (depthClrEl) {
+            depthClrEl.textContent = `Travel lane completely dry`;
+            depthClrEl.style.color = "var(--text-muted)";
+          }
+        }
+      } else {
+        // RECEDING / PEAK CREST PHASE (Driven by physical streetLevel!)
+        if (streetLevel >= cfg.crown) {
+          valCrownEl.innerHTML = `+${crownDepthIn.toFixed(1)} <span>in water</span>`;
+          crownStatusEl.textContent = "SUBMERGED";
+          crownStatusEl.style.color = "var(--red)";
+          if (crownSubEl) crownSubEl.textContent = `Sag Dip: +${crownDepthIn.toFixed(1)}" | Street Gutter: +${houseGutterDepthIn.toFixed(1)}"`;
+
+          const remClr = Math.max(0, activeVehicleClearance - crownDepthIn);
+          valClrEl.innerHTML = `${remClr.toFixed(1)} <span>in clr</span>`;
+          valClrEl.style.color = remClr < 2.0 ? "var(--red)" : "var(--amber)";
+          if (statusClrEl) {
+            statusClrEl.textContent = remClr < 1.5 ? "IMPASSABLE" : "REDUCED";
+            statusClrEl.style.color = remClr < 1.5 ? "var(--red)" : "var(--amber)";
+          }
+          if (depthClrEl) {
+            depthClrEl.textContent = `Sag dip water: ${crownDepthIn.toFixed(1)}" deep (Receding with lag)`;
+            depthClrEl.style.color = "#fca5a5";
+          }
+        } else if (streetLevel >= (cfg.houseGutter || 6.85)) {
+          valCrownEl.innerHTML = `0.0 <span>in dry</span>`;
+          crownStatusEl.textContent = "CROWN CLEAR";
+          crownStatusEl.style.color = "var(--green)";
+          if (crownSubEl) crownSubEl.textContent = `Crown dry | Front stalls flooded (+${houseGutterDepthIn.toFixed(1)}")`;
+
+          valClrEl.innerHTML = `${activeVehicleClearance.toFixed(1)} <span>in clr</span>`;
+          valClrEl.style.color = "var(--green)";
+          if (statusClrEl) {
+            statusClrEl.textContent = "PASSABLE";
+            statusClrEl.style.color = "var(--green)";
+          }
+          if (depthClrEl) {
+            depthClrEl.textContent = `Travel lane clear • Watch curb gutters`;
+            depthClrEl.style.color = "var(--text-muted)";
+          }
+        } else if (streetLevel > cfg.gutter) { // > 7.15'
+          hero.classList.add('yellow');
+          badge.classList.add('yellow');
+          badgeText.textContent = "⚠️ TRAVEL LANES CLEAR • RESIDUAL GUTTER WATER";
+          heroTitle.textContent = `Travel Lanes Clear & Passable • Standing Water in Curb Gutters (+${gutterDepthIn.toFixed(1)}")`;
+          heroDesc.textContent = `Center roadway crown and front parking stalls are completely clear and passable for all vehicles. Residual standing water (+${gutterDepthIn.toFixed(1)} in deep) remains trapped in the curb gutter pan in front of #326 and near the sag dip due to flat gutter drainage lag. Avoid parking directly in gutter pans until dry.`;
+          cdLabel.textContent = "ESTIMATED GUTTER CLEARANCE:";
+          cdVal.textContent = getStreetClearanceCountdown('gutter');
+        } else {
+          hero.classList.add('green');
+          badge.classList.add('green');
+          badgeText.textContent = "ROAD & PARKING 100% CLEAR";
+          heroTitle.textContent = "Roadway, Front Stalls & Curb Gutters 100% Clear";
+          if (nextHighTideObj) {
+            heroDesc.textContent = `Road crown, front parking stalls, and curb gutters completely dry. Next high tide is forecast at ${nextHighTideObj.timeLabel} (${nextHighTideObj.twl.toFixed(2)}' TWL — ${nextHighTideObj.hazard}).`;
+            cdLabel.textContent = "NEXT HIGH TIDE:";
+            cdVal.textContent = `${nextHighTideObj.timeLabel} (${nextHighTideObj.twl.toFixed(2)}') in ${nextHighTideObj.timeRemaining}`;
+          } else {
+            heroDesc.textContent = "All salt water has receded. Road crown, front stalls, and curb gutters completely dry all the way down the street.";
+            cdLabel.textContent = "STATUS:";
+            cdVal.textContent = "100% Clear";
+          }
+        }
+      }
+
+      // Update Fullscreen Status Banner if present
+      const fsBanner = document.getElementById('fsStatusBanner');
+      if (fsBanner && point) {
+        const crownDiff = (effectiveTwl - cfg.crown) * 12;
+        let stText = "ROAD 100% CLEAR";
+        if (crownDiff > 0) {
+          stText = `⚠️ ROAD IMPASSIBLE (+${crownDiff.toFixed(1)}" OVER CROWN)`;
+        } else if (effectiveTwl >= cfg.gutter) {
+          const gDiff = (effectiveTwl - cfg.gutter) * 12;
+          stText = `🟡 STREET GUTTER FLOODED (+${gDiff.toFixed(1)}") • CROWN PASSABLE`;
+        }
+        fsBanner.textContent = `${point.dayLabel} ${point.timeLabel} • TWL: ${effectiveTwl.toFixed(2)}' NAVD88 • ${stText}`;
+        if (crownDiff > 0) {
+          fsBanner.style.borderColor = '#ef4444';
+          fsBanner.style.color = '#fca5a5';
+        } else if (effectiveTwl >= cfg.gutter) {
+          fsBanner.style.borderColor = '#f59e0b';
+          fsBanner.style.color = '#fde68a';
+        } else {
+          fsBanner.style.borderColor = '#22c55e';
+          fsBanner.style.color = '#86efac';
+        }
+      }
+
+      // Update SVG Road Cross Section Simulator
+      updateSvgCrossSection(streetLevel, cfg, isRising);
+      updateScrubIndicator();
+    }
+    
+    function updateSvgCrossSection(twl, cfg, isRising) {
+      document.getElementById('crossSectionTideLabel').textContent = `TWL: ${twl.toFixed(2)} ft NAVD88`;
+
+      const gutterY = 223.0; // Pavement ground line at bottom of tires in Front Parking
+      const pxPerFt = 23.856;
+      
+      // Calibrated to Front Street Gutters (where vehicle actually parks outside #326)
+      const frontGutterElev = cfg.frontGutter || 7.55; 
+      const frontStallElev = cfg.frontStall || 7.75;
+      const sagCrownElev = cfg.crown || 7.42;
+      const sagGutterElev = cfg.sagGutter || 7.15;
+      
+      let waterY;
+      let effectiveStreetTwl = twl;
+      
+      const waterLayer = document.getElementById('svgWaterLayer');
+      const waterLine = document.getElementById('svgWaterLine');
+      const waterMarker = document.getElementById('svgWaterMarker');
+      const waterText = document.getElementById('svgWaterText');
+      const sillAlert = document.getElementById('svgSillAlert');
+      const sillText = document.getElementById('svgSillAlertText');
+
+      if (twl <= frontGutterElev) {
+        // Front Parking and Front Street Gutters are 100% DRY!
+        effectiveStreetTwl = twl;
+        waterY = 225.0; // below pavement line
+        if (waterLayer) waterLayer.style.display = 'none';
+        if (waterLine) waterLine.style.display = 'none';
+        if (waterMarker) waterMarker.style.display = 'none';
+        if (sillAlert) sillAlert.style.display = 'none';
+
+        if (waterText) {
+          waterText.setAttribute('y', 235);
+          waterText.setAttribute('fill', '#86efac');
+          if (twl > sagCrownElev) {
+            const sagCrownDepth = (twl - sagCrownElev) * 12;
+            waterText.textContent = `Water Level: ${twl.toFixed(2)}' NAVD88 • Front Parking 100% DRY (+${sagCrownDepth.toFixed(1)}" in distant Sag Dip)`;
+          } else if (twl > sagGutterElev) {
+            const sagGutterDepth = (twl - sagGutterElev) * 12;
+            waterText.textContent = `Water Level: ${twl.toFixed(2)}' NAVD88 • Front Parking 100% DRY (+${sagGutterDepth.toFixed(1)}" in distant Sag Gutter)`;
+          } else {
+            waterText.textContent = `Water Level: ${twl.toFixed(2)}' NAVD88 • Front Parking & Gutters 100% DRY`;
+          }
+        }
+        return;
+      }
+
+      // Water reaches Front Street Gutters (exceeds 7.55' NAVD88)
+      waterY = Math.max(40, Math.min(223, gutterY - (twl - frontGutterElev) * pxPerFt));
+
+      const waterPath = `M 30,260 L 30,${waterY} Q 360,${waterY - 0.5} 600,${waterY} L 600,260 Z`;
+      if (waterLayer) {
+        waterLayer.style.display = 'block';
+        waterLayer.setAttribute('d', waterPath);
+      }
+
+      // Dynamically move the blue water line and marker arrow
+      if (waterLine) {
+        waterLine.style.display = 'block';
+        waterLine.setAttribute('y1', waterY);
+        waterLine.setAttribute('y2', waterY);
+      }
+      if (waterMarker) {
+        waterMarker.style.display = 'block';
+        waterMarker.setAttribute('points', `600,${waterY} 612,${waterY - 5} 612,${waterY + 5}`);
+      }
+
+      const frontGutterDepthIn = (twl - frontGutterElev) * 12;
+      const stallDepthIn = Math.max(0, (twl - frontStallElev) * 12);
+
+      let depthText = `Water Elevation: ${twl.toFixed(2)}' NAVD88`;
+      if (stallDepthIn > 0) {
+        depthText += ` (+${stallDepthIn.toFixed(1)}" in Front Parking Stalls | +${frontGutterDepthIn.toFixed(1)}" in Front Gutter)`;
+        if (waterText) waterText.setAttribute('fill', '#f87171');
+      } else {
+        depthText += ` (+${frontGutterDepthIn.toFixed(1)}" in Front Street Gutter • Parking Stall Dry)`;
+        if (waterText) waterText.setAttribute('fill', '#38bdf8');
+      }
+
+      if (waterText) {
+        waterText.setAttribute('y', Math.max(50, Math.min(235, waterY - 4)));
+        waterText.textContent = depthText;
+      }
+
+      // Sill Alert calibrated to Front Parking
+      const vInfo = VEHICLES[activeVehicleKey] || VEHICLES.prius;
+      const clrElev = frontGutterElev + (vInfo.clr / 12);
+      const sillElev = frontGutterElev + (8.5 / 12); // Door sill ~8.5" above gutter
+      const sillDeltaIn = (twl - sillElev) * 12;
+
+      if (twl >= sillElev) {
+        if (sillAlert) sillAlert.style.display = 'block';
+        if (sillText) sillText.textContent = `🚨 WATER OVER DOOR SILL (+${sillDeltaIn.toFixed(1)}") — MOVE TO SAFE PARKING`;
+        const rect = sillAlert ? sillAlert.querySelector('rect') : null;
+        if (rect) {
+          rect.setAttribute('fill', '#ef4444');
+          rect.setAttribute('stroke', '#ffffff');
+        }
+      } else if (twl >= clrElev) {
+        if (sillAlert) sillAlert.style.display = 'block';
+        if (sillText) sillText.textContent = `⚠️ EXCEEDS ${vInfo.clr}" GROUND CLEARANCE — MOVE VEHICLE`;
+        const rect = sillAlert ? sillAlert.querySelector('rect') : null;
+        if (rect) {
+          rect.setAttribute('fill', '#f97316');
+          rect.setAttribute('stroke', '#fb923c');
+        }
+      } else if (frontGutterDepthIn > 0) {
+        if (sillAlert) sillAlert.style.display = 'block';
+        if (sillText) sillText.textContent = `🟡 WATER IN FRONT GUTTER (+${frontGutterDepthIn.toFixed(1)}") — STALL DRY`;
+        const rect = sillAlert ? sillAlert.querySelector('rect') : null;
+        if (rect) {
+          rect.setAttribute('fill', '#f59e0b');
+          rect.setAttribute('stroke', '#fbbf24');
+        }
+      } else {
+        if (sillAlert) sillAlert.style.display = 'none';
+      }
+    }
+    
+    // Native SVG Hydrograph Generator & Touch Scrubber (Centered 48-Hour Chart)
+    function renderSvgHydrograph() {
+      if (!tideTimeline.length) return;
+
+      const xMin = 55;
+      const xMax = 585;
+      const xSpan = xMax - xMin; // 530px
+      const yBottom = 200; // Elevation 5.0'
+      const yTop = 30;    // Elevation 8.0'
+      const elevMin = 5.0;
+      const elevMax = 8.2;
+      const elevSpan = elevMax - elevMin;
+
+      function getX(idx) {
+        return xMin + (idx / (tideTimeline.length - 1)) * xSpan;
+      }
+      function getY(elev) {
+        const clamped = Math.max(elevMin, Math.min(elevMax, elev));
+        return yBottom - ((clamped - elevMin) / elevSpan) * (yBottom - yTop);
+      }
+
+      let twlPoints = [];
+      let astPoints = [];
+
+      for (let i = 0; i < tideTimeline.length; i++) {
+        const x = getX(i);
+        const yTwl = getY(tideTimeline[i].twl);
+        const yAst = getY(tideTimeline[i].ast);
+        twlPoints.push(`${x.toFixed(1)},${yTwl.toFixed(1)}`);
+        astPoints.push(`${x.toFixed(1)},${yAst.toFixed(1)}`);
+      }
+
+      let streetPoints = [];
+      for (let i = 0; i < tideTimeline.length; i++) {
+        const x = getX(i);
+        const pt = tideTimeline[i];
+        const sLevel = (pt.streetTWL !== undefined && pt.streetTWL > 0) ? pt.streetTWL : pt.twl;
+        const yStreet = getY(sLevel);
+        streetPoints.push(`${x.toFixed(1)},${yStreet.toFixed(1)}`);
+      }
+
+      const twlPathD = "M " + twlPoints.join(" L ");
+      const astPathD = "M " + astPoints.join(" L ");
+      const streetPathD = "M " + streetPoints.join(" L ");
+      const twlAreaD = `M ${xMin},${yBottom} L ${twlPoints.join(" L ")} L ${xMax},${yBottom} Z`;
+
+      const elTwl = document.getElementById('svgTwlPath');
+      const elAst = document.getElementById('svgAstPath');
+      const elStreet = document.getElementById('svgStreetPath');
+      const elArea = document.getElementById('svgTwlArea');
+
+      if (elTwl) elTwl.setAttribute('d', twlPathD);
+      if (elAst) elAst.setAttribute('d', astPathD);
+      if (elStreet) elStreet.setAttribute('d', streetPathD);
+      if (elArea) elArea.setAttribute('d', twlAreaD);
+
+      // Render Next High Tide Dual Markers (Creek Crest + Street Sag Peak)
+      if (nextHighTideObj) {
+        const xPeak = getX(nextHighTideObj.idx);
+        const yPeak = getY(nextHighTideObj.twl);
+        const xStreetPeak = getX(nextHighTideObj.streetIdx || Math.min(tideTimeline.length - 1, nextHighTideObj.idx + 2));
+        const deltaX = Math.max(12, xStreetPeak - xPeak);
+        
+        const markerG = document.getElementById('svgNextHighMarker');
+        if (markerG) {
+          markerG.setAttribute('transform', `translate(${xPeak}, ${yPeak})`);
+          markerG.style.display = 'inline';
+          
+          const lagLine = document.getElementById('svgPeakLagLine');
+          if (lagLine) lagLine.setAttribute('x2', deltaX);
+          
+          const streetDot = document.getElementById('svgStreetPeakDot');
+          if (streetDot) streetDot.setAttribute('cx', deltaX);
+          
+          const label = document.getElementById('svgNextHighLabel');
+          if (label) {
+            const creekT = nextHighTideObj.timeLabel.includes(' ') ? nextHighTideObj.timeLabel.split(' ').slice(1).join(' ') : nextHighTideObj.timeLabel;
+            const streetT = nextHighTideObj.streetTimeLabel.includes(' ') ? nextHighTideObj.streetTimeLabel.split(' ').slice(1).join(' ') : nextHighTideObj.streetTimeLabel;
+            label.textContent = `🌊 Creek ${creekT} (${nextHighTideObj.twl.toFixed(2)}') ➔ 🚗 Sag ~${streetT} (+24m)`;
+          }
+          
+          const box = document.getElementById('svgNextHighBox');
+          if (box) {
+            box.setAttribute('x', Math.round(deltaX / 2 - 95));
+            box.setAttribute('width', 190);
+          }
+          if (label) {
+            label.setAttribute('x', Math.round(deltaX / 2));
+          }
+        }
+      }
+
+      updateScrubIndicator();
+    }
+
+    function updateScrubIndicator() {
+      if (!tideTimeline.length) return;
+      const xMin = 55;
+      const xMax = 585;
+      const xSpan = xMax - xMin;
+      const yBottom = 200;
+      const yTop = 30;
+      const elevMin = 5.0;
+      const elevMax = 8.2;
+      const elevSpan = elevMax - elevMin;
+
+      const pt = tideTimeline[currentScrubIdx];
+      const curX = xMin + (currentScrubIdx / (tideTimeline.length - 1)) * xSpan;
+      const curY = yBottom - ((Math.max(elevMin, Math.min(elevMax, pt.twl)) - elevMin) / elevSpan) * (yBottom - yTop);
+
+      const scrubLine = document.getElementById('svgScrubLine');
+      const scrubDot = document.getElementById('svgScrubDot');
+      const scrubBadge = document.getElementById('svgScrubBadge');
+      const scrubText = document.getElementById('svgScrubText');
+
+      if (scrubLine) {
+        scrubLine.setAttribute('x1', curX);
+        scrubLine.setAttribute('x2', curX);
+      }
+      if (scrubDot) {
+        scrubDot.setAttribute('cx', curX);
+        scrubDot.setAttribute('cy', curY);
+      }
+      if (scrubBadge) {
+        const badgeX = Math.max(90, Math.min(550, curX));
+        scrubBadge.setAttribute('transform', `translate(${badgeX}, 15)`);
+      }
+      if (scrubText) {
+        scrubText.textContent = `${pt.dayLabel} ${pt.timeLabel} (${pt.twl.toFixed(2)}')`;
+      }
+    }
+
+    function openPhoto(url, caption) {
+      alert(`${caption}\n\n(Photo: ${url})`);
+    }
+
+    function hardReloadApp() {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(regs => {
+          for (let reg of regs) reg.update();
+        });
+      }
+      if ('caches' in window) {
+        caches.keys().then(keys => {
+          keys.forEach(k => caches.delete(k));
+        });
+      }
+      window.location.href = window.location.pathname + '?nocache=' + new Date().getTime();
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        window.location.reload();
+      });
+    }
+
+    // Startup Initialization
+    document.addEventListener('DOMContentLoaded', () => {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js?v=30').catch(() => {});
+      }
+      applyVehicleAndCarView();
+      initHydrographDragScrub();
+      loadAlertSettings();
+    fetchLiveNOAA();
+
+      // Continuous 24/7 Polling: Refresh NOAA data every 6 minutes all day & night
+      setInterval(fetchLiveNOAA, 6 * 60 * 1000);
+
+      // Keep Live indicator fresh every 30 seconds
+      setInterval(() => {
+        if (currentScrubIdx === 144) {
+          updateUI();
+        }
+      }, 30 * 1000);
+    });
+
+    // Condition Alerts & SMS Registration Engine
+    const CARRIER_GATEWAYS = {
+      verizon: "@vtext.com",
+      att: "@txt.att.net",
+      tmobile: "@tmomail.net",
+      googlefi: "@msg.fi.google.com",
+      xfinity: "@vtext.com",
+      spectrum: "@vtext.com",
+      other: ""
+    };
+
+    function formatPhoneNumber(input) {
+      let val = input.value.replace(/\D/g, '');
+      if (val.length > 10) val = val.substring(0, 10);
+      if (val.length >= 7) {
+        input.value = `(${val.substring(0,3)}) ${val.substring(3,6)}-${val.substring(6)}`;
+      } else if (val.length >= 4) {
+        input.value = `(${val.substring(0,3)}) ${val.substring(3)}`;
+      } else if (val.length > 0) {
+        input.value = `(${val}`;
+      } else {
+        input.value = '';
+      }
+    }
+
+    function loadAlertSettings() {
+      try {
+        const raw = localStorage.getItem('wet_alert_settings');
+        if (!raw) return;
+        const cfg = JSON.parse(raw);
+        if (cfg.phone) document.getElementById('alertPhoneInput').value = cfg.phone;
+        if (cfg.carrier) document.getElementById('alertCarrierSelect').value = cfg.carrier;
+        if (cfg.notifyDrain1 !== undefined) document.getElementById('notifyDrain1').checked = cfg.notifyDrain1;
+        if (cfg.notifyCrownBreach !== undefined) document.getElementById('notifyCrownBreach').checked = cfg.notifyCrownBreach;
+        if (cfg.notifyCrownClear !== undefined) document.getElementById('notifyCrownClear').checked = cfg.notifyCrownClear;
+        if (cfg.notifyEarlySeep !== undefined) document.getElementById('notifyEarlySeep').checked = cfg.notifyEarlySeep;
+        if (cfg.notifyCarport !== undefined) document.getElementById('notifyCarport').checked = cfg.notifyCarport;
+        if (cfg.notifyGutterClear !== undefined) document.getElementById('notifyGutterClear').checked = cfg.notifyGutterClear;
+      } catch (e) {
+        console.log("Could not load alert settings:", e);
+      }
+    }
+
+    function saveAlertSettings() {
+      const phone = document.getElementById('alertPhoneInput').value.trim();
+      const carrier = document.getElementById('alertCarrierSelect').value;
+      const cleanDigits = phone.replace(/\D/g, '');
+      const feedback = document.getElementById('alertFeedbackBox');
+
+      const settings = {
+        phone: phone,
+        cleanDigits: cleanDigits,
+        carrier: carrier,
+        gatewayEmail: cleanDigits && CARRIER_GATEWAYS[carrier] ? `${cleanDigits}${CARRIER_GATEWAYS[carrier]}` : '',
+        notifyDrain1: document.getElementById('notifyDrain1').checked,
+        notifyCrownBreach: document.getElementById('notifyCrownBreach').checked,
+        notifyCrownClear: document.getElementById('notifyCrownClear').checked,
+        notifyEarlySeep: document.getElementById('notifyEarlySeep').checked,
+        notifyCarport: document.getElementById('notifyCarport').checked,
+        notifyGutterClear: document.getElementById('notifyGutterClear').checked,
+        savedAt: new Date().toISOString()
+      };
+
+      try {
+        localStorage.setItem('wet_alert_settings', JSON.stringify(settings));
+        if (feedback) {
+          feedback.style.display = 'block';
+          feedback.style.color = '#4ade80';
+          feedback.textContent = `✓ Preferences saved! SMS Gateway: ${settings.gatewayEmail || 'Direct'}`;
+          setTimeout(() => { feedback.style.display = 'none'; }, 4000);
+        }
+      } catch (e) {
+        console.error("Save alert settings error:", e);
+      }
+    }
+
+    async function requestAndroidPushPermission() {
+      const btn = document.getElementById('btnPushPermission');
+      if (!('Notification' in window)) {
+        alert("This browser does not support Web Push notifications.");
+        return;
+      }
+      try {
+        const perm = await Notification.requestPermission();
+        if (perm === 'granted') {
+          if (btn) {
+            btn.textContent = "✓ Enabled";
+            btn.style.borderColor = "#22c55e";
+            btn.style.color = "#4ade80";
+          }
+          new Notification("🌊 Larkspur Flood Watch", {
+            body: "Real-time notifications enabled for your Samsung Galaxy / Android device!",
+            icon: "favicon.ico"
+          });
+        } else {
+          alert("Notification permission was denied. You can enable it in Chrome / Android Site Settings.");
+        }
+      } catch (e) {
+        console.log("Notification request error:", e);
+      }
+    }
+
+    function sendTestSmsAlert() {
+      const phone = document.getElementById('alertPhoneInput').value.trim();
+      const carrier = document.getElementById('alertCarrierSelect').value;
+      const cleanDigits = phone.replace(/\D/g, '');
+      const feedback = document.getElementById('alertFeedbackBox');
+
+      if (!cleanDigits || cleanDigits.length < 10) {
+        if (feedback) {
+          feedback.style.display = 'block';
+          feedback.style.color = '#f87171';
+          feedback.textContent = "⚠️ Please enter a valid 10-digit mobile phone number.";
+        }
+        return;
+      }
+
+      const gateway = CARRIER_GATEWAYS[carrier] ? `${cleanDigits}${CARRIER_GATEWAYS[carrier]}` : cleanDigits;
+      const sampleMsg = `[Larkspur FloodWatch] TEST ALERT: Big Drain #1 surcharging (7.28' TWL). Front stalls taking water (+1"). Move cars parked in front stalls.`;
+
+      // Trigger native notification if permitted
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification("🌊 Larkspur Flood Watch • Test Alert", {
+          body: sampleMsg,
+          icon: "favicon.ico"
+        });
+      }
+
+      if (feedback) {
+        feedback.style.display = 'block';
+        feedback.style.color = '#38bdf8';
+        feedback.innerHTML = `📨 <strong>Test Alert Generated!</strong> Destination: <code style="font-family:var(--mono);">${gateway}</code><br/><span style="color:#cbd5e1; font-size:0.71rem;">${sampleMsg}</span>`;
+      }
+    }
+
+</script>
 </body>
 </html>
