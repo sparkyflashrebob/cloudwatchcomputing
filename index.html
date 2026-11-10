@@ -1790,13 +1790,13 @@
         frontGutter: 7.28, // Front Street Gutters (KML 1.18m GPS: fills at 7.28', flooded in Nov 8 photos at 7.43')
         houseGutter: 7.28, // Front Street Gutters in front of 326 Larkspur Plaza Dr (takes water at 7.28')
         frontStall: 7.38,  // Front parking stall apron (submerged in Nov 8 photos at 7.43')
-        walkwayBase: 7.42, // Concrete walkway bottom slab at #326 (water touches walkway slab at 7.42')
+        walkwayBase: 7.42, // Concrete walkway bottom slab  (water touches walkway slab at 7.42')
         crown: 7.42,    // Crown (SAG in Road) crosswalk travel lane overtopping threshold
         higherPatch: 7.75, // Higher front parking patch
         highCrown: 7.75, // High road crown ridge in foreground
         priusSag: 7.91,  // Impassable for 5.9" clearance (7.42' crown + 0.49' / 5.9" = 7.91')
         stall: 8.15,     // Low Driveway & Ground Apron benchmark
-        streetHighPoint: 8.30, // Street High Point (road crest north of #326; last divide to submerge)
+        streetHighPoint: 8.30, // Street High Point (road crest ; last divide to submerge)
         damageLevel: 8.86, // Interior damage level
         lagMinutes: 270   // 4.5 hour drainage lag for curb gutters & front stalls
       },
@@ -2605,7 +2605,7 @@
       const frontGutterThresh = cfg.frontGutter || 7.28;
       const frontGutterDeltaFt = streetLevel - frontGutterThresh;
       const frontGutterDepthIn = Math.max(0, frontGutterDeltaFt * 12);
-      const houseGutterDepthIn = frontGutterDepthIn; // Alias for front gutter in front of #326
+      const houseGutterDepthIn = frontGutterDepthIn; // Alias for front gutter along street margins
       
       const sagGutterThresh = cfg.sagGutter || 7.15;
       const sagGutterDeltaFt = streetLevel - sagGutterThresh;
@@ -2841,7 +2841,7 @@
       const gutterY = 223.0; // Pavement ground line at bottom of tires in Front Parking
       const pxPerFt = 23.856;
       
-      // Calibrated to Front Street Gutters (where vehicle actually parks outside #326)
+      // Calibrated to Front Street Gutters (where vehicle actually parks along street parking)
       const frontGutterElev = cfg.frontGutter || 7.55; 
       const frontStallElev = cfg.frontStall || 7.75;
       const sagCrownElev = cfg.crown || 7.42;
