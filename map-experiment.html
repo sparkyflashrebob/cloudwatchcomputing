@@ -1,637 +1,851 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Marin Coastal Flood Map • Real-Time Inundation Experiment</title>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#090d16">
+  <title>🛠️ Marin County Coastal Flood Topography Dev Lab</title>
   
-  <!-- Leaflet CSS & JS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --bg: #090d16;
-      --card-bg: rgba(15, 23, 42, 0.88);
-      --border: rgba(56, 189, 248, 0.25);
+      --bg: #0b0f19;
+      --card-bg: rgba(18, 24, 38, 0.92);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
       --cyan: #38bdf8;
+      --blue: #2563eb;
       --green: #22c55e;
       --amber: #f59e0b;
       --red: #ef4444;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --font: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --mono: 'JetBrains Mono', monospace;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body, html {
-      width: 100%;
-      height: 100%;
+
+    body {
       background: var(--bg);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: var(--font);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
       overflow: hidden;
     }
 
-    #map {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 1;
-    }
-
-    /* Floating Header Control Panel */
-    .map-header {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      right: 12px;
-      max-width: 540px;
-      margin: 0 auto;
-      z-index: 1000;
-      background: var(--card-bg);
-      backdrop-filter: blur(16px);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 12px 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    }
-
-    .header-top {
+    /* Top Nav */
+    header {
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 10px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      z-index: 1000;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
-    .title-group {
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand h1 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .badge-dev {
+      background: #4338ca;
+      color: #e0e7ff;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      font-family: var(--mono);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn-link {
+      color: var(--cyan);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 8px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      transition: all 0.2s;
+    }
+    .btn-link:hover {
+      background: rgba(56, 189, 248, 0.2);
+    }
+
+    /* Scrubber / Control Bar */
+    .control-bar {
+      background: rgba(18, 24, 38, 0.96);
+      border-bottom: 1px solid var(--card-border);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      z-index: 999;
+    }
+
+    .elevation-display {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--card-border);
+      padding: 6px 14px;
+      border-radius: 10px;
+    }
+
+    .elevation-val {
+      font-family: var(--mono);
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--cyan);
+    }
+
+    .elevation-unit {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .datum-sub {
+      font-size: 0.72rem;
+      color: #cbd5e1;
+      font-family: var(--mono);
+      margin-left: 4px;
+    }
+
+    /* Preset Buttons */
+    .preset-group {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .preset-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 0.76rem;
+      font-family: var(--mono);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .preset-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--cyan);
+    }
+    .preset-btn.active {
+      background: var(--cyan);
+      color: #0b0f19;
+      border-color: var(--cyan);
+      font-weight: 800;
+    }
+
+    /* Slider Wrap */
+    .slider-wrap {
+      flex: 1;
+      min-width: 180px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .slider-wrap input[type=range] {
+      flex: 1;
+      accent-color: var(--cyan);
+      height: 6px;
+      cursor: pointer;
+    }
+
+    /* Map Layout */
+    #devMap {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      background: #090d16;
+      z-index: 10;
+    }
+
+    /* Custom Leaflet Pins */
+    .custom-marker-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .custom-marker-badge {
+      background: rgba(15, 23, 42, 0.95);
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--card-border);
+      white-space: nowrap;
+      margin-bottom: 3px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      font-family: var(--mono);
+      pointer-events: none;
+    }
+    .custom-marker-badge.green { border-color: var(--green); color: #86efac; }
+    .custom-marker-badge.amber { border-color: var(--amber); color: #fde047; }
+    .custom-marker-badge.red { border-color: var(--red); color: #fca5a5; }
+
+    .custom-marker-pin {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      border: 2px solid #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    .custom-marker-pin.green { background: var(--green); }
+    .custom-marker-pin.amber { background: var(--amber); }
+    .custom-marker-pin.red { background: var(--red); }
+
+    /* Map Popup Styling */
+    .leaflet-popup-content-wrapper {
+      background: rgba(15, 23, 42, 0.96) !important;
+      border: 1px solid var(--card-border) !important;
+      color: var(--text) !important;
+      border-radius: 12px !important;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6) !important;
+    }
+    .leaflet-popup-tip {
+      background: rgba(15, 23, 42, 0.96) !important;
+    }
+
+    /* Floating Legend Overlay */
+    .floating-legend {
+      position: absolute;
+      bottom: 24px;
+      left: 16px;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.75rem;
+      z-index: 1000;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      max-width: 320px;
+    }
+
+    .legend-row {
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .title-icon { font-size: 1.25rem; }
-    .title-text { font-size: 0.95rem; font-weight: 700; color: #fff; }
-    .title-sub { font-size: 0.72rem; color: var(--text-muted); }
-
-    .live-tide-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(56, 189, 248, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      border-radius: 999px;
-      padding: 4px 10px;
-      font-size: 0.76rem;
-      font-family: var(--mono);
-      font-weight: 700;
-      color: var(--cyan);
+    .legend-color {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
     }
 
-    /* Interactive Tide Level Simulation Slider */
-    .slider-box {
-      margin-top: 8px;
-      background: rgba(0, 0, 0, 0.35);
-      border-radius: 10px;
-      padding: 8px 12px;
-    }
-
-    .slider-label-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.75rem;
-      margin-bottom: 4px;
-    }
-
-    .slider-val {
-      font-family: var(--mono);
-      font-weight: 700;
-      color: #fcd34d;
-    }
-
-    input[type=range] {
-      width: 100%;
-      accent-color: var(--cyan);
-      cursor: pointer;
-    }
-
-    .slider-presets {
-      display: flex;
-      gap: 6px;
-      margin-top: 6px;
-      overflow-x: auto;
-      padding-bottom: 2px;
-    }
-
-    .preset-btn {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 6px;
-      padding: 3px 8px;
-      font-size: 0.68rem;
-      color: var(--text-muted);
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-    .preset-btn:hover, .preset-btn.active {
-      background: rgba(56, 189, 248, 0.2);
-      border-color: var(--cyan);
-      color: #fff;
-    }
-
-    /* Floating Legend & Controls at Bottom */
-    .map-footer {
+    /* Inspector Toast */
+    .inspector-card {
       position: absolute;
-      bottom: 16px;
-      left: 12px;
-      right: 12px;
-      max-width: 540px;
-      margin: 0 auto;
+      top: 130px;
+      right: 16px;
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 12px;
+      padding: 12px 16px;
       z-index: 1000;
-      background: var(--card-bg);
-      backdrop-filter: blur(16px);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 10px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.75rem;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      color: var(--text);
+      max-width: 340px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      display: none;
     }
-
-    .legend-group {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-    }
-    .dot.green { background: var(--green); box-shadow: 0 0 8px var(--green); }
-    .dot.yellow { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
-    .dot.red { background: var(--red); box-shadow: 0 0 8px var(--red); }
-
-    .btn-gps {
-      background: rgba(56, 189, 248, 0.15);
-      border: 1px solid var(--cyan);
-      border-radius: 8px;
-      color: #fff;
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 6px 10px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    /* Leaflet Layer Control Dark Styling */
-    .leaflet-control-layers {
-      background: rgba(15, 23, 42, 0.88) !important;
-      backdrop-filter: blur(12px) !important;
-      border: 1px solid var(--border) !important;
-      border-radius: 10px !important;
-      color: var(--text) !important;
-      font-size: 0.78rem !important;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5) !important;
-      padding: 6px 10px !important;
-    }
-    .leaflet-control-layers label {
-      color: var(--text) !important;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 4px;
-    }
-
-    /* Custom Leaflet Marker Styling */
-    .custom-marker-pin {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
-      transition: all 0.3s ease;
-      cursor: pointer;
-      border: 2px solid #ffffff;
-    }
-
-    .custom-marker-pin.green {
-      background: #16a34a;
-      box-shadow: 0 0 14px rgba(34, 197, 94, 0.6);
-    }
-    .custom-marker-pin.yellow {
-      background: #d97706;
-      box-shadow: 0 0 16px rgba(245, 158, 11, 0.8);
-    }
-    .custom-marker-pin.red {
-      background: #dc2626;
-      box-shadow: 0 0 20px rgba(239, 68, 68, 0.9);
-      animation: pulseAlert 1.5s infinite;
-    }
-
-    @keyframes pulseAlert {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.18); }
-      100% { transform: scale(1); }
-    }
-
-    /* Popup Styling */
-    .leaflet-popup-content-wrapper {
-      background: #0f172a !important;
-      color: #f8fafc !important;
-      border: 1px solid var(--border) !important;
-      border-radius: 14px !important;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
-    }
-    .leaflet-popup-tip {
-      background: #0f172a !important;
-    }
-    .popup-title {
-      font-weight: 700;
-      font-size: 0.9rem;
-      color: #38bdf8;
-      margin-bottom: 4px;
-    }
-    .popup-meta {
-      font-size: 0.76rem;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-      line-height: 1.35;
-    }
-    .popup-status {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 0.74rem;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-    .popup-status.green { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
-    .popup-status.yellow { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
-    .popup-status.red { background: rgba(239, 68, 68, 0.25); color: #f87171; }
   </style>
 </head>
 <body>
 
-  <!-- MAP CONTAINER -->
-  <div id="map"></div>
-
-  <!-- FLOATING CONTROL PANEL -->
-  <div class="map-header">
-    <div class="header-top">
-      <div class="title-group">
-        <span class="title-icon">🗺️</span>
-        <div>
-          <div class="title-text">Marin Real-Time Flood Map</div>
-          <div class="title-sub">Localized Coastal Inundation &amp; Hotspot Simulation</div>
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <span>🌊</span>
+      <div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <h1>Marin County Coastal Flood Topography Dev Lab</h1>
+          <span class="badge-dev">DEV EXPERIMENT</span>
+        </div>
+        <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">
+          Whole-Map LiDAR Elevation Inundation Modeling &amp; Real-Time Tide Benchmarking
         </div>
       </div>
-      <div class="live-tide-badge" id="liveTideBadge" title="Live NOAA Water Level at Golden Gate">
-        <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--green);"></span>
-        <span id="badgeTideText">Syncing...</span>
-      </div>
+    </div>
+    <div class="nav-links">
+      <a href="index.html" class="btn-link">← Return to Main App</a>
+    </div>
+  </header>
+
+  <!-- Elevation Controller -->
+  <div class="control-bar">
+    <div class="elevation-display">
+      <span class="elevation-val" id="dispMllw">7.25</span>
+      <span class="elevation-unit">ft MLLW</span>
+      <span class="datum-sub" id="dispNavd">(7.16' NAVD88)</span>
     </div>
 
-    <!-- TIDE WATER LEVEL SLIDER SIMULATOR -->
-    <div class="slider-box">
-      <div class="slider-label-row">
-        <span style="color:var(--text-muted);">Simulate Bay Water Level:</span>
-        <span class="slider-val" id="sliderValDisplay">7.22 ft NAVD88</span>
-      </div>
-      <input type="range" id="tideSlider" min="5.00" max="8.80" step="0.05" value="7.22" oninput="onSliderChange(this.value)">
-      <div class="slider-presets">
-        <button class="preset-btn" onclick="setSlider(6.20)">Normal (6.20')</button>
-        <button class="preset-btn" onclick="setSlider(7.00)">NWS Advisory (7.00')</button>
-        <button class="preset-btn active" id="btnLive" onclick="resetToLive()">Live Now (7.22')</button>
-        <button class="preset-btn" onclick="setSlider(7.42)">Larkspur Crown (7.42')</button>
-        <button class="preset-btn" onclick="setSlider(7.80)">King Tide Peak (7.80')</button>
-      </div>
+    <div class="preset-group">
+      <button class="preset-btn" onclick="setElevation(7.00)">7.00'</button>
+      <button class="preset-btn active" onclick="setElevation(7.25)">7.25'</button>
+      <button class="preset-btn" onclick="setElevation(7.50)">7.50'</button>
+      <button class="preset-btn" onclick="setElevation(7.75)">7.75'</button>
+      <button class="preset-btn" onclick="setElevation(8.00)">8.00'</button>
+      <button class="preset-btn" onclick="setElevation(8.50)">8.50'</button>
+      <button class="preset-btn" onclick="setElevation(9.00)">9.00'</button>
+      <button class="preset-btn" id="btnLiveNoaa" style="border-color:var(--cyan); color:var(--cyan);" onclick="fetchLiveNoaa()">📡 Sync Live NOAA</button>
+    </div>
+
+    <div class="slider-wrap">
+      <span style="font-size:0.72rem; color:var(--text-muted); font-family:var(--mono);">6.50'</span>
+      <input type="range" id="elevationSlider" min="6.50" max="9.50" step="0.05" value="7.25" oninput="onSliderInput(this.value)">
+      <span style="font-size:0.72rem; color:var(--text-muted); font-family:var(--mono);">9.50'</span>
+    </div>
+
+    <div style="display:flex; gap:6px;">
+      <button class="preset-btn" id="btnToggleInundation" style="background:#0284c7; color:#fff;" onclick="toggleInundationLayer()">🌊 Flood Layer: ON</button>
+      <button class="preset-btn" onclick="locateUser()">📍 My GPS</button>
     </div>
   </div>
 
-  <!-- FLOATING LEGEND FOOTER -->
-  <div class="map-footer">
-    <div class="legend-group">
-      <div class="legend-item"><span class="dot green"></span> Clear</div>
-      <div class="legend-item"><span class="dot yellow"></span> Gutters Wet</div>
-      <div class="legend-item"><span class="dot red"></span> Impassable</div>
+  <!-- Leaflet Map Container -->
+  <div id="devMap"></div>
+
+  <!-- Floating Legend -->
+  <div class="floating-legend">
+    <div style="font-weight:700; font-size:0.8rem; margin-bottom:2px; display:flex; justify-content:space-between;">
+      <span>🗺️ Topographic Inundation</span>
+      <span style="color:var(--cyan); font-family:var(--mono);" id="legendElevation">7.25' MLLW</span>
     </div>
-    <button class="btn-gps" onclick="detectGPSLocation()">
-      <span>📍</span> My GPS Pin
-    </button>
+    <div class="legend-row">
+      <div class="legend-color" style="background:#0284c7; opacity:0.75;"></div>
+      <span>Modeled LiDAR Coastal Flood Inundation</span>
+    </div>
+    <div class="legend-row">
+      <div class="legend-color" style="background:var(--green); border-radius:50%;"></div>
+      <span>Clear Benchmark (Ground Above Tide)</span>
+    </div>
+    <div class="legend-row">
+      <div class="legend-color" style="background:var(--amber); border-radius:50%;"></div>
+      <span>Gutter / Storm Drain Wet</span>
+    </div>
+    <div class="legend-row">
+      <div class="legend-color" style="background:var(--red); border-radius:50%;"></div>
+      <span>Crown / Trail Submerged</span>
+    </div>
+    <div style="font-size:0.68rem; color:var(--text-muted); margin-top:4px; border-top:1px solid var(--card-border); padding-top:4px;">
+      💡 Tip: Click <i>anywhere</i> on the map to query the exact USGS LiDAR ground elevation.
+    </div>
   </div>
+
+  <!-- Inspector Card (Click anywhere to inspect) -->
+  <div class="inspector-card" id="inspectorCard">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+      <span style="font-weight:700; font-size:0.85rem; color:var(--cyan);">🔍 Ground Elevation Inspector</span>
+      <button onclick="document.getElementById('inspectorCard').style.display='none'" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:0.9rem;">✕</button>
+    </div>
+    <div style="font-size:0.76rem; color:var(--text-muted);" id="inspectCoords">Lat: 37.9400, Lon: -122.5350</div>
+    <div style="margin-top:8px; font-size:0.82rem; font-family:var(--mono);" id="inspectElevation">Querying USGS 3DEP 1m LiDAR...</div>
+    <div style="margin-top:6px; font-size:0.78rem;" id="inspectFloodStatus"></div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <script>
-    // Marin Surveyed Hotspots
-    const HOTSPOTS = [
+    // NOAA Golden Gate Datum Conversion:
+    // NAVD88 = MLLW - 0.09 ft
+    // MLLW = NAVD88 + 0.09 ft
+    let currentMllw = 7.25;
+    let currentNavd88 = 7.16;
+    let devMapInstance = null;
+    let markers = {};
+    let inundationLayer1ft = null;
+    let inundationLayer2ft = null;
+    let inundationLayer3ft = null;
+    let activeInundationLayer = null;
+    let showInundation = true;
+
+    // Surveyed Marin County Benchmarks (Calibrated Ground Truth)
+    const MARIN_BENCHMARKS = [
+      {
+        id: 'larkspurnorth',
+        city: 'Larkspur',
+        name: 'Larkspur Plaza Dr North (#617 / Heather Gardens)',
+        shortName: 'Larkspur Plaza North',
+        lat: 37.941245,
+        lon: -122.533875,
+        crownNavd: 7.41,
+        gutterNavd: 7.10,
+        desc: "Frequent neighborhood tidal flooding hotspot at northern Larkspur Plaza Drive (#617 / Heather Gardens). Low curb gutters surcharge at 7.10' NAVD88 (7.19' MLLW); roadway center breaches at 7.41' NAVD88 (7.50' MLLW)."
+      },
       {
         id: 'larkspur',
         city: 'Larkspur',
-        name: 'Larkspur Plaza Dr (Sag & Crosswalk)',
+        name: 'Larkspur Plaza Dr (Sag & Crosswalk near Heather Way)',
+        shortName: 'Larkspur Sag',
         lat: 37.939750,
         lon: -122.535078,
-        crown: 7.42,
-        gutter: 7.28,
-        desc: 'Concave sag dip on Larkspur Plaza Dr near Heather Way. Drains 1-4 take water at 7.28\'; roadway crown overhauls at 7.42\'.'
+        crownNavd: 7.42,
+        gutterNavd: 7.28,
+        desc: "Concave road sag on Larkspur Plaza Dr near Heather Way. Drains 1-4 surcharge at 7.28' NAVD88 (7.37' MLLW); road crown overhauls at 7.42' NAVD88 (7.51' MLLW)."
       },
       {
         id: 'boardwalk',
         city: 'Larkspur',
         name: 'Boardwalk One (at Corte Madera Creek)',
+        shortName: 'Boardwalk One',
         lat: 37.940714,
         lon: -122.532933,
-        crown: 8.04,
-        gutter: 7.60,
-        desc: 'Elevated residential boardwalk deck (8.04\') and shoreline approach ramp on east bank of creek slough.'
+        crownNavd: 8.04,
+        gutterNavd: 7.60,
+        desc: "Elevated residential boardwalk deck (8.04' NAVD88 / 8.13' MLLW) on east bank of creek slough."
       },
       {
         id: 'creek',
-        city: 'Larkspur',
-        name: 'Corte Madera Creek Path (Slough Outfall)',
-        lat: 37.940701,
-        lon: -122.533743,
-        crown: 6.60,
-        gutter: 6.40,
-        desc: 'Tidal marsh shoreline path and drainage headwall. Natural low mudbank inundated on routine monthly high tides.'
+        city: 'Kentfield / Larkspur',
+        name: 'Corte Madera Creek Pathway (Kentfield / Larkspur)',
+        shortName: 'Corte Madera Pathway',
+        lat: 37.945709,
+        lon: -122.538074,
+        crownNavd: 8.00,
+        gutterNavd: 6.40,
+        desc: "Official Corte Madera Creek paved multi-use pathway between Larkspur and Kentfield. Low shoreline trail sections flood during winter tides above 6.40' NAVD88 (6.49' MLLW)."
       },
       {
         id: 'luckyramp',
         city: 'Corte Madera',
         name: 'Lucky Dr at US-101 Off-Ramp',
+        shortName: 'Lucky Dr Ramp',
         lat: 37.939360,
         lon: -122.518280,
-        crown: 3.78,
-        gutter: 3.50,
-        desc: 'Historic tidal marsh subsidence basin off US-101 southbound exit. Relies on Town storm drainage pump station.'
+        crownNavd: 3.78,
+        gutterNavd: 3.50,
+        desc: "Historic tidal marsh subsidence basin off US-101 southbound exit. Relies on Town storm drainage pump station."
       },
       {
         id: 'luckyfrontage',
         city: 'Corte Madera',
         name: 'Lucky Dr Residential Frontage',
+        shortName: 'Lucky Frontage',
         lat: 37.939194,
         lon: -122.518536,
-        crown: 4.19,
-        gutter: 3.90,
-        desc: 'Residential frontage road and residential parking stalls along Lucky Drive low basin.'
+        crownNavd: 4.19,
+        gutterNavd: 3.90,
+        desc: "Residential frontage road and parking stalls along Lucky Drive low basin."
       },
       {
         id: 'manzanita',
         city: 'Mill Valley',
         name: 'Manzanita Park & Ride (Shoreline Hwy)',
+        shortName: 'Manzanita P&R',
         lat: 37.880500,
         lon: -122.519000,
-        crown: 7.20,
-        gutter: 7.00,
-        desc: 'Major commuter parking lot and US-101 highway underpass at head of Richardson Bay. Sheet-floods when tides exceed 7.00\'.'
+        crownNavd: 7.20,
+        gutterNavd: 7.00,
+        desc: "Major commuter parking lot and US-101 highway underpass at head of Richardson Bay. Sheet-floods when tides exceed 7.00' NAVD88 (7.09' MLLW)."
       },
       {
         id: 'tam',
         city: 'Mill Valley',
         name: 'Tam Junction (Shoreline Hwy & Almonte)',
+        shortName: 'Tam Junction',
         lat: 37.886000,
         lon: -122.525000,
-        crown: 7.35,
-        gutter: 7.10,
-        desc: 'Key highway intersection on Shoreline Hwy (SR-1). Low road shoulder and commercial parking margins flood at 7.10\'.'
+        crownNavd: 7.35,
+        gutterNavd: 7.10,
+        desc: "Key highway intersection on Shoreline Hwy (SR-1). Low road shoulder and commercial parking margins flood at 7.10' NAVD88 (7.19' MLLW)."
+      },
+      {
+        id: 'sanrafaelcanal',
+        city: 'San Rafael',
+        name: 'Canal St & Spinnaker Way (San Rafael Canal)',
+        shortName: 'San Rafael Canal',
+        lat: 37.965800,
+        lon: -122.502000,
+        crownNavd: 5.70,
+        gutterNavd: 5.20,
+        desc: "Low-lying San Rafael Canal District frontage road and access corridor. Tidal bowl subsidence causes canal to overtop bank onto Canal Street during tides above 5.70' NAVD88 (5.79' MLLW)."
       }
     ];
 
-    let currentTideLevel = 7.22;
-    let liveFetchedTide = 7.22;
-    let map = null;
-    let markers = {};
-    let haloCircles = {};
-    let gpsMarker = null;
+    function initDevMap() {
+      // Centered on Central/South Marin County
+      devMapInstance = L.map('devMap', {
+        zoomControl: false,
+        maxBounds: [
+          [37.80, -122.65],
+          [38.05, -122.40]
+        ],
+        minZoom: 11
+      }).setView([37.935, -122.528], 13);
 
-    // Initialize Leaflet Map
-    function initMap() {
-      // Center map between Larkspur, Corte Madera, and Mill Valley
-      map = L.map('map', {
-        zoomControl: false
-      }).setView([37.915, -122.528], 13);
-
-      // Basemap options (100% free, NO API key required)
+      // Basemap options
       const osmStandard = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        attribution: '&copy; OpenStreetMap',
         maxZoom: 19
       });
 
       const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'Tiles &copy; Esri, USGS, DeLorme',
+        attribution: 'Tiles &copy; Esri, USGS',
+        maxZoom: 19
+      });
+
+      const esriSatellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri World Imagery',
         maxZoom: 19
       });
 
       const esriDark = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+        attribution: 'Tiles &copy; Esri Dark Canvas',
         maxZoom: 16
       });
 
-      // Default to OpenStreetMap Standard (crisp street & waterway names, zero API key)
-      osmStandard.addTo(map);
+      esriTopo.addTo(devMapInstance);
 
-      // Basemap switcher so user can toggle between street, topo/coastal, or dark
-      L.control.layers({
-        "🗺️ Street Map (OSM)": osmStandard,
-        "⛰️ Coastal & Topo (Esri)": esriTopo,
-        "🌙 Dark Canvas (Esri)": esriDark
-      }, null, { position: 'bottomleft', collapsed: false }).addTo(map);
-
-      L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-      // Plot All Surveyed Hotspots
-      HOTSPOTS.forEach(site => {
-        // Halo catchment circle
-        const circle = L.circle([site.lat, site.lon], {
-          radius: 80,
-          fillColor: '#22c55e',
-          color: '#22c55e',
-          weight: 1,
-          opacity: 0.6,
-          fillOpacity: 0.18
-        }).addTo(map);
-        haloCircles[site.id] = circle;
-
-        // Custom HTML Marker
-        const icon = L.divIcon({
-          className: 'custom-marker',
-          html: `<div class="custom-marker-pin green" id="pin-${site.id}">🚗</div>`,
-          iconSize: [28, 28],
-          iconAnchor: [14, 14]
-        });
-
-        const marker = L.marker([site.lat, site.lon], { icon: icon }).addTo(map);
-        marker.bindPopup(generatePopupContent(site, currentTideLevel));
-        markers[site.id] = marker;
+      // NOAA LiDAR Coastal Inundation Layers
+      // NOAA slr_1ft: MHHW + 1ft (captures ~7.00 - 7.50 ft MLLW flood footprint)
+      inundationLayer1ft = L.tileLayer('https://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_1ft/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '&copy; NOAA Digital Coast LiDAR Inundation',
+        opacity: 0.75,
+        maxZoom: 16
       });
 
-      fetchLiveNOAATide();
+      // NOAA slr_2ft: MHHW + 2ft (captures ~7.75 - 8.50 ft MLLW extreme storm footprint)
+      inundationLayer2ft = L.tileLayer('https://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_2ft/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '&copy; NOAA Digital Coast LiDAR Inundation',
+        opacity: 0.75,
+        maxZoom: 16
+      });
+
+      // NOAA slr_3ft: MHHW + 3ft (captures 8.50'+ surge)
+      inundationLayer3ft = L.tileLayer('https://coast.noaa.gov/arcgis/rest/services/dc_slr/slr_3ft/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '&copy; NOAA Digital Coast LiDAR Inundation',
+        opacity: 0.75,
+        maxZoom: 16
+      });
+
+      inundationLayer1ft.addTo(devMapInstance);
+      activeInundationLayer = inundationLayer1ft;
+
+      // Layer Controls
+      L.control.layers({
+        "⛰️ Coastal Topo (Esri)": esriTopo,
+        "🗺️ Street Map (OSM)": osmStandard,
+        "🛰️ Satellite Imagery (Esri)": esriSatellite,
+        "🌙 Dark Canvas (Esri)": esriDark
+      }, {
+        "🌊 NOAA LiDAR Flood (+1ft MHHW / ~7.2' MLLW)": inundationLayer1ft,
+        "🌊 NOAA LiDAR Flood (+2ft MHHW / ~8.2' MLLW)": inundationLayer2ft,
+        "🌊 NOAA LiDAR Flood (+3ft MHHW / ~9.2' MLLW)": inundationLayer3ft
+      }, { position: 'bottomleft', collapsed: true }).addTo(devMapInstance);
+
+      L.control.zoom({ position: 'bottomright' }).addTo(devMapInstance);
+
+      // Plot All Surveyed Location Pins
+      MARIN_BENCHMARKS.forEach(site => {
+        const customIcon = L.divIcon({
+          className: 'custom-marker',
+          html: generateMarkerHtml(site, currentNavd88, currentMllw),
+          iconSize: [30, 30],
+          iconAnchor: [15, 15]
+        });
+
+        const m = L.marker([site.lat, site.lon], { icon: customIcon }).addTo(devMapInstance);
+        m.bindPopup(generatePopupHtml(site, currentNavd88, currentMllw));
+        markers[site.id] = m;
+      });
+
+      // Point-and-Click Elevation Inspector
+      devMapInstance.on('click', e => {
+        inspectMapClick(e.latlng.lat, e.latlng.lng);
+      });
     }
 
-    // Evaluate Flood Condition for a Site
-    function evaluateSite(site, tideLevel) {
-      if (tideLevel >= site.crown) {
-        const depthIn = Math.max(0.5, (tideLevel - site.crown) * 12);
-        return {
-          status: 'red',
-          label: '🔴 ROAD SUBMERGED (IMPASSABLE)',
-          desc: `Water over road crown is +${depthIn.toFixed(1)}" deep. Impassable for small passenger vehicles.`
-        };
-      } else if (tideLevel >= site.gutter) {
-        const gutterDepthIn = Math.max(0.2, (tideLevel - site.gutter) * 12);
-        return {
-          status: 'yellow',
-          label: '⚠️ GUTTERS & PARKING WET',
-          desc: `Main travel lanes clear and passable. Standing water confined to low curb gutters and parking margin (+${gutterDepthIn.toFixed(1)}").`
-        };
+    function generateMarkerHtml(site, navd, mllw) {
+      let statusClass = 'green';
+      let statusIcon = '✓';
+      let tagText = '';
+
+      const crownMllw = site.crownNavd + 0.09;
+      const gutterMllw = site.gutterNavd + 0.09;
+
+      if (navd >= site.crownNavd) {
+        statusClass = 'red';
+        statusIcon = '🚨';
+        const depthIn = ((navd - site.crownNavd) * 12).toFixed(1);
+        tagText = `FLOODED (+${depthIn}")`;
+      } else if (navd >= site.gutterNavd) {
+        statusClass = 'amber';
+        statusIcon = '⚠️';
+        const depthIn = ((navd - site.gutterNavd) * 12).toFixed(1);
+        tagText = `GUTTER WET (+${depthIn}")`;
       } else {
-        return {
-          status: 'green',
-          label: '🟢 100% CLEAR (DRY)',
-          desc: `Roadway crown, travel lanes, and curb gutters are completely dry and fully passable.`
-        };
+        statusClass = 'green';
+        statusIcon = '🟢';
+        const clearFt = (site.crownNavd - navd).toFixed(2);
+        tagText = `Clear by ${clearFt} ft`;
       }
-    }
 
-    function generatePopupContent(site, tideLevel) {
-      const evalResult = evaluateSite(site, tideLevel);
       return `
-        <div>
-          <div class="popup-title">${site.name}</div>
-          <div class="popup-meta">${site.city} • Crown: ${site.crown.toFixed(2)}' | Gutter: ${site.gutter.toFixed(2)}' NAVD88</div>
-          <div class="popup-status ${evalResult.status}">${evalResult.label}</div>
-          <div style="font-size:0.75rem; color:#e2e8f0; line-height:1.35; margin-bottom:6px;">${evalResult.desc}</div>
-          <div style="font-size:0.7rem; color:var(--text-muted);">${site.desc}</div>
+        <div class="custom-marker-wrap">
+          <div class="custom-marker-badge ${statusClass}">
+            <b>${site.shortName}</b>: ${tagText}
+          </div>
+          <div class="custom-marker-pin ${statusClass}">
+            ${statusIcon}
+          </div>
         </div>
       `;
     }
 
-    // Update All Map Elements when Tide Level Changes
-    function updateMapState(tideLevel) {
-      currentTideLevel = tideLevel;
-      document.getElementById('sliderValDisplay').textContent = `${parseFloat(tideLevel).toFixed(2)} ft NAVD88`;
+    function generatePopupHtml(site, navd, mllw) {
+      const crownMllw = (site.crownNavd + 0.09).toFixed(2);
+      const gutterMllw = (site.gutterNavd + 0.09).toFixed(2);
+      const crownDiffIn = ((navd - site.crownNavd) * 12).toFixed(1);
 
-      HOTSPOTS.forEach(site => {
-        const res = evaluateSite(site, tideLevel);
-        const pinEl = document.getElementById('pin-' + site.id);
-        if (pinEl) {
-          pinEl.className = `custom-marker-pin ${res.status}`;
-          pinEl.textContent = res.status === 'red' ? '⚠️' : (res.status === 'yellow' ? '🚗' : '✓');
+      let statusBadge = '';
+      if (navd >= site.crownNavd) {
+        statusBadge = `<span style="background:#ef4444; color:#fff; font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:4px;">🚨 CROWN OVERTOPPED (+${crownDiffIn} in)</span>`;
+      } else if (navd >= site.gutterNavd) {
+        statusBadge = `<span style="background:#f59e0b; color:#0b0f19; font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:4px;">⚠️ GUTTERS SURCHARGED</span>`;
+      } else {
+        const marginFt = (site.crownNavd - navd).toFixed(2);
+        statusBadge = `<span style="background:#22c55e; color:#fff; font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:4px;">🟢 CLEAR (${marginFt} ft margin)</span>`;
+      }
+
+      return `
+        <div style="font-family:var(--font); padding:4px; max-width:260px;">
+          <div style="font-weight:800; font-size:0.92rem; color:var(--cyan); margin-bottom:4px;">
+            ${site.name}
+          </div>
+          <div style="margin-bottom:8px;">${statusBadge}</div>
+          <div style="font-size:0.74rem; color:var(--text-muted); line-height:1.4; margin-bottom:8px;">
+            ${site.desc}
+          </div>
+          <div style="background:rgba(255,255,255,0.06); padding:8px; border-radius:6px; font-family:var(--mono); font-size:0.74rem;">
+            <div>👑 <b>Road Crown:</b> ${site.crownNavd.toFixed(2)}' NAVD88 (${crownMllw}' MLLW)</div>
+            <div>🌊 <b>Low Gutter:</b> ${site.gutterNavd.toFixed(2)}' NAVD88 (${gutterMllw}' MLLW)</div>
+            <div>⏱️ <b>Current Tide:</b> ${navd.toFixed(2)}' NAVD88 (${mllw.toFixed(2)}' MLLW)</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function setElevation(mllw) {
+      currentMllw = parseFloat(mllw);
+      currentNavd88 = currentMllw - 0.09;
+
+      // Update UI displays
+      document.getElementById('dispMllw').textContent = currentMllw.toFixed(2);
+      document.getElementById('dispNavd').textContent = `(${currentNavd88.toFixed(2)}' NAVD88)`;
+      document.getElementById('elevationSlider').value = currentMllw.toFixed(2);
+      document.getElementById('legendElevation').textContent = `${currentMllw.toFixed(2)}' MLLW`;
+
+      // Update Preset Button active states
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        if (btn.textContent.includes(currentMllw.toFixed(2))) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      // Dynamically select and scale NOAA LiDAR Inundation layer based on tide elevation:
+      // < 7.00' MLLW: low tide / dry baseline
+      // 7.00' - 7.60' MLLW: NOAA 1ft SLR layer (represents ~7.00 - 7.50' MLLW king tide footprint)
+      // 7.65' - 8.40' MLLW: NOAA 2ft SLR layer (represents ~8.00' MLLW extreme storm footprint)
+      // 8.45'+ MLLW: NOAA 3ft SLR layer (represents 9.00' surge)
+      if (devMapInstance && showInundation) {
+        let targetLayer = inundationLayer1ft;
+        let layerOpacity = 0.75;
+
+        if (currentMllw >= 8.40) {
+          targetLayer = inundationLayer3ft;
+          layerOpacity = 0.85;
+        } else if (currentMllw >= 7.65) {
+          targetLayer = inundationLayer2ft;
+          layerOpacity = 0.80;
+        } else if (currentMllw >= 7.00) {
+          targetLayer = inundationLayer1ft;
+          // Interpolate opacity from 0.40 at 7.00' to 0.75 at 7.50'
+          layerOpacity = 0.40 + ((currentMllw - 7.00) / 0.60) * 0.35;
+        } else {
+          // Below 7.00' MLLW: subtle trace
+          targetLayer = inundationLayer1ft;
+          layerOpacity = 0.15;
         }
 
-        const circle = haloCircles[site.id];
-        if (circle) {
-          const colorMap = { green: '#22c55e', yellow: '#f59e0b', red: '#ef4444' };
-          circle.setStyle({
-            fillColor: colorMap[res.status],
-            color: colorMap[res.status]
+        if (activeInundationLayer !== targetLayer) {
+          if (activeInundationLayer) devMapInstance.removeLayer(activeInundationLayer);
+          targetLayer.addTo(devMapInstance);
+          activeInundationLayer = targetLayer;
+        }
+        activeInundationLayer.setOpacity(layerOpacity);
+      }
+
+      // Update All Calibrated Pins
+      MARIN_BENCHMARKS.forEach(site => {
+        const m = markers[site.id];
+        if (m) {
+          const icon = L.divIcon({
+            className: 'custom-marker',
+            html: generateMarkerHtml(site, currentNavd88, currentMllw),
+            iconSize: [30, 30],
+            iconAnchor: [15, 15]
           });
-        }
-
-        const marker = markers[site.id];
-        if (marker && marker.getPopup()) {
-          marker.getPopup().setContent(generatePopupContent(site, tideLevel));
+          m.setIcon(icon);
+          m.setPopupContent(generatePopupHtml(site, currentNavd88, currentMllw));
         }
       });
     }
 
-    function onSliderChange(val) {
-      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-      updateMapState(parseFloat(val));
+    function onSliderInput(val) {
+      setElevation(val);
     }
 
-    function setSlider(val) {
-      document.getElementById('tideSlider').value = val;
-      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-      if (event && event.target) event.target.classList.add('active');
-      updateMapState(parseFloat(val));
+    function toggleInundationLayer() {
+      showInundation = !showInundation;
+      const btn = document.getElementById('btnToggleInundation');
+      if (showInundation) {
+        if (activeInundationLayer) activeInundationLayer.addTo(devMapInstance);
+        btn.textContent = '🌊 Flood Layer: ON';
+        btn.style.background = '#0284c7';
+      } else {
+        if (activeInundationLayer) devMapInstance.removeLayer(activeInundationLayer);
+        btn.textContent = '🌊 Flood Layer: OFF';
+        btn.style.background = 'rgba(255,255,255,0.05)';
+      }
     }
 
-    function resetToLive() {
-      setSlider(liveFetchedTide);
-      const btn = document.getElementById('btnLive');
-      if (btn) btn.classList.add('active');
-    }
-
-    // Live NOAA Fetch
-    async function fetchLiveNOAATide() {
+    // Live NOAA Tide Fetch from Golden Gate Station 9414290
+    async function fetchLiveNoaa() {
+      const btn = document.getElementById('btnLiveNoaa');
+      btn.textContent = '⏳ Syncing NOAA...';
       try {
-        const url = 'https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?range=2&station=9414290&product=water_level&datum=NAVD&time_zone=lst_ldt&units=english&format=json';
+        const res = await fetch('https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&station=9414290&product=water_level&datum=MLLW&time_zone=lst_ldt&units=english&format=json');
+        const data = await res.json();
+        if (data && data.data && data.data.length > 0) {
+          const liveMllw = parseFloat(data.data[0].v);
+          setElevation(liveMllw);
+          btn.textContent = `📡 Live: ${liveMllw.toFixed(2)}' MLLW`;
+          setTimeout(() => { btn.textContent = '📡 Sync Live NOAA'; }, 5000);
+        } else {
+          alert('Could not retrieve latest water level from NOAA.');
+          btn.textContent = '📡 Sync Live NOAA';
+        }
+      } catch (err) {
+        console.error(err);
+        btn.textContent = '📡 Sync Live NOAA';
+      }
+    }
+
+    // Live Point-and-Click USGS 3DEP Elevation Inspector
+    async function inspectMapClick(lat, lon) {
+      const card = document.getElementById('inspectorCard');
+      const coordEl = document.getElementById('inspectCoords');
+      const elevEl = document.getElementById('inspectElevation');
+      const statEl = document.getElementById('inspectFloodStatus');
+
+      card.style.display = 'block';
+      coordEl.textContent = `📍 Lat: ${lat.toFixed(5)}, Lon: ${lon.toFixed(5)}`;
+      elevEl.textContent = 'Querying USGS 3DEP 1m LiDAR...';
+      statEl.textContent = '';
+
+      try {
+        const url = `https://epqs.nationalmap.gov/v1/json?x=${lon}&y=${lat}&units=Feet&output=json`;
         const resp = await fetch(url);
         const data = await resp.json();
-        if (data.data && data.data.length > 0) {
-          const latest = data.data[data.data.length - 1];
-          const twl = parseFloat(latest.v);
-          if (!isNaN(twl)) {
-            liveFetchedTide = twl;
-            document.getElementById('badgeTideText').textContent = `LIVE: ${twl.toFixed(2)}' NAVD88`;
-            const btnLive = document.getElementById('btnLive');
-            if (btnLive) btnLive.textContent = `Live Now (${twl.toFixed(2)}')`;
-            updateMapState(twl);
+        if (data && data.value !== undefined && data.value !== null && data.value > -100) {
+          const groundNavd = parseFloat(data.value);
+          const groundMllw = groundNavd + 0.09;
+          elevEl.innerHTML = `Ground: <b>${groundNavd.toFixed(2)}' NAVD88</b> (${groundMllw.toFixed(2)}' MLLW)`;
+
+          if (currentNavd88 >= groundNavd) {
+            const depthIn = ((currentNavd88 - groundNavd) * 12).toFixed(1);
+            statEl.innerHTML = `<span style="color:#ef4444; font-weight:700;">🚨 INUNDATED: Water is +${depthIn} inches deep at this water level!</span>`;
+          } else {
+            const marginFt = (groundNavd - currentNavd88).toFixed(2);
+            statEl.innerHTML = `<span style="color:#22c55e; font-weight:700;">🟢 DRY: Land is ${marginFt} ft above current tide.</span>`;
           }
+        } else {
+          elevEl.textContent = 'USGS point elevation unavailable or over open bay.';
         }
       } catch (e) {
-        document.getElementById('badgeTideText').textContent = `LIVE: 7.22' NAVD88`;
+        elevEl.textContent = 'Error querying USGS Elevation Point API.';
       }
     }
 
-    // Geolocation Support
-    function detectGPSLocation() {
+    function locateUser() {
       if (!navigator.geolocation) {
-        alert("Geolocation not supported by this browser.");
+        alert('Geolocation not supported by your browser.');
         return;
       }
-      navigator.geolocation.getCurrentPosition(async (pos) => {
+      navigator.geolocation.getCurrentPosition(pos => {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
-        map.setView([lat, lon], 16);
-
-        let elevStr = "Querying USGS...";
-        try {
-          const resp = await fetch(`https://epqs.nationalmap.gov/v1/json?x=${lon}&y=${lat}&units=Feet`);
-          const data = await resp.json();
-          const elev = parseFloat(data.value);
-          if (!isNaN(elev)) elevStr = `${elev.toFixed(1)}' NAVD88`;
-        } catch (e) {}
-
-        if (gpsMarker) map.removeLayer(gpsMarker);
-        gpsMarker = L.marker([lat, lon], {
-          icon: L.divIcon({
-            className: 'gps-marker',
-            html: `<div style="width:18px; height:18px; border-radius:50%; background:#0284c7; border:3px solid #fff; box-shadow:0 0 12px #38bdf8;"></div>`,
-            iconSize: [18, 18],
-            iconAnchor: [9, 9]
-          })
-        }).addTo(map);
-
-        gpsMarker.bindPopup(`
-          <div style="font-weight:700; color:#38bdf8;">📍 Your Current Location</div>
-          <div style="font-size:0.75rem; color:#e2e8f0; margin-top:2px;">Ground Elevation: <b>${elevStr}</b></div>
-          <div style="font-size:0.72rem; color:var(--text-muted); margin-top:4px;">Current simulated bay water: ${currentTideLevel.toFixed(2)}' NAVD88</div>
-        `).openPopup();
+        devMapInstance.setView([lat, lon], 16);
+        L.circleMarker([lat, lon], {
+          radius: 8,
+          fillColor: '#38bdf8',
+          color: '#fff',
+          weight: 2,
+          fillOpacity: 0.9
+        }).addTo(devMapInstance).bindPopup("📍 <b>Your Current GPS Location</b>").openPopup();
+      }, err => {
+        alert('Unable to retrieve your location: ' + err.message);
       });
     }
 
-    window.addEventListener('DOMContentLoaded', initMap);
+    window.addEventListener('DOMContentLoaded', () => {
+      initDevMap();
+    });
   </script>
 </body>
 </html>
