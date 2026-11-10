@@ -1,6 +1,6 @@
 {
-  "name": "CWC Flood Watch Wet",
-  "short_name": "CWC Flood Watch Wet",
+  "name": "CWC Marin Flood Watch WET",
+  "short_name": "CWC Marin Flood Watch WET",
   "description": "Hyper-local tide, storm surge, and road flood passability monitor by Cloud Watch Computing",
   "start_url": "./index.html",
   "scope": "./",
