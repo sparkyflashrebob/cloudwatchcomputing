@@ -858,6 +858,49 @@
       padding: 6px 10px;
     }
 
+  
+    .noaa-category-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 11px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-family: inherit;
+      color: #38bdf8;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .noaa-category-pill:hover, .noaa-category-pill:active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: #38bdf8;
+    }
+    .noaa-category-pill.green {
+      border-color: rgba(34, 197, 94, 0.35);
+      color: #4ade80;
+    }
+    .noaa-category-pill.yellow {
+      border-color: rgba(245, 158, 11, 0.45);
+      color: #fcd34d;
+      background: rgba(245, 158, 11, 0.12);
+    }
+    .noaa-category-pill.orange {
+      border-color: rgba(249, 115, 22, 0.5);
+      color: #fb923c;
+      background: rgba(249, 115, 22, 0.15);
+    }
+    .noaa-category-pill.red {
+      border-color: rgba(239, 68, 68, 0.6);
+      color: #f87171;
+      background: rgba(239, 68, 68, 0.2);
+    }
+    .noaa-stage-card.active-stage {
+      outline: 2px solid #38bdf8;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
+    }
+
   </style>
 </head>
 <body>
@@ -895,6 +938,13 @@
         <button class="location-chip-btn" onclick="openSettings()" title="Tap to switch reporting location">
           📍 <span id="currentLocationName">Larkspur Plaza Dr (at Heather Way / Sag Crosswalk)</span>
           <span style="opacity:0.6; font-size:0.65rem;">▾</span>
+        </button>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: center; margin: 4px 0 10px; flex-wrap: wrap;">
+        <button type="button" class="noaa-category-pill green" id="noaaInundationBadge" onclick="openNoaaModal(event)" title="Tap to view official NOAA/NWS flood categories">
+          <span style="font-weight: 700;">🏛️ NOAA / NWS:</span>
+          <span id="noaaCategoryText">Below Flood Stage (&lt; 7.00')</span>
+          <span style="font-size:0.68rem; opacity:0.75; margin-left:3px;">ℹ️</span>
         </button>
       </div>
       <div class="hero-title" id="heroTitle">Connecting to Real-Time Water Level Sensors...</div>
@@ -2828,6 +2878,17 @@
     }
 
     // Core Dynamic UI State Update
+
+    function openNoaaModal(e) {
+      if (e) e.stopPropagation();
+      const modal = document.getElementById('noaaModal');
+      if (modal) modal.classList.add('open');
+    }
+    function closeNoaaModal() {
+      const modal = document.getElementById('noaaModal');
+      if (modal) modal.classList.remove('open');
+    }
+
     function updateUI() {
       if (!tideTimeline.length) return;
       const point = tideTimeline[currentScrubIdx];
@@ -2858,6 +2919,39 @@
       document.getElementById('valTWL').innerHTML = `${twl.toFixed(2)} <span>ft NAVD88</span>`;
       document.getElementById('valTWLMLLW').textContent = `Station 9414874: ${(twl - 0.06).toFixed(2)}' MLLW`;
       document.getElementById('valSurge').innerHTML = `+${liveSurge.toFixed(2)} <span>ft</span>`;
+
+      // Update NOAA / NWS Inundation Category Badge
+      const noaaBadge = document.getElementById('noaaInundationBadge');
+      const noaaText = document.getElementById('noaaCategoryText');
+      let noaaCatKey = 'normal';
+      let noaaLabel = 'Below Flood Stage (< 7.00')';
+      let noaaClass = 'green';
+
+      if (twl >= 9.25) {
+        noaaCatKey = 'major';
+        noaaLabel = `Major Inundation (${twl.toFixed(2)}')`;
+        noaaClass = 'red';
+      } else if (twl >= 8.00) {
+        noaaCatKey = 'moderate';
+        noaaLabel = `Moderate Coastal Flood (${twl.toFixed(2)}')`;
+        noaaClass = 'orange';
+      } else if (twl >= 7.00) {
+        noaaCatKey = 'minor';
+        noaaLabel = `Minor Inundation / NWS Advisory (${twl.toFixed(2)}')`;
+        noaaClass = 'yellow';
+      }
+
+      if (noaaBadge) {
+        noaaBadge.className = `noaa-category-pill ${noaaClass}`;
+      }
+      if (noaaText) {
+        noaaText.textContent = noaaLabel;
+      }
+
+      // Highlight active stage card in modal
+      document.querySelectorAll('.noaa-stage-card').forEach(c => c.classList.remove('active-stage'));
+      const activeStageCard = document.getElementById('noaaCard-' + noaaCatKey);
+      if (activeStageCard) activeStageCard.classList.add('active-stage');
 
       // Compute Smoothed Trend over 30-min window (eliminates 1-step sensor noise)
       const nextIdx = Math.min(tideTimeline.length - 1, currentScrubIdx + 1);
@@ -3504,7 +3598,7 @@
     // Startup Initialization
     document.addEventListener('DOMContentLoaded', () => {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=46').catch(() => {});
+        navigator.serviceWorker.register('./sw.js?v=47').catch(() => {});
       }
       applyVehicleAndCarView();
       initHydrographDragScrub();
@@ -3658,5 +3752,67 @@
     }
 
 </script>
+
+  <!-- NOAA / NWS INUNDATION CATEGORIES MODAL -->
+  <div class="modal" id="noaaModal" onclick="if(event.target===this)closeNoaaModal()">
+    <div class="modal-box" style="max-width: 520px;">
+      <div class="modal-header">
+        <h2 style="font-size: 1.02rem; display: flex; align-items: center; gap: 8px;">
+          <span>🏛️</span> Official NOAA / NWS Flood Stages
+        </h2>
+        <button class="btn-icon" onclick="closeNoaaModal()">✕</button>
+      </div>
+      <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 14px; line-height: 1.4;">
+        Official National Ocean Service (NOS) and National Weather Service (NWS) coastal inundation thresholds calibrated for San Francisco Bay (Station 9414290 / Golden Gate):
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <!-- Minor Flood Stage -->
+        <div id="noaaCard-minor" class="noaa-stage-card" style="padding: 12px; border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.35); background: rgba(245, 158, 11, 0.08);">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+            <div style="font-weight: 700; color: #fcd34d; font-size: 0.88rem;">⚠️ Minor Coastal Inundation (NWS Advisory)</div>
+            <div style="font-family: var(--mono); font-size: 0.78rem; color: #fcd34d; font-weight: 700;">7.00' – 7.99' NAVD88</div>
+          </div>
+          <div style="font-size: 0.76rem; color: #e2e8f0; line-height: 1.35;">
+            Triggers the official NWS Coastal Flood Advisory. High-tide nuisance &amp; King Tide flooding. Saltwater breaches lowest marsh edges, trails, and low frontage margins (e.g. Manzanita lot, Lucky Dr dip).
+          </div>
+        </div>
+
+        <!-- Moderate Flood Stage -->
+        <div id="noaaCard-moderate" class="noaa-stage-card" style="padding: 12px; border-radius: 12px; border: 1px solid rgba(249, 115, 22, 0.35); background: rgba(249, 115, 22, 0.08);">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+            <div style="font-weight: 700; color: #fb923c; font-size: 0.88rem;">🚨 Moderate Coastal Flood</div>
+            <div style="font-family: var(--mono); font-size: 0.78rem; color: #fb923c; font-weight: 700;">8.00' – 9.24' NAVD88</div>
+          </div>
+          <div style="font-size: 0.76rem; color: #e2e8f0; line-height: 1.35;">
+            Severe storm surge event. Breaches road crowns, low property aprons, and elevated residential approach slabs across low-lying coastal corridors.
+          </div>
+        </div>
+
+        <!-- Major Flood Stage -->
+        <div id="noaaCard-major" class="noaa-stage-card" style="padding: 12px; border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.35); background: rgba(239, 68, 68, 0.08);">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+            <div style="font-weight: 700; color: #f87171; font-size: 0.88rem;">🛑 Major Coastal Inundation Emergency</div>
+            <div style="font-family: var(--mono); font-size: 0.78rem; color: #f87171; font-weight: 700;">&ge; 9.25' NAVD88</div>
+          </div>
+          <div style="font-size: 0.76rem; color: #e2e8f0; line-height: 1.35;">
+            Catastrophic coastal storm surge emergency. Widespread structural flooding, deep highway inundation, and severe property damage.
+          </div>
+        </div>
+
+        <!-- Below Flood Stage -->
+        <div id="noaaCard-normal" class="noaa-stage-card" style="padding: 12px; border-radius: 12px; border: 1px solid rgba(34, 197, 94, 0.3); background: rgba(34, 197, 94, 0.06);">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+            <div style="font-weight: 700; color: #4ade80; font-size: 0.88rem;">🟢 Below Flood Stage (Normal Tides)</div>
+            <div style="font-family: var(--mono); font-size: 0.78rem; color: #4ade80; font-weight: 700;">&lt; 7.00' NAVD88</div>
+          </div>
+          <div style="font-size: 0.76rem; color: #e2e8f0; line-height: 1.35;">
+            Everyday tidal range. Water stays safely within marsh sloughs, natural tidal channels, and engineered canals.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
