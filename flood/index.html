@@ -828,6 +828,36 @@
       cursor: pointer;
       font-size: 0.78rem;
     }
+  
+    .styled-dropdown {
+      width: 100%;
+      padding: 10px 14px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 12px;
+      color: #f8fafc;
+      font-size: 0.86rem;
+      font-family: inherit;
+      outline: none;
+      cursor: pointer;
+      margin-top: 6px;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+    }
+    .styled-dropdown optgroup {
+      background: #0f172a;
+      color: #38bdf8;
+      font-weight: 700;
+    }
+    .styled-dropdown option {
+      background: #1e293b;
+      color: #f8fafc;
+      font-weight: 400;
+      padding: 6px 10px;
+    }
+
   </style>
 </head>
 <body>
@@ -1608,38 +1638,96 @@
         <button class="btn-icon" onclick="closeSettings()">✕</button>
       </div>
 
+      <!-- COUNTY SELECTION DROPDOWN -->
       <div class="setting-group">
-        <label>Reporting Location</label>
+        <label style="display:flex; justify-content:space-between; align-items:center;">
+          <span>Region / County</span>
+          <span style="font-size:0.75rem; color:var(--cyan);">San Francisco Bay</span>
+        </label>
+        <select id="selectCounty" class="styled-dropdown" onchange="changeCounty(this.value)">
+          <option value="marin" selected>🌲 Marin County (Richardson Bay &amp; Corte Madera Creek)</option>
+          <option value="sf" disabled>🌉 San Francisco County (Coming Soon)</option>
+          <option value="san_mateo" disabled>🌊 San Mateo County (Coming Soon)</option>
+        </select>
+      </div>
+
+      <!-- HOTSPOT SELECTION DROPDOWN (ORGANIZED BY CITY) -->
+      <div class="setting-group">
+        <label style="display:flex; justify-content:space-between; align-items:center;">
+          <span>Marin County Hotspots (by City)</span>
+          <span style="font-size:0.75rem; color:var(--text-muted);" id="hotspotCountBadge">7 Hotspots Available</span>
+        </label>
+        <select id="selectHotspot" class="styled-dropdown" onchange="selectLocation(this.value)">
+          <optgroup label="Larkspur">
+            <option value="larkspur" selected>📍 Larkspur Plaza Dr (at Heather Way / Sag Crosswalk) — Crown 7.42'</option>
+            <option value="boardwalk">📍 Boardwalk One (at Corte Madera Creek) — Deck 8.04'</option>
+            <option value="creek">📍 Corte Madera Creek Path (Tidal Slough) — Crest 6.60'</option>
+          </optgroup>
+          <optgroup label="Corte Madera">
+            <option value="luckyramp">📍 Lucky Dr at US-101 Off-Ramp — Exit Dip 3.78'</option>
+            <option value="luckyfrontage">📍 Lucky Dr Residential Frontage — Roadway 4.19'</option>
+          </optgroup>
+          <optgroup label="Mill Valley / Tam Valley">
+            <option value="manzanita">📍 Manzanita Park &amp; Ride (Shoreline Hwy &amp; US-101) — Lot 7.20'</option>
+            <option value="tam">📍 Tam Junction (Shoreline Hwy &amp; Almonte Blvd) — Crown 7.35'</option>
+          </optgroup>
+          <optgroup label="Custom GPS Survey">
+            <option value="custom">📍 Use My Current Location (GPS &amp; USGS 3DEP Elevation)</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <!-- QUICK SELECT CARDS -->
+      <div class="setting-group">
+        <label>Quick Select Hotspot Card</label>
         <div class="select-card-list">
           <div class="select-card active" id="loc-larkspur" onclick="selectLocation('larkspur')">
             <div>
-              <div class="select-card-name">📍 Larkspur Plaza Dr (at Heather Way / Sag Crosswalk)</div>
-              <div class="select-card-detail">Road Crown: 7.42' | Sag Gutter: 7.15'</div>
+              <div class="select-card-name">📍 Larkspur Plaza Dr (Heather Way / Sag Crosswalk)</div>
+              <div class="select-card-detail">Larkspur • Crown: 7.42' | Sag Gutter: 7.15'</div>
             </div>
             <span>✓</span>
           </div>
+          <div class="select-card" id="loc-boardwalk" onclick="selectLocation('boardwalk')">
+            <div>
+              <div class="select-card-name">📍 Boardwalk One (at Corte Madera Creek)</div>
+              <div class="select-card-detail">Larkspur • Residential Deck: 8.04' | Bank: 7.60'</div>
+            </div>
+          </div>
+          <div class="select-card" id="loc-luckyramp" onclick="selectLocation('luckyramp')">
+            <div>
+              <div class="select-card-name">📍 Lucky Dr at US-101 Off-Ramp</div>
+              <div class="select-card-detail">Corte Madera • Exit Ramp Dip: 3.78' (Tidal/Rain Flood Zone)</div>
+            </div>
+          </div>
+          <div class="select-card" id="loc-luckyfrontage" onclick="selectLocation('luckyfrontage')">
+            <div>
+              <div class="select-card-name">📍 Lucky Dr Residential Frontage</div>
+              <div class="select-card-detail">Corte Madera • Homes &amp; Frontage Road: 4.19'</div>
+            </div>
+          </div>
           <div class="select-card" id="loc-manzanita" onclick="selectLocation('manzanita')">
             <div>
-              <div class="select-card-name">📍 Manzanita Park & Ride (Shoreline Hwy & Hwy 101)</div>
-              <div class="select-card-detail">Lot Floods: 7.20' | Impassable: 7.45'</div>
+              <div class="select-card-name">📍 Manzanita Park &amp; Ride (Shoreline Hwy &amp; Hwy 101)</div>
+              <div class="select-card-detail">Mill Valley • Lot Floods: 7.20' | Impassable: 7.45'</div>
+            </div>
+          </div>
+          <div class="select-card" id="loc-tam" onclick="selectLocation('tam')">
+            <div>
+              <div class="select-card-name">📍 Tam Junction (Shoreline Hwy &amp; Almonte Blvd)</div>
+              <div class="select-card-detail">Mill Valley • Road Floods: 7.35' | Impassable: 7.60'</div>
+            </div>
+          </div>
+          <div class="select-card" id="loc-creek" onclick="selectLocation('creek')">
+            <div>
+              <div class="select-card-name">📍 Corte Madera Creek Path (at Larkspur Plaza)</div>
+              <div class="select-card-detail">Larkspur • Tidal Path Overtopped: 6.60'</div>
             </div>
           </div>
           <div class="select-card" id="loc-custom" onclick="selectLocation('custom')">
             <div>
               <div class="select-card-name">📍 Use My Current Location (GPS)</div>
               <div class="select-card-detail" id="customLocDetail">Tap to detect local ground elevation via USGS</div>
-            </div>
-          </div>
-          <div class="select-card" id="loc-tam" onclick="selectLocation('tam')">
-            <div>
-              <div class="select-card-name">📍 Tam Junction (Shoreline Hwy & Almonte Blvd)</div>
-              <div class="select-card-detail">Road Floods: 7.35' | Impassable: 7.60'</div>
-            </div>
-          </div>
-          <div class="select-card" id="loc-creek" onclick="selectLocation('creek')">
-            <div>
-              <div class="select-card-name">📍 Corte Madera Creek Path (at Larkspur Plaza)</div>
-              <div class="select-card-detail">Path Overtopped: 6.60'</div>
             </div>
           </div>
         </div>
@@ -1855,6 +1943,48 @@
         stall: 8.00,
         lagMinutes: 180
       },
+      boardwalk: {
+        name: "Boardwalk One (at Corte Madera Creek)",
+        roadBoundary: "Boardwalk One residential walkway & creek path interface",
+        crownBoundary: "Boardwalk One elevated residential deck",
+        gutterBoundary: "Boardwalk approach ramp & shoreline bank",
+        crown: 8.04,     // Elevated residential deck level
+        gutter: 7.60,    // Low shoreline bank & approach ramp
+        sagGutter: 7.60,
+        frontGutter: 7.75,
+        yellow: 7.80,
+        priusSag: 8.53,
+        stall: 8.25,
+        lagMinutes: 60
+      },
+      luckyramp: {
+        name: "Lucky Dr at US-101 Off-Ramp (Corte Madera)",
+        roadBoundary: "Lucky Dr exit ramp from US-101 southbound & frontage junction",
+        crownBoundary: "US-101 off-ramp low depression onto Lucky Dr",
+        gutterBoundary: "Off-ramp shoulder and low curb pan",
+        crown: 3.78,     // Subsidence depression exit dip (relies on pump station)
+        gutter: 3.50,
+        sagGutter: 3.50,
+        frontGutter: 3.65,
+        yellow: 3.60,
+        priusSag: 4.27,
+        stall: 4.50,
+        lagMinutes: 240
+      },
+      luckyfrontage: {
+        name: "Lucky Dr Residential Frontage (Corte Madera)",
+        roadBoundary: "Lucky Dr residential corridor between US-101 off-ramp & Redwood Hwy",
+        crownBoundary: "Lucky Dr roadway center travel lane",
+        gutterBoundary: "Lucky Dr residential street parking & curb gutters",
+        crown: 4.19,     // Residential frontage road crown
+        gutter: 3.90,
+        sagGutter: 3.90,
+        frontGutter: 4.05,
+        yellow: 4.00,
+        priusSag: 4.68,
+        stall: 4.80,
+        lagMinutes: 240
+      },
       tam: {
         name: "Tam Junction (Shoreline Hwy & Almonte Blvd)",
         roadBoundary: "Shoreline Hwy at Almonte Blvd / Buckeye restaurant frontage sag",
@@ -1940,11 +2070,20 @@
       document.getElementById('settingsModal').classList.remove('open');
       updateUI();
     }
+    function changeCounty(countyKey) {
+      // Future expansion for multiple counties
+    }
+
     function selectLocation(key) {
       activeLocKey = key;
       try {
         localStorage.setItem('cwc_active_loc_key', key);
       } catch (e) {}
+
+      const dropdownEl = document.getElementById('selectHotspot');
+      if (dropdownEl && dropdownEl.value !== key) {
+        dropdownEl.value = key;
+      }
 
       document.querySelectorAll('.select-card-list div[id^="loc-"]').forEach(el => el.classList.remove('active'));
       const target = document.getElementById('loc-' + key);
@@ -1955,7 +2094,7 @@
         return;
       }
       updateUI();
-      setTimeout(closeSettings, 200);
+      setTimeout(closeSettings, 350);
     }
 
     function restoreSavedLocation() {
@@ -1971,6 +2110,9 @@
         if (savedLoc && THRESHOLDS[savedLoc]) {
           activeLocKey = savedLoc;
         }
+        const dropdownEl = document.getElementById('selectHotspot');
+        if (dropdownEl) dropdownEl.value = activeLocKey;
+
         document.querySelectorAll('.select-card-list div[id^="loc-"]').forEach(el => el.classList.remove('active'));
         const target = document.getElementById('loc-' + activeLocKey);
         if (target) target.classList.add('active');
@@ -3347,7 +3489,7 @@
     // Startup Initialization
     document.addEventListener('DOMContentLoaded', () => {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=44').catch(() => {});
+        navigator.serviceWorker.register('./sw.js?v=45').catch(() => {});
       }
       applyVehicleAndCarView();
       initHydrographDragScrub();
