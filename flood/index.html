@@ -15,6 +15,30 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 
   <style>
+    .location-chip-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 6px;
+      padding: 3px 9px;
+      color: #94a3b8;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+      max-width: 60%;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .location-chip-btn:hover {
+      background: rgba(56, 189, 248, 0.18);
+      border-color: rgba(56, 189, 248, 0.5);
+      color: #38bdf8;
+    }
+
     :root {
       --bg: #0b0f19;
       --card-bg: rgba(22, 30, 49, 0.75);
@@ -820,7 +844,7 @@
         </div>
       </div>
       <div class="header-actions">
-        <button class="btn-icon" title="Refresh App & Live NOAA Data" onclick="hardReloadApp()">🔄</button>
+        <button class="btn-icon" id="btnSyncNOAA" title="Refresh Live NOAA Tide Data" onclick="refreshLiveData(this)">🔄</button>
         <button class="btn-icon" title="Settings & Thresholds" onclick="openSettings()">⚙️</button>
       </div>
     </header>
@@ -838,9 +862,10 @@
           <span class="pulse-dot"></span>
           <span id="statusBadgeText">SYNCING LIVE NOAA DATA...</span>
         </div>
-        <div style="font-size:0.75rem; color:var(--text-muted); font-family:var(--mono);" id="currentLocationName">
-          Larkspur Plaza Dr (at Heather Way / Sag Crosswalk)
-        </div>
+        <button class="location-chip-btn" onclick="openSettings()" title="Tap to switch reporting location">
+          📍 <span id="currentLocationName">Larkspur Plaza Dr (at Heather Way / Sag Crosswalk)</span>
+          <span style="opacity:0.6; font-size:0.65rem;">▾</span>
+        </button>
       </div>
       <div class="hero-title" id="heroTitle">Connecting to Real-Time Water Level Sensors...</div>
       <div class="hero-desc" id="heroDesc">
@@ -1896,6 +1921,10 @@
     }
     function selectLocation(key) {
       activeLocKey = key;
+      try {
+        localStorage.setItem('cwc_active_loc_key', key);
+      } catch (e) {}
+
       document.querySelectorAll('.select-card-list div[id^="loc-"]').forEach(el => el.classList.remove('active'));
       const target = document.getElementById('loc-' + key);
       if (target) target.classList.add('active');
@@ -1905,6 +1934,26 @@
         return;
       }
       updateUI();
+      setTimeout(closeSettings, 200);
+    }
+
+    function restoreSavedLocation() {
+      try {
+        const savedCustom = localStorage.getItem('cwc_custom_thresholds');
+        if (savedCustom) {
+          const parsed = JSON.parse(savedCustom);
+          if (parsed && parsed.crown) {
+            THRESHOLDS.custom = parsed;
+          }
+        }
+        const savedLoc = localStorage.getItem('cwc_active_loc_key');
+        if (savedLoc && THRESHOLDS[savedLoc]) {
+          activeLocKey = savedLoc;
+        }
+        document.querySelectorAll('.select-card-list div[id^="loc-"]').forEach(el => el.classList.remove('active'));
+        const target = document.getElementById('loc-' + activeLocKey);
+        if (target) target.classList.add('active');
+      } catch (e) {}
     }
 
     function detectCustomLocationElevation() {
@@ -1949,8 +1998,14 @@
                 stall: parseFloat((elev + 0.50).toFixed(2)),
                 lagMinutes: 180
               };
+              try {
+                localStorage.setItem('cwc_custom_thresholds', JSON.stringify(THRESHOLDS.custom));
+                localStorage.setItem('cwc_active_loc_key', 'custom');
+              } catch(e) {}
+
               if (detailEl) detailEl.textContent = `${streetName} • Ground: ${elev.toFixed(1)}' NAVD88`;
               updateUI();
+              setTimeout(closeSettings, 500);
             } else {
               throw new Error("Invalid elevation");
             }
@@ -1965,7 +2020,12 @@
               stall: 8.00,
               lagMinutes: 180
             };
+            try {
+              localStorage.setItem('cwc_custom_thresholds', JSON.stringify(THRESHOLDS.custom));
+              localStorage.setItem('cwc_active_loc_key', 'custom');
+            } catch(e) {}
             updateUI();
+            setTimeout(closeSettings, 500);
           }
         },
         (err) => {
@@ -1975,7 +2035,25 @@
       );
     }
 
-    // Vehicle Selection Switcher (Updates 3D/SVG Model Across Both Views)
+    // Smooth in-place NOAA refresh without reloading the page
+    async function refreshLiveData(btn) {
+      if (btn) {
+        btn.style.transform = 'rotate(360deg)';
+        btn.style.transition = 'transform 0.6s ease';
+      }
+      try {
+        await fetchLiveNOAA();
+      } finally {
+        if (btn) {
+          setTimeout(() => {
+            btn.style.transform = '';
+            btn.style.transition = '';
+          }, 600);
+        }
+      }
+    }
+
+    // Vehicle Selection Switcher// Vehicle Selection Switcher (Updates 3D/SVG Model Across Both Views)
     function selectVehicle(key, clr) {
       activeVehicleKey = key;
       activeVehicleClearance = clr;
@@ -3151,7 +3229,7 @@
     // Startup Initialization
     document.addEventListener('DOMContentLoaded', () => {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=42').catch(() => {});
+        navigator.serviceWorker.register('./sw.js?v=43').catch(() => {});
       }
       applyVehicleAndCarView();
       initHydrographDragScrub();
