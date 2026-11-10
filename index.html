@@ -1047,6 +1047,12 @@
     .hide-elevation-badges .elevation-water-badge {
       display: none !important;
     }
+    .hide-flood-borders .flood-polygon-border {
+      display: none !important;
+    }
+    .flood-polygon-border {
+      transition: all 0.3s ease;
+    }
 
     /* Leaflet Dark Glass Controls & Popups */
     .leaflet-popup-content-wrapper {
@@ -1383,6 +1389,7 @@
           <span style="font-size:0.75rem; color:var(--cyan); font-family:var(--mono);" id="mapTideLabel">TWL: 7.25 ft NAVD88</span>
         </div>
         <div style="display: flex; gap: 6px; align-items: center; margin-left: auto; flex-wrap: wrap;">
+          <button type="button" id="btnToggleBorders" class="chip-btn active" style="padding: 4px 10px; font-size: 0.72rem;" onclick="toggleMapFloodBorders(event)">🗺️ Flood Borders</button>
           <button type="button" id="btnToggleBadges" class="chip-btn active" style="padding: 4px 10px; font-size: 0.72rem;" onclick="toggleMapElevationBadges(event)">📏 Elevation Badges</button>
           <button type="button" id="btnMapGps" class="chip-btn" style="padding: 4px 10px; font-size: 0.72rem;" onclick="locateUserOnMap(event)">📍 My GPS</button>
           <button type="button" id="btnFsMap" class="chip-btn" style="padding: 4px 10px; font-size: 0.72rem;" onclick="toggleMapFullscreen(event)"><span class="fs-icon">⤢</span> Enlarge Map</button>
@@ -3633,7 +3640,13 @@
         lon: -122.535078,
         crown: 7.42,
         gutter: 7.28,
-        desc: "Concave sag on Larkspur Plaza Dr near Heather Way. Drains 1-4 surcharge at 7.28'; road crown overhauls at 7.42'."
+        desc: "Concave sag on Larkspur Plaza Dr near Heather Way. Drains 1-4 surcharge at 7.28'; road crown overhauls at 7.42'.",
+        poly: [
+          [37.94025, -122.53560],
+          [37.94034, -122.53545],
+          [37.93940, -122.53460],
+          [37.93930, -122.53478]
+        ]
       },
       {
         id: 'boardwalk',
@@ -3644,7 +3657,13 @@
         lon: -122.532933,
         crown: 8.04,
         gutter: 7.60,
-        desc: "Elevated residential boardwalk deck (8.04') on east bank of creek slough."
+        desc: "Elevated residential boardwalk deck (8.04') on east bank of creek slough.",
+        poly: [
+          [37.94110, -122.53325],
+          [37.94115, -122.53270],
+          [37.94035, -122.53260],
+          [37.94030, -122.53315]
+        ]
       },
       {
         id: 'creek',
@@ -3655,7 +3674,13 @@
         lon: -122.533743,
         crown: 6.60,
         gutter: 6.40,
-        desc: "Tidal marsh shoreline path and drainage headwall. Inundated on routine monthly high tides."
+        desc: "Tidal marsh shoreline path and drainage headwall. Inundated on routine monthly high tides.",
+        poly: [
+          [37.94120, -122.53420],
+          [37.94125, -122.53360],
+          [37.94020, -122.53350],
+          [37.94015, -122.53410]
+        ]
       },
       {
         id: 'luckyramp',
@@ -3666,7 +3691,13 @@
         lon: -122.518280,
         crown: 3.78,
         gutter: 3.50,
-        desc: "Historic tidal marsh subsidence basin off US-101 southbound exit. Relies on Town storm drainage pump station."
+        desc: "Historic tidal marsh subsidence basin off US-101 southbound exit. Relies on Town storm drainage pump station.",
+        poly: [
+          [37.94010, -122.51890],
+          [37.93990, -122.51770],
+          [37.93885, -122.51790],
+          [37.93905, -122.51910]
+        ]
       },
       {
         id: 'luckyfrontage',
@@ -3677,7 +3708,13 @@
         lon: -122.518536,
         crown: 4.19,
         gutter: 3.90,
-        desc: "Residential frontage road and parking stalls along Lucky Drive low basin."
+        desc: "Residential frontage road and parking stalls along Lucky Drive low basin.",
+        poly: [
+          [37.93970, -122.51930],
+          [37.93950, -122.51810],
+          [37.93870, -122.51830],
+          [37.93890, -122.51950]
+        ]
       },
       {
         id: 'manzanita',
@@ -3688,7 +3725,13 @@
         lon: -122.519000,
         crown: 7.20,
         gutter: 7.00,
-        desc: "Major commuter parking lot and US-101 highway underpass at head of Richardson Bay. Sheet-floods when tides exceed 7.00'."
+        desc: "Major commuter parking lot and US-101 highway underpass at head of Richardson Bay. Sheet-floods when tides exceed 7.00'.",
+        poly: [
+          [37.88160, -122.52000],
+          [37.88140, -122.51800],
+          [37.87950, -122.51830],
+          [37.87980, -122.52030]
+        ]
       },
       {
         id: 'tam',
@@ -3699,7 +3742,13 @@
         lon: -122.525000,
         crown: 7.35,
         gutter: 7.10,
-        desc: "Key highway intersection on Shoreline Hwy (SR-1). Low road shoulder and commercial parking margins flood at 7.10'."
+        desc: "Key highway intersection on Shoreline Hwy (SR-1). Low road shoulder and commercial parking margins flood at 7.10'.",
+        poly: [
+          [37.88700, -122.52620],
+          [37.88680, -122.52420],
+          [37.88520, -122.52440],
+          [37.88540, -122.52640]
+        ]
       },
       {
         id: 'sanrafaelcanal',
@@ -3710,15 +3759,22 @@
         lon: -122.502000,
         crown: 5.70,
         gutter: 5.20,
-        desc: "Low-lying San Rafael Canal District frontage road and access corridor. Tidal bowl subsidence causes canal to overtop bank onto Canal Street during winter king tides above 6.00'."
+        desc: "Low-lying San Rafael Canal District frontage road and access corridor. Tidal bowl subsidence causes canal to overtop bank onto Canal Street during winter king tides above 6.00'.",
+        poly: [
+          [37.96720, -122.50420],
+          [37.96690, -122.50020],
+          [37.96480, -122.50050],
+          [37.96510, -122.50450]
+        ]
       }
     ];
 
     let floodMapInstance = null;
     let mapMarkers = {};
-    let mapHalos = {};
+    let mapPolygons = {};
     let mapGpsMarker = null;
     let showElevationBadges = true;
+    let showFloodBorders = true;
 
     function initFloodMap() {
       const container = document.getElementById('floodMap');
@@ -3760,18 +3816,21 @@
 
       L.control.zoom({ position: 'bottomright' }).addTo(floodMapInstance);
 
-      // Plot All Marin County Surveyed Hotspots
+      // Plot All Marin County Surveyed Hotspots & Physical Flood Borders
       MARIN_MAP_HOTSPOTS.forEach(site => {
-        // Inundation halo circle
-        const halo = L.circle([site.lat, site.lon], {
-          radius: 60,
-          fillColor: '#22c55e',
-          color: '#22c55e',
-          weight: 1,
-          opacity: 0.6,
-          fillOpacity: 0.15
-        }).addTo(floodMapInstance);
-        mapHalos[site.id] = halo;
+        // Physical Surveyed Footprint / Flood Border Polygon
+        if (site.poly) {
+          const poly = L.polygon(site.poly, {
+            className: 'flood-polygon-border',
+            color: '#22c55e',
+            weight: 1.5,
+            dashArray: '3, 6',
+            fillColor: '#22c55e',
+            fillOpacity: 0.06,
+            opacity: 0.4
+          }).addTo(floodMapInstance);
+          mapPolygons[site.id] = poly;
+        }
 
         // Custom HTML Marker with floating Elevation & Water Level Tag
         const customIcon = L.divIcon({
@@ -3884,8 +3943,8 @@
 
       MARIN_MAP_HOTSPOTS.forEach(site => {
         const marker = mapMarkers[site.id];
-        const halo = mapHalos[site.id];
-        if (!marker || !halo) return;
+        const poly = mapPolygons[site.id];
+        if (!marker) return;
 
         // Update icon & floating badge
         const icon = L.divIcon({
@@ -3897,37 +3956,59 @@
         marker.setIcon(icon);
         marker.setPopupContent(generateMapPopupHtml(site, twl));
 
-        // Update Inundation Halo
-        if (twl >= site.crown) {
-          const depthRatio = Math.min(2.5, 1 + (twl - site.crown));
-          halo.setRadius(Math.round(70 * depthRatio));
-          halo.setStyle({
-            fillColor: '#ef4444',
-            color: '#ef4444',
-            weight: 2,
-            opacity: 0.85,
-            fillOpacity: 0.35
-          });
-        } else if (twl >= site.gutter) {
-          halo.setRadius(70);
-          halo.setStyle({
-            fillColor: '#f59e0b',
-            color: '#f59e0b',
-            weight: 1.5,
-            opacity: 0.7,
-            fillOpacity: 0.22
-          });
-        } else {
-          halo.setRadius(50);
-          halo.setStyle({
-            fillColor: '#22c55e',
-            color: '#22c55e',
-            weight: 1,
-            opacity: 0.5,
-            fillOpacity: 0.12
-          });
+        // Update Physical Flood Border Polygon based on ground height
+        if (poly) {
+          if (twl >= site.crown) {
+            const depthIn = ((twl - site.crown) * 12).toFixed(1);
+            poly.setStyle({
+              color: '#ef4444',
+              weight: 3.5,
+              dashArray: null,
+              fillColor: '#ef4444',
+              fillOpacity: 0.45,
+              opacity: 1
+            });
+            poly.bindTooltip(`🚨 <b>${site.shortName} FLOOD BORDER</b><br>Crown Submerged (+${depthIn}" deep)`, { sticky: true });
+          } else if (twl >= site.gutter) {
+            const depthIn = ((twl - site.gutter) * 12).toFixed(1);
+            poly.setStyle({
+              color: '#f59e0b',
+              weight: 2.5,
+              dashArray: '5, 5',
+              fillColor: '#f59e0b',
+              fillOpacity: 0.25,
+              opacity: 0.95
+            });
+            poly.bindTooltip(`⚠️ <b>${site.shortName} GUTTER BORDER</b><br>Curbs & Inverts Wet (+${depthIn}")`, { sticky: true });
+          } else {
+            const marginFt = (site.crown - twl).toFixed(2);
+            poly.setStyle({
+              color: '#22c55e',
+              weight: 1.5,
+              dashArray: '3, 6',
+              fillColor: '#22c55e',
+              fillOpacity: 0.05,
+              opacity: 0.4
+            });
+            poly.bindTooltip(`🟢 <b>${site.shortName} CLEAR</b><br>${marginFt} ft margin to crown`, { sticky: true });
+          }
         }
       });
+    }
+
+    function toggleMapFloodBorders(e) {
+      if (e) e.stopPropagation();
+      const mapEl = document.getElementById('floodMap');
+      const btn = document.getElementById('btnToggleBorders');
+      if (!mapEl) return;
+      showFloodBorders = !showFloodBorders;
+      if (showFloodBorders) {
+        mapEl.classList.remove('hide-flood-borders');
+        if (btn) btn.classList.add('active');
+      } else {
+        mapEl.classList.add('hide-flood-borders');
+        if (btn) btn.classList.remove('active');
+      }
     }
 
     function toggleMapElevationBadges(e) {
