@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Flood Watch WET • Weather • Event • Tide & FloodWatch</title>
+  <title>CWC Flood Watch Wet • Weather • Event • Tide</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="favicon.ico">
   <meta name="theme-color" content="#0b0f19">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Larkspur WET">
+  <meta name="apple-mobile-web-app-title" content="CWC Flood Watch Wet">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -815,7 +815,7 @@
       <div class="brand">
         <div class="app-icon">🌊</div>
         <div class="brand-title">
-          <h1>Flood Watch WET</h1>
+          <h1>CWC Flood Watch Wet</h1>
           <p>Weather • Event • Tide & FloodWatch</p>
         </div>
       </div>
@@ -3036,7 +3036,7 @@
     // Startup Initialization
     document.addEventListener('DOMContentLoaded', () => {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=37').catch(() => {});
+        navigator.serviceWorker.register('./sw.js?v=38').catch(() => {});
       }
       applyVehicleAndCarView();
       initHydrographDragScrub();
@@ -3144,7 +3144,7 @@
             btn.style.borderColor = "#22c55e";
             btn.style.color = "#4ade80";
           }
-          new Notification("🌊 Larkspur Flood Watch", {
+          new Notification("🌊 CWC Flood Watch Wet", {
             body: "Real-time notifications enabled for your Samsung Galaxy / Android device!",
             icon: "favicon.ico"
           });
@@ -3176,7 +3176,7 @@
 
       // Trigger native notification if permitted
       if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification("🌊 Larkspur Flood Watch • Test Alert", {
+        new Notification("🌊 CWC Flood Watch Wet • Test Alert", {
           body: sampleMsg,
           icon: "favicon.ico"
         });

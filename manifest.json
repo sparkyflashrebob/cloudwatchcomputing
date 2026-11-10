@@ -1,12 +1,12 @@
 {
-  "name": "Flood Watch WET - Weather, Event, Tide",
-  "short_name": "Flood Watch WET",
-  "description": "Hyper-local tide, storm surge, and road flood passability monitor for Larkspur and Marin County (calibrated for Larkspur Plaza Dr & Prius)",
+  "name": "CWC Flood Watch Wet",
+  "short_name": "CWC Flood Watch Wet",
+  "description": "Hyper-local tide, storm surge, and road flood passability monitor by Cloud Watch Computing",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "background_color": "#0b0f19",
+  "theme_color": "#0b0f19",
   "orientation": "any",
   "icons": [
     {
