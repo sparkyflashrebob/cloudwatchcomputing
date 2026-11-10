@@ -1389,7 +1389,7 @@
           <span style="font-size:0.75rem; color:var(--cyan); font-family:var(--mono);" id="mapTideLabel">TWL: 7.25 ft NAVD88</span>
         </div>
         <div style="display: flex; gap: 6px; align-items: center; margin-left: auto; flex-wrap: wrap;">
-          <button type="button" id="btnToggleInundation" class="chip-btn active" style="padding: 4px 10px; font-size: 0.72rem;" onclick="toggleMapInundationLayer(event)">🌊 LiDAR Flood Layer</button>
+          <button type="button" id="btnToggleInundation" class="chip-btn" style="padding: 4px 10px; font-size: 0.72rem;" onclick="toggleMapInundationLayer(event)">🌊 LiDAR Flood: OFF</button>
           <button type="button" id="btnToggleBadges" class="chip-btn active" style="padding: 4px 10px; font-size: 0.72rem;" onclick="toggleMapElevationBadges(event)">📏 Elevation Badges</button>
           <button type="button" id="btnMapGps" class="chip-btn" style="padding: 4px 10px; font-size: 0.72rem;" onclick="locateUserOnMap(event)">📍 My GPS</button>
           <button type="button" id="btnFsMap" class="chip-btn" style="padding: 4px 10px; font-size: 0.72rem;" onclick="toggleMapFullscreen(event)"><span class="fs-icon">⤢</span> Enlarge Map</button>
@@ -3749,11 +3749,12 @@
       }
     ];
 
-    let floodMapInstance = null;
+        let floodMapInstance = null;
     let mapMarkers = {};
     let mapGpsMarker = null;
-    let showElevationBadges = true;
-    let showInundation = true;
+    // Persistent state shared with Topographic Dev Lab
+    let showElevationBadges = localStorage.getItem('cwc_show_badges') !== 'false'; // Default ON
+    let showInundation = localStorage.getItem('cwc_flood_overlay') === 'true'; // Default OFF
     let activeInundationLayer = null;
     let inundationLayer1ft = null;
     let inundationLayer2ft = null;
@@ -3826,10 +3827,12 @@
         maxZoom: 21
       });
 
+      activeInundationLayer = inundationLayer1ft;
       if (showInundation) {
         inundationLayer1ft.addTo(floodMapInstance);
-        activeInundationLayer = inundationLayer1ft;
       }
+      applyMapOverlayUI();
+      applyMapBadgesUI();
 
       // Add Base Layer Control
       const baseMaps = {
@@ -4001,10 +4004,8 @@
           layerOpacity = 0.80;
         } else if (mllw >= 7.00) {
           targetLayer = inundationLayer1ft;
-          // Interpolate opacity from 0.35 at 7.00' MLLW to 0.75 at 7.65' MLLW
           layerOpacity = 0.35 + ((mllw - 7.00) / 0.65) * 0.40;
         } else {
-          // Subtle low tide baseline
           targetLayer = inundationLayer1ft;
           layerOpacity = 0.12;
         }
@@ -4018,6 +4019,20 @@
         }
         if (activeInundationLayer) {
           activeInundationLayer.setOpacity(layerOpacity);
+        }
+      } else {
+        if (activeInundationLayer && floodMapInstance.hasLayer(activeInundationLayer)) {
+          floodMapInstance.removeLayer(activeInundationLayer);
+        }
+      }
+
+      // Strictly enforce badge visibility preference on every update
+      const mapEl = document.getElementById('floodMap');
+      if (mapEl) {
+        if (showElevationBadges) {
+          mapEl.classList.remove('hide-elevation-badges');
+        } else {
+          mapEl.classList.add('hide-elevation-badges');
         }
       }
 
@@ -4037,36 +4052,63 @@
       });
     }
 
-    function toggleMapInundationLayer(e) {
-      if (e) e.stopPropagation();
+    function applyMapOverlayUI() {
       const btn = document.getElementById('btnToggleInundation');
-      showInundation = !showInundation;
-      if (showInundation) {
-        if (btn) btn.classList.add('active');
-        if (activeInundationLayer && !floodMapInstance.hasLayer(activeInundationLayer)) {
-          activeInundationLayer.addTo(floodMapInstance);
+      if (btn) {
+        if (showInundation) {
+          btn.classList.add('active');
+          btn.textContent = '🌊 LiDAR Flood: ON';
+        } else {
+          btn.classList.remove('active');
+          btn.textContent = '🌊 LiDAR Flood: OFF';
         }
-      } else {
-        if (btn) btn.classList.remove('active');
-        if (activeInundationLayer && floodMapInstance.hasLayer(activeInundationLayer)) {
-          floodMapInstance.removeLayer(activeInundationLayer);
+      }
+      if (floodMapInstance && activeInundationLayer) {
+        if (showInundation) {
+          if (!floodMapInstance.hasLayer(activeInundationLayer)) {
+            activeInundationLayer.addTo(floodMapInstance);
+          }
+        } else {
+          if (floodMapInstance.hasLayer(activeInundationLayer)) {
+            floodMapInstance.removeLayer(activeInundationLayer);
+          }
         }
       }
     }
 
-    function toggleMapElevationBadges(e) {
-      if (e) e.stopPropagation();
+    function applyMapBadgesUI() {
       const mapEl = document.getElementById('floodMap');
       const btn = document.getElementById('btnToggleBadges');
-      if (!mapEl) return;
-      showElevationBadges = !showElevationBadges;
-      if (showElevationBadges) {
-        mapEl.classList.remove('hide-elevation-badges');
-        if (btn) btn.classList.add('active');
-      } else {
-        mapEl.classList.add('hide-elevation-badges');
-        if (btn) btn.classList.remove('active');
+      if (mapEl) {
+        if (showElevationBadges) {
+          mapEl.classList.remove('hide-elevation-badges');
+        } else {
+          mapEl.classList.add('hide-elevation-badges');
+        }
       }
+      if (btn) {
+        if (showElevationBadges) {
+          btn.classList.add('active');
+          btn.textContent = '🏷️ Badges: ON';
+        } else {
+          btn.classList.remove('active');
+          btn.textContent = '🏷️ Badges: OFF';
+        }
+      }
+    }
+
+    function toggleMapInundationLayer(e) {
+      if (e) e.stopPropagation();
+      showInundation = !showInundation;
+      localStorage.setItem('cwc_flood_overlay', showInundation ? 'true' : 'false');
+      applyMapOverlayUI();
+    }
+
+    function toggleMapElevationBadges(e) {
+      if (e) e.stopPropagation();
+      showElevationBadges = !showElevationBadges;
+      localStorage.setItem('cwc_show_badges', showElevationBadges ? 'true' : 'false');
+      applyMapBadgesUI();
     }
 
     function locateUserOnMap(e) {
@@ -4329,7 +4371,7 @@
     // Startup Initialization
     document.addEventListener('DOMContentLoaded', () => {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=55').catch(() => {});
+        navigator.serviceWorker.register('./sw.js?v=cwc-wet-v56').catch(() => {});
       }
       applyVehicleAndCarView();
       initHydrographDragScrub();

@@ -373,6 +373,11 @@
       }
     }
     
+  
+    .hide-elevation-badges .custom-marker-badge {
+      display: none !important;
+    }
+    
   </style>
 </head>
 <body>
@@ -421,8 +426,9 @@
       <span style="font-size:0.72rem; color:var(--text-muted); font-family:var(--mono);">9.50'</span>
     </div>
 
-    <div style="display:flex; gap:6px;">
-      <button class="preset-btn" id="btnToggleInundation" style="background:#0284c7; color:#fff;" onclick="toggleInundationLayer()">🌊 Flood Layer: ON</button>
+    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+      <button class="preset-btn" id="btnToggleInundation" style="background:rgba(255,255,255,0.05); color:var(--text);" onclick="toggleInundationLayer()">🌊 Flood Layer: OFF</button>
+      <button class="preset-btn active" id="btnToggleBadges" onclick="toggleElevationBadges()">🏷️ Badges: ON</button>
       <button class="preset-btn" onclick="locateUser()">📍 My GPS</button>
     </div>
   </div>
@@ -661,8 +667,12 @@
         maxZoom: 21
       });
 
-      inundationLayer1ft.addTo(devMapInstance);
       activeInundationLayer = inundationLayer1ft;
+      if (showInundation) {
+        inundationLayer1ft.addTo(devMapInstance);
+      }
+      applyInundationUI();
+      applyElevationBadgesUI();
 
       // Layer Controls
       L.control.layers({
@@ -697,6 +707,25 @@
         inspectMapClick(e.latlng.lat, e.latlng.lng);
       });
     
+      
+      applyInundationUI();
+      applyElevationBadgesUI();
+
+      if (syncLive) {
+        const btnLive = document.getElementById('btnLiveNoaa');
+        if (btnLive) {
+          btnLive.classList.add('active');
+          btnLive.style.borderColor = 'var(--cyan)';
+          btnLive.style.color = 'var(--cyan)';
+        }
+        fetchLiveNoaa();
+      } else {
+        const savedMllw = localStorage.getItem('cwc_selected_mllw');
+        if (savedMllw) {
+          setElevation(parseFloat(savedMllw));
+        }
+      }
+
       setTimeout(() => { if (devMapInstance) devMapInstance.invalidateSize(); }, 200);
       setTimeout(() => { if (devMapInstance) devMapInstance.invalidateSize(); }, 600);
       setTimeout(() => { if (devMapInstance) devMapInstance.invalidateSize(); }, 1200);
@@ -771,7 +800,18 @@ function generateMarkerHtml(site, navd, mllw) {
       `;
     }
 
-    function setElevation(mllw) {
+    function setElevation(mllw, fromLive = false) {
+      if (!fromLive) {
+        syncLive = false;
+        localStorage.setItem('cwc_sync_live', 'false');
+        const btnLive = document.getElementById('btnLiveNoaa');
+        if (btnLive) {
+          btnLive.classList.remove('active');
+          btnLive.style.borderColor = 'var(--card-border)';
+          btnLive.style.color = 'var(--text)';
+        }
+      }
+      localStorage.setItem('cwc_selected_mllw', parseFloat(mllw).toFixed(2));
       currentMllw = parseFloat(mllw);
       currentNavd88 = currentMllw - 0.09;
 
@@ -866,7 +906,13 @@ function generateMarkerHtml(site, navd, mllw) {
         const data = await res.json();
         if (data && data.data && data.data.length > 0) {
           const liveMllw = parseFloat(data.data[0].v);
-          setElevation(liveMllw);
+          syncLive = true;
+          localStorage.setItem('cwc_sync_live', 'true');
+          setElevation(liveMllw, true);
+          btn.classList.add('active');
+          btn.style.borderColor = 'var(--cyan)';
+          btn.style.color = 'var(--cyan)';
+          setElevation(liveMllw, true);
           btn.textContent = `📡 Live: ${liveMllw.toFixed(2)}' MLLW`;
           setTimeout(() => { btn.textContent = '📡 Sync Live NOAA'; }, 5000);
         } else {
@@ -946,6 +992,25 @@ function generateMarkerHtml(site, navd, mllw) {
       initDevMap();
     });
     window.addEventListener('load', () => {
+      
+      applyInundationUI();
+      applyElevationBadgesUI();
+
+      if (syncLive) {
+        const btnLive = document.getElementById('btnLiveNoaa');
+        if (btnLive) {
+          btnLive.classList.add('active');
+          btnLive.style.borderColor = 'var(--cyan)';
+          btnLive.style.color = 'var(--cyan)';
+        }
+        fetchLiveNoaa();
+      } else {
+        const savedMllw = localStorage.getItem('cwc_selected_mllw');
+        if (savedMllw) {
+          setElevation(parseFloat(savedMllw));
+        }
+      }
+
       setTimeout(() => { if (devMapInstance) devMapInstance.invalidateSize(); }, 200);
     });
   </script>
