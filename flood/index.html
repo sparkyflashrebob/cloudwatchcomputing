@@ -1653,25 +1653,6 @@
       </div>
     </section>
 
-    <!-- CRITICAL THRESHOLD REFERENCE TABLE -->
-    <section class="cross-section-card">
-      <div class="card-title">
-        <span>📋 Calibrated Elevation Thresholds</span>
-      </div>
-      <table class="threshold-table">
-        <thead>
-          <tr>
-            <th>Feature / Benchmark</th>
-            <th>Elevation</th>
-            <th>Status / Impact</th>
-          </tr>
-        </thead>
-        <tbody id="thresholdTableBody">
-          <!-- Dynamically populated per selected location in updateUI() -->
-        </tbody>
-      </table>
-    </section>
-
   </div>
 
   <!-- SETTINGS MODAL -->
@@ -3432,85 +3413,6 @@
       }
 
       
-      // Update Pertinent Elevation Threshold Table for Active Location
-      const tbody = document.getElementById('thresholdTableBody');
-      if (tbody) {
-        const isLarkspur = (activeLocKey === 'larkspur');
-        let rows = '';
-        if (isLarkspur) {
-          rows += `
-            <tr>
-              <td>Street Gutter Inverts</td>
-              <td class="val" style="color:var(--cyan);">${(cfg.gutter || 7.15).toFixed(2)} ft</td>
-              <td>Water begins seeping into curb gutters (Drain 1-4)</td>
-            </tr>
-            <tr>
-              <td><strong>Lowest Crown in Sag Dip</strong></td>
-              <td class="val" style="color:#f97316;"><strong>${(cfg.crown || 7.42).toFixed(2)} ft</strong></td>
-              <td><strong>True Travel Lane Clearance (Crosswalk breach)</strong></td>
-            </tr>
-            <tr>
-              <td>High Road Crown (Foreground)</td>
-              <td class="val" style="color:#fbbf24;">7.75 ft</td>
-              <td>High ridge exposed while sag dip floods</td>
-            </tr>
-            <tr>
-              <td><strong>Vehicle Impassable (${activeVehicleClearance}" CLR)</strong></td>
-              <td class="val" style="color:var(--red);"><strong>${((cfg.crown || 7.42) + activeVehicleClearance/12).toFixed(2)} ft</strong></td>
-              <td><strong>Water depth reaches vehicle ground clearance</strong></td>
-            </tr>
-            <tr>
-              <td>Low Driveway & Ground Apron</td>
-              <td class="val" style="color:var(--purple);">${(cfg.stall || 8.15).toFixed(2)} ft</td>
-              <td>Carport apron & concrete floor boundary</td>
-            </tr>
-            <tr>
-              <td>Vehicle Door Sill Damage Level</td>
-              <td class="val" style="color:#f43f5e;">8.86 ft</td>
-              <td>Water reaches vehicle interior</td>
-            </tr>
-          `;
-        } else {
-          const crownVal = cfg.crown || 7.50;
-          const gutterVal = cfg.gutter || (crownVal - 0.40);
-          const impassableVal = crownVal + (activeVehicleClearance / 12);
-          const crownDiff = streetLevel - crownVal;
-          const gutterDiff = streetLevel - gutterVal;
-          
-          let crownStatus = crownDiff >= 0 
-            ? `<span style="color:#ef4444; font-weight:700;">🚨 OVERTOPPED (+${(crownDiff*12).toFixed(1)}")</span>`
-            : `<span style="color:#22c55e;">🟢 CLEAR (${(-crownDiff).toFixed(2)}' margin)</span>`;
-            
-          let gutterStatus = gutterDiff >= 0 
-            ? `<span style="color:#f59e0b; font-weight:700;">⚠️ WET / PONDING (+${(gutterDiff*12).toFixed(1)}")</span>`
-            : `<span style="color:#22c55e;">🟢 DRY (${(-gutterDiff).toFixed(2)}' margin)</span>`;
-
-          rows += `
-            <tr>
-              <td><strong>👑 Roadway Crown / Crest</strong></td>
-              <td class="val" style="color:#f97316;"><strong>${crownVal.toFixed(2)} ft NAVD88</strong></td>
-              <td><strong>${crownStatus} • Travel lane overtopping threshold</strong></td>
-            </tr>
-            <tr>
-              <td>📐 Low Gutter / Approach Shoulder</td>
-              <td class="val" style="color:var(--cyan);">${gutterVal.toFixed(2)} ft NAVD88</td>
-              <td>${gutterStatus} • Low roadside margins and curb inverts</td>
-            </tr>
-            <tr>
-              <td>🚗 Vehicle Clearance Limit (${activeVehicleClearance}" CLR)</td>
-              <td class="val" style="color:var(--red);"><strong>${impassableVal.toFixed(2)} ft NAVD88</strong></td>
-              <td>Critical water depth where travel becomes impassable</td>
-            </tr>
-            <tr>
-              <td>🌊 Live Water Level (Observed TWL)</td>
-              <td class="val" style="color:var(--green); font-weight:bold;">${streetLevel.toFixed(2)} ft NAVD88</td>
-              <td>Real-time geodetic tide datum at current reporting station</td>
-            </tr>
-          `;
-        }
-        tbody.innerHTML = rows;
-      }
-
       // Update SVG Road Cross Section Simulator
       updateSvgCrossSection(streetLevel, cfg, isRising);
       updateScrubIndicator();
@@ -4606,7 +4508,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       applyRoadSimulatorVisibility();
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=cwc-wet-v66').catch(() => {});
+        navigator.serviceWorker.register('./sw.js?v=cwc-wet-v67').catch(() => {});
       }
       applyVehicleAndCarView();
       initHydrographDragScrub();
