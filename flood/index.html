@@ -1653,61 +1653,6 @@
       </div>
     </section>
 
-    
-    <!-- NOV 10 GROUND-TRUTH VERIFICATION PHOTO -->
-    
-
-    <!-- CALIBRATED SAFE PARKING HAVENS (FROM ANDY'S PLACES KML) -->
-    <section class="card" style="margin-bottom: 16px;">
-      <div class="card-title">
-        <span>🅿️ Safe Parking Havens (Andy's Places Survey)</span>
-        <span style="font-size:0.75rem; color:var(--green); font-family:var(--mono);">High Ground Safe Havens</span>
-      </div>
-      <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
-        If tides threaten Front Parking (&gt; 7.55') or Low Driveways (&gt; 8.15'), these surveyed locations remain elevated and accessible:
-      </div>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 10px;">
-          <div style="font-weight: 700; color: #6ee7b7; font-size: 0.85rem;">🅿️ Safe Parking 1 (Closest)</div>
-          <div style="font-size: 0.78rem; color: #cbd5e1; margin-top: 3px;">390 ft West • 37.94046, -122.53605</div>
-          <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 2px;">Elev: 2.24m GPS (Safe high ground)</div>
-        </div>
-        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 10px;">
-          <div style="font-weight: 700; color: #6ee7b7; font-size: 0.85rem;">🅿️ Safe Parking 2</div>
-          <div style="font-size: 0.78rem; color: #cbd5e1; margin-top: 3px;">750 ft Southeast • 37.93911, -122.53340</div>
-          <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 2px;">Elev: 1.84m GPS (Elevated bay)</div>
-        </div>
-        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 10px;">
-          <div style="font-weight: 700; color: #6ee7b7; font-size: 0.85rem;">🅿️ Safe Parking 4</div>
-          <div style="font-size: 0.78rem; color: #cbd5e1; margin-top: 3px;">850 ft Southeast • 37.93885, -122.53326</div>
-          <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 2px;">Elev: 2.27m GPS (High ridge)</div>
-        </div>
-        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 10px;">
-          <div style="font-weight: 700; color: #6ee7b7; font-size: 0.85rem;">🅿️ Safe Parking 3 (Highest)</div>
-          <div style="font-size: 0.78rem; color: #cbd5e1; margin-top: 3px;">1,090 ft South • 37.93795, -122.53388</div>
-          <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 2px;">Elev: 2.98m GPS (Extreme retreat)</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- NOV 7 KING TIDE PEAK GROUND-TRUTH GALLERY (BATCH 18) -->
-    
-
-    <!-- NOV 7 KING TIDE MORNING PEAK GALLERY -->
-    
-
-    <!-- NOV 6 KING TIDE MORNING PEAK GALLERY -->
-    
-
-    <!-- NOV 1 KING TIDE & DST CALIBRATION GALLERY -->
-    
-
-    <!-- OCT 31 GROUND-TRUTH & SURVEY GALLERY -->
-    
-
-    <!-- GROUND-TRUTH CALIBRATION GALLERY -->
-    
-
     <!-- CRITICAL THRESHOLD REFERENCE TABLE -->
     <section class="cross-section-card">
       <div class="card-title">
@@ -3666,7 +3611,7 @@
 
       if (twl >= sillElev) {
         if (sillAlert) sillAlert.style.display = 'block';
-        if (sillText) sillText.textContent = `🚨 WATER OVER DOOR SILL (+${sillDeltaIn.toFixed(1)}") — MOVE TO SAFE PARKING`;
+        if (sillText) sillText.textContent = `🚨 WATER OVER DOOR SILL (+${sillDeltaIn.toFixed(1)}") — MOVE TO HIGH GROUND`;
         const rect = sillAlert ? sillAlert.querySelector('rect') : null;
         if (rect) {
           rect.setAttribute('fill', '#ef4444');
@@ -4661,7 +4606,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       applyRoadSimulatorVisibility();
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=cwc-wet-v65').catch(() => {});
+        navigator.serviceWorker.register('./sw.js?v=cwc-wet-v66').catch(() => {});
       }
       applyVehicleAndCarView();
       initHydrographDragScrub();
