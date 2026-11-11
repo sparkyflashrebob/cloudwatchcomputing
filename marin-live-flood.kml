@@ -58,7 +58,7 @@
           </tr>
           <tr style="border-bottom: 1px solid #e2e8f0;">
             <td style="padding: 3px 0; color: #475569;"><b>📐 Street Gutters & Drains:</b></td>
-            <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.28' NAVD88 (7.37' MLLW)</td>
+            <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.15' NAVD88 (7.24' MLLW)</td>
           </tr>
           <tr>
             <td style="padding: 3px 0; color: #475569;"><b>🌊 Live Tide:</b></td>
@@ -274,36 +274,36 @@
     </Point>
   </Placemark>
   <Placemark>
-    <name>Corte Madera TC</name>
+    <name>The Village at Corte Madera</name>
     <description><![CDATA[
       <div style="font-family: Arial, sans-serif; min-width: 260px; line-height: 1.4;">
-        <h3 style="margin: 0 0 4px 0; color: #0284c7;">Corte Madera Town Center (Low Basin)</h3>
+        <h3 style="margin: 0 0 4px 0; color: #0284c7;">The Village at Corte Madera</h3>
         <p style="margin: 0 0 8px 0; font-size: 11px; color: #64748b;">📍 Corte Madera, Marin County</p>
-        <div style="background: #f59e0b; color: #fff; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; margin-bottom: 8px;">
-          ⚠️ LOW PARKING PERIMETER WET (+4.0 in) • COMMERCIAL ACCESS DRIVE CLEAR (0.20' margin)
+        <div style="background: #ef4444; color: #fff; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; margin-bottom: 8px;">
+          🚨 ACCESS RING ROAD & PARKING CROWN SUBMERGED (+6.0 in)
         </div>
         <table style="width: 100%; font-size: 12px; border-collapse: collapse; margin-bottom: 8px;">
           <tr style="border-bottom: 1px solid #e2e8f0;">
-            <td style="padding: 3px 0; color: #475569;"><b>👑 Commercial Access Drive:</b></td>
-            <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.20' NAVD88 (7.29' MLLW)</td>
+            <td style="padding: 3px 0; color: #475569;"><b>👑 Access Ring Road & Parking Crown:</b></td>
+            <td style="padding: 3px 0; text-align: right; font-family: monospace;">6.50' NAVD88 (6.59' MLLW)</td>
           </tr>
           <tr style="border-bottom: 1px solid #e2e8f0;">
-            <td style="padding: 3px 0; color: #475569;"><b>📐 Low Parking Perimeter:</b></td>
-            <td style="padding: 3px 0; text-align: right; font-family: monospace;">6.67' NAVD88 (6.76' MLLW)</td>
+            <td style="padding: 3px 0; color: #475569;"><b>📐 Marsh Perimeter Gutter & Basin:</b></td>
+            <td style="padding: 3px 0; text-align: right; font-family: monospace;">5.71' NAVD88 (5.80' MLLW)</td>
           </tr>
           <tr>
             <td style="padding: 3px 0; color: #475569;"><b>🌊 Live Tide:</b></td>
             <td style="padding: 3px 0; text-align: right; font-family: monospace; font-weight: bold; color: #0284c7;">7.00' NAVD88 (7.09' MLLW)</td>
           </tr>
         </table>
-        <p style="font-size: 11px; color: #64748b; font-style: italic; margin: 0 0 8px 0;">Low commercial parking perimeter adjacent to Corte Madera marsh network; surcharges during astronomical high tides.</p>
+        <p style="font-size: 11px; color: #64748b; font-style: italic; margin: 0 0 8px 0;">The Village at Corte Madera shopping center east of US-101. Low perimeter and basin gutter at 5.71' NAVD88; parking access road at 6.50' NAVD88.</p>
         <p style="margin: 0; font-size: 11px;"><a href="https://cloudwatchcomputing.com/flood/" target="_blank">Open CWC Marin Flood Watch WET Dashboard &rarr;</a></p>
       </div>
     ]]></description>
-    <styleUrl>#yellowPin</styleUrl>
+    <styleUrl>#redPin</styleUrl>
     <Point>
       <altitudeMode>relativeToGround</altitudeMode>
-      <coordinates>-122.525547,37.92723,5</coordinates>
+      <coordinates>-122.512177,37.927167,5</coordinates>
     </Point>
   </Placemark>
   <Placemark>
@@ -346,7 +346,7 @@
         <h3 style="margin: 0 0 4px 0; color: #0284c7;">Manzanita Park & Ride (Shoreline Hwy & Hwy 101)</h3>
         <p style="margin: 0 0 8px 0; font-size: 11px; color: #64748b;">📍 Mill Valley, Marin County</p>
         <div style="background: #f59e0b; color: #fff; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; margin-bottom: 8px;">
-          ⚠️ NORTH LOT ENTRY DIP WET (+1.2 in) • CENTER PARKING LOT CLEAR (0.20' margin)
+          ⚠️ NORTH LOT ENTRY DIP WET (+6.2 in) • CENTER PARKING LOT CLEAR (0.20' margin)
         </div>
         <table style="width: 100%; font-size: 12px; border-collapse: collapse; margin-bottom: 8px;">
           <tr style="border-bottom: 1px solid #e2e8f0;">
@@ -355,14 +355,14 @@
           </tr>
           <tr style="border-bottom: 1px solid #e2e8f0;">
             <td style="padding: 3px 0; color: #475569;"><b>📐 North Lot Entry Dip:</b></td>
-            <td style="padding: 3px 0; text-align: right; font-family: monospace;">6.90' NAVD88 (6.99' MLLW)</td>
+            <td style="padding: 3px 0; text-align: right; font-family: monospace;">6.48' NAVD88 (6.57' MLLW)</td>
           </tr>
           <tr>
             <td style="padding: 3px 0; color: #475569;"><b>🌊 Live Tide:</b></td>
             <td style="padding: 3px 0; text-align: right; font-family: monospace; font-weight: bold; color: #0284c7;">7.00' NAVD88 (7.09' MLLW)</td>
           </tr>
         </table>
-        <p style="font-size: 11px; color: #64748b; font-style: italic; margin: 0 0 8px 0;">Caltrans commuter lot under Hwy 101 overpass. North lot ponds at 6.90' NAVD88; center lot impassable above 7.20' NAVD88.</p>
+        <p style="font-size: 11px; color: #64748b; font-style: italic; margin: 0 0 8px 0;">Caltrans commuter lot under Hwy 101 overpass. Low north entry dip at 6.48' NAVD88; center lot impassable above 7.20' NAVD88.</p>
         <p style="margin: 0; font-size: 11px;"><a href="https://cloudwatchcomputing.com/flood/" target="_blank">Open CWC Marin Flood Watch WET Dashboard &rarr;</a></p>
       </div>
     ]]></description>
@@ -379,7 +379,7 @@
         <h3 style="margin: 0 0 4px 0; color: #0284c7;">Tam Junction (Shoreline Hwy & Almonte Blvd)</h3>
         <p style="margin: 0 0 8px 0; font-size: 11px; color: #64748b;">📍 Mill Valley, Marin County</p>
         <div style="background: #f59e0b; color: #fff; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; margin-bottom: 8px;">
-          ⚠️ ROADSIDE SHOULDER MARGINS WET (+0.0 in) • HIGHWAY TRAVEL LANES CLEAR (0.35' margin)
+          ⚠️ ROADSIDE SHOULDER MARGINS WET (+7.4 in) • HIGHWAY TRAVEL LANES CLEAR (0.35' margin)
         </div>
         <table style="width: 100%; font-size: 12px; border-collapse: collapse; margin-bottom: 8px;">
           <tr style="border-bottom: 1px solid #e2e8f0;">
@@ -388,21 +388,21 @@
           </tr>
           <tr style="border-bottom: 1px solid #e2e8f0;">
             <td style="padding: 3px 0; color: #475569;"><b>📐 Roadside Shoulder Margins:</b></td>
-            <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.00' NAVD88 (7.09' MLLW)</td>
+            <td style="padding: 3px 0; text-align: right; font-family: monospace;">6.38' NAVD88 (6.47' MLLW)</td>
           </tr>
           <tr>
             <td style="padding: 3px 0; color: #475569;"><b>🌊 Live Tide:</b></td>
             <td style="padding: 3px 0; text-align: right; font-family: monospace; font-weight: bold; color: #0284c7;">7.00' NAVD88 (7.09' MLLW)</td>
           </tr>
         </table>
-        <p style="font-size: 11px; color: #64748b; font-style: italic; margin: 0 0 8px 0;">Both Shoreline Hwy and Almonte Blvd shoulders submerge around 7.00' NAVD88; travel lane breaches at 7.35' NAVD88.</p>
+        <p style="font-size: 11px; color: #64748b; font-style: italic; margin: 0 0 8px 0;">Key intersection on Shoreline Hwy (SR-1) at Almonte Blvd. Low roadside shoulder ponds at 6.38' NAVD88; travel lanes overtop at 7.35' NAVD88.</p>
         <p style="margin: 0; font-size: 11px;"><a href="https://cloudwatchcomputing.com/flood/" target="_blank">Open CWC Marin Flood Watch WET Dashboard &rarr;</a></p>
       </div>
     ]]></description>
     <styleUrl>#yellowPin</styleUrl>
     <Point>
       <altitudeMode>relativeToGround</altitudeMode>
-      <coordinates>-122.531201,37.884192,5</coordinates>
+      <coordinates>-122.5245,37.8835,5</coordinates>
     </Point>
   </Placemark>
   <Placemark>
@@ -412,7 +412,7 @@
         <h3 style="margin: 0 0 4px 0; color: #0284c7;">US-101 Off-Ramp to Mill Valley / Shoreline Hwy</h3>
         <p style="margin: 0 0 8px 0; font-size: 11px; color: #64748b;">📍 Mill Valley, Marin County</p>
         <div style="background: #f59e0b; color: #fff; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; margin-bottom: 8px;">
-          ⚠️ LOW OFF-RAMP GUTTER DIP WET (+0.6 in) • EXIT RAMP TRAVEL LANE CLEAR (0.15' margin)
+          ⚠️ LOW OFF-RAMP GUTTER DIP WET (+27.8 in) • EXIT RAMP TRAVEL LANE CLEAR (0.15' margin)
         </div>
         <table style="width: 100%; font-size: 12px; border-collapse: collapse; margin-bottom: 8px;">
           <tr style="border-bottom: 1px solid #e2e8f0;">
@@ -421,7 +421,7 @@
           </tr>
           <tr style="border-bottom: 1px solid #e2e8f0;">
             <td style="padding: 3px 0; color: #475569;"><b>📐 Low Off-Ramp Gutter Dip:</b></td>
-            <td style="padding: 3px 0; text-align: right; font-family: monospace;">6.95' NAVD88 (7.04' MLLW)</td>
+            <td style="padding: 3px 0; text-align: right; font-family: monospace;">4.68' NAVD88 (4.77' MLLW)</td>
           </tr>
           <tr>
             <td style="padding: 3px 0; color: #475569;"><b>🌊 Live Tide:</b></td>

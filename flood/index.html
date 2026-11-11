@@ -3705,7 +3705,7 @@
             "lat": 37.93975,
             "lon": -122.535078,
             "crown": 7.42,
-            "gutter": 7.28,
+            "gutter": 7.15,
             "crestLabel": "Road Crown (Sag Dip)",
             "approachLabel": "Street Gutters & Drains",
             "type": "road",
@@ -3796,18 +3796,18 @@
             "desc": "Corte Madera Town Park playing fields and walking perimeter. Surveyed elevation 9.00' NAVD88 (9.09' MLLW); perimeter margins sit at 8.20' NAVD88."
       },
       {
-            "id": "cortemaderatc",
+            "id": "thevillagecortemadera",
             "city": "Corte Madera",
-            "name": "Corte Madera Town Center (Low Basin)",
-            "shortName": "Corte Madera TC",
-            "lat": 37.92723,
-            "lon": -122.525547,
-            "crown": 7.2,
-            "gutter": 6.67,
-            "crestLabel": "Commercial Access Drive",
-            "approachLabel": "Low Parking Perimeter",
+            "name": "The Village at Corte Madera",
+            "shortName": "The Village at Corte Madera",
+            "lat": 37.927167,
+            "lon": -122.512177,
+            "crown": 6.5,
+            "gutter": 5.71,
+            "crestLabel": "Access Ring Road & Parking Crown",
+            "approachLabel": "Marsh Perimeter Gutter & Basin",
             "type": "road",
-            "desc": "Low commercial parking perimeter adjacent to Corte Madera marsh network; surcharges during astronomical high tides."
+            "desc": "The Village at Corte Madera shopping center east of US-101. Low perimeter and basin gutter at 5.71' NAVD88; parking access road at 6.50' NAVD88."
       },
       {
             "id": "traderjoescm",
@@ -3831,25 +3831,25 @@
             "lat": 37.881242,
             "lon": -122.524581,
             "crown": 7.2,
-            "gutter": 6.9,
+            "gutter": 6.48,
             "crestLabel": "Center Parking Lot",
             "approachLabel": "North Lot Entry Dip",
             "type": "road",
-            "desc": "Caltrans commuter lot under Hwy 101 overpass. North lot ponds at 6.90' NAVD88; center lot impassable above 7.20' NAVD88."
+            "desc": "Caltrans commuter lot under Hwy 101 overpass. Low north entry dip at 6.48' NAVD88; center lot impassable above 7.20' NAVD88."
       },
       {
             "id": "tam",
             "city": "Mill Valley",
             "name": "Tam Junction (Shoreline Hwy & Almonte Blvd)",
             "shortName": "Tam Junction",
-            "lat": 37.884192,
-            "lon": -122.531201,
+            "lat": 37.8835,
+            "lon": -122.5245,
             "crown": 7.35,
-            "gutter": 7.0,
+            "gutter": 6.38,
             "crestLabel": "Highway Travel Lanes",
             "approachLabel": "Roadside Shoulder Margins",
             "type": "road",
-            "desc": "Both Shoreline Hwy and Almonte Blvd shoulders submerge around 7.00' NAVD88; travel lane breaches at 7.35' NAVD88."
+            "desc": "Key intersection on Shoreline Hwy (SR-1) at Almonte Blvd. Low roadside shoulder ponds at 6.38' NAVD88; travel lanes overtop at 7.35' NAVD88."
       },
       {
             "id": "millvalleyramp",
@@ -3859,7 +3859,7 @@
             "lat": 37.882833,
             "lon": -122.522851,
             "crown": 7.15,
-            "gutter": 6.95,
+            "gutter": 4.68,
             "crestLabel": "Exit Ramp Travel Lane",
             "approachLabel": "Low Off-Ramp Gutter Dip",
             "type": "road",
@@ -4652,7 +4652,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       applyRoadSimulatorVisibility();
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=cwc-wet-v64').catch(() => {});
+        navigator.serviceWorker.register('./sw.js?v=cwc-wet-v63').catch(() => {});
       }
       applyVehicleAndCarView();
       initHydrographDragScrub();
