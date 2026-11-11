@@ -307,36 +307,36 @@
     </Point>
   </Placemark>
   <Placemark>
-    <name>Trader Joe's CM</name>
+    <name>Trader Joe's (Bon Air)</name>
     <description><![CDATA[
       <div style="font-family: Arial, sans-serif; min-width: 260px; line-height: 1.4;">
-        <h3 style="margin: 0 0 4px 0; color: #0284c7;">Trader Joe's Corte Madera Gutter</h3>
-        <p style="margin: 0 0 8px 0; font-size: 11px; color: #64748b;">📍 Corte Madera, Marin County</p>
-        <div style="background: #f59e0b; color: #fff; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; margin-bottom: 8px;">
-          ⚠️ CATCHMENT GUTTER BASIN WET (+2.4 in) • STORE ACCESS DRIVEWAY CLEAR (0.30' margin)
+        <h3 style="margin: 0 0 4px 0; color: #0284c7;">Trader Joe's (Bon Air Center, Greenbrae)</h3>
+        <p style="margin: 0 0 8px 0; font-size: 11px; color: #64748b;">📍 Greenbrae, Marin County</p>
+        <div style="background: #22c55e; color: #fff; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; margin-bottom: 8px;">
+          🟢 100% CLEAR (Crown 7.10' • Basin 5.95')
         </div>
         <table style="width: 100%; font-size: 12px; border-collapse: collapse; margin-bottom: 8px;">
           <tr style="border-bottom: 1px solid #e2e8f0;">
-            <td style="padding: 3px 0; color: #475569;"><b>👑 Store Access Driveway:</b></td>
-            <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.30' NAVD88 (7.39' MLLW)</td>
+            <td style="padding: 3px 0; color: #475569;"><b>👑 Store Access Drive &amp; Entrance:</b></td>
+            <td style="padding: 3px 0; text-align: right; font-family: monospace;">7.10' NAVD88 (7.19' MLLW)</td>
           </tr>
           <tr style="border-bottom: 1px solid #e2e8f0;">
-            <td style="padding: 3px 0; color: #475569;"><b>📐 Catchment Gutter Basin:</b></td>
-            <td style="padding: 3px 0; text-align: right; font-family: monospace;">6.80' NAVD88 (6.89' MLLW)</td>
+            <td style="padding: 3px 0; color: #475569;"><b>📐 Low Parking Basin &amp; Gutter:</b></td>
+            <td style="padding: 3px 0; text-align: right; font-family: monospace;">5.95' NAVD88 (6.04' MLLW)</td>
           </tr>
           <tr>
-            <td style="padding: 3px 0; color: #475569;"><b>🌊 Live Tide:</b></td>
-            <td style="padding: 3px 0; text-align: right; font-family: monospace; font-weight: bold; color: #0284c7;">7.00' NAVD88 (7.09' MLLW)</td>
+            <td style="padding: 3px 0; color: #475569;"><b>🌊 Live Datum Offset:</b></td>
+            <td style="padding: 3px 0; text-align: right; font-family: monospace; font-weight: bold; color: #0284c7;">+0.09' MLLW</td>
           </tr>
         </table>
-        <p style="font-size: 11px; color: #64748b; font-style: italic; margin: 0 0 8px 0;">Commercial access gutter and stormwater catchment basin near marsh interface.</p>
+        <p style="font-size: 11px; color: #64748b; font-style: italic; margin: 0 0 8px 0;">Trader Joe's at Bon Air Center along Corte Madera Creek. Low parking lot basin sits at 5.95' NAVD88 (USGS 3DEP LiDAR); main center drive crown at 7.10' NAVD88.</p>
         <p style="margin: 0; font-size: 11px;"><a href="https://cloudwatchcomputing.com/flood/" target="_blank">Open CWC Marin Flood Watch WET Dashboard &rarr;</a></p>
       </div>
     ]]></description>
-    <styleUrl>#yellowPin</styleUrl>
+    <styleUrl>#greenPin</styleUrl>
     <Point>
       <altitudeMode>relativeToGround</altitudeMode>
-      <coordinates>-122.528379,37.926887,5</coordinates>
+      <coordinates>-122.515956,37.937483,5</coordinates>
     </Point>
   </Placemark>
   <Placemark>

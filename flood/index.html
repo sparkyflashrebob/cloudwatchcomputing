@@ -960,7 +960,7 @@
       padding: 3px 8px;
       white-space: nowrap;
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
-      pointer-events: auto;
+      pointer-events: none;
       text-align: center;
       z-index: 25;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -3569,6 +3569,9 @@
       // Update SVG Road Cross Section Simulator
       updateSvgCrossSection(streetLevel, cfg, isRising);
       updateScrubIndicator();
+
+      // Synchronize Marin County Flood & Elevation Map with Hydrograph Scrubber
+      updateFloodMap(twl);
     }
     
     function updateSvgCrossSection(twl, cfg, isRising) {
@@ -3688,9 +3691,6 @@
       } else {
         if (sillAlert) sillAlert.style.display = 'none';
       }
-
-      // Synchronize Marin County Flood & Elevation Map with Hydrograph Scrubber
-      updateFloodMap(point.twl);
     }
 
     // ==========================================
@@ -3810,18 +3810,18 @@
             "desc": "The Village at Corte Madera shopping center east of US-101. Low perimeter and basin gutter at 5.71' NAVD88; parking access road at 6.50' NAVD88."
       },
       {
-            "id": "traderjoescm",
-            "city": "Corte Madera",
-            "name": "Trader Joe's Corte Madera Gutter",
-            "shortName": "Trader Joe's CM",
-            "lat": 37.926887,
-            "lon": -122.528379,
-            "crown": 7.3,
-            "gutter": 6.8,
-            "crestLabel": "Store Access Driveway",
-            "approachLabel": "Catchment Gutter Basin",
+            "id": "traderjoesbonair",
+            "city": "Greenbrae",
+            "name": "Trader Joe's (Bon Air Center, Greenbrae)",
+            "shortName": "Trader Joe's (Bon Air)",
+            "lat": 37.937483,
+            "lon": -122.515956,
+            "crown": 7.10,
+            "gutter": 5.95,
+            "crestLabel": "Store Access Drive & Entrance",
+            "approachLabel": "Low Parking Basin & Gutter",
             "type": "road",
-            "desc": "Commercial access gutter and stormwater catchment basin near marsh interface."
+            "desc": "Trader Joe's at Bon Air Center along Corte Madera Creek. Low parking lot basin sits at 5.95' NAVD88 (USGS 3DEP LiDAR); main center drive crown at 7.10' NAVD88."
       },
       {
             "id": "manzanita",
@@ -4135,7 +4135,9 @@
       L.control.zoom({ position: 'bottomright' }).addTo(floodMapInstance);
 
       // Add Marin County Hotspots Markers
-      const initialTwl = (typeof currentPoint !== 'undefined' && currentPoint && currentPoint.twl) ? currentPoint.twl : 7.00;
+      const initialTwl = (tideTimeline && tideTimeline.length > currentScrubIdx && tideTimeline[currentScrubIdx])
+        ? tideTimeline[currentScrubIdx].twl
+        : (typeof liveSurge !== 'undefined' ? (1.18 + liveSurge) : 1.18);
 
       MARIN_MAP_HOTSPOTS.forEach(site => {
         const markerIcon = L.divIcon({
@@ -4154,6 +4156,9 @@
         mapMarkers[site.id] = marker;
       });
 
+      // Immediately sync map title label and markers with live water level
+      updateFloodMap(initialTwl);
+
       setTimeout(() => {
         if (floodMapInstance) floodMapInstance.invalidateSize();
       }, 400);
@@ -4161,21 +4166,23 @@
 
     function generateMapPinHtml(site, twl) {
       let status = 'green';
-      let icon = '🚗';
+      let icon = (site.type === 'boardwalk') ? '🪵' : ((site.type === 'trail' || site.type === 'park') ? '🌿' : '🚗');
       let statusText = '';
       let statusColor = 'green';
+      const crestName = site.crestLabel || (site.type === 'boardwalk' ? 'Boardwalk Deck' : 'Roadway Crown');
+      const approachName = site.approachLabel || (site.type === 'boardwalk' ? 'Shoreline Approach' : 'Street Gutters');
 
       if (twl >= site.crown) {
         status = 'red';
         icon = '🚨';
         const depthIn = ((twl - site.crown) * 12).toFixed(1);
-        statusText = `ROADWAY SUBMERGED (+${depthIn}")`;
+        statusText = `${crestName.toUpperCase()} SUBMERGED (+${depthIn}")`;
         statusColor = 'red';
       } else if (twl >= site.gutter) {
         status = 'yellow';
         icon = '⚠️';
         const depthIn = ((twl - site.gutter) * 12).toFixed(1);
-        statusText = `GUTTERS WET (+${depthIn}") • ROAD CLEAR`;
+        statusText = `${approachName.toUpperCase()} WET (+${depthIn}") • DRY CROWN`;
         statusColor = 'yellow';
       } else {
         const marginFt = (site.crown - twl).toFixed(2);
@@ -4188,7 +4195,7 @@
           <div class="elevation-water-badge ${status}" id="badge-${site.id}">
             <span class="badge-loc">${site.shortName}</span>
             <div class="badge-metrics">
-              <span class="ground-span" title="Surveyed Roadway Crown Elevation">👑 Crown: ${site.crown.toFixed(2)}'</span>
+              <span class="ground-span" title="Surveyed Elevation">👑 ${crestName}: ${site.crown.toFixed(2)}'</span>
               <span style="opacity:0.4;">|</span>
               <span class="water-span ${statusColor}" title="Regional Tide Water Elevation">🌊 Water: ${twl.toFixed(2)}'</span>
             </div>
@@ -4203,7 +4210,9 @@
 
     function generateMapPopupHtml(site, twl) {
       let status = 'green';
-      let badgeLabel = '🟢 ROADWAY &amp; GUTTERS 100% CLEAR';
+      const crestName = site.crestLabel || (site.type === 'boardwalk' ? 'Boardwalk Deck' : 'Roadway Crown');
+      const approachName = site.approachLabel || (site.type === 'boardwalk' ? 'Shoreline Approach' : 'Curb Gutter Invert');
+      let badgeLabel = `🟢 ${crestName.toUpperCase()} &amp; ${approachName.toUpperCase()} 100% CLEAR`;
       let color = '#22c55e';
       let diffHtml = '';
 
@@ -4214,24 +4223,24 @@
       if (twl >= site.crown) {
         status = 'red';
         const depthIn = ((twl - site.crown) * 12).toFixed(1);
-        badgeLabel = `🔴 ROADWAY OVERTOPPED (+${depthIn}")`;
+        badgeLabel = `🔴 ${crestName.toUpperCase()} OVERTOPPED (+${depthIn}")`;
         color = '#ef4444';
         diffHtml = `<div style="margin-top: 6px; padding: 4px 8px; background: rgba(239, 68, 68, 0.15); border-left: 3px solid #ef4444; border-radius: 4px; font-weight: 700; color: #f87171;">
-          Water is overtopping road crown by +${depthIn} inches (${(twl - site.crown).toFixed(2)} ft). Impassable for low sedans.
+          Water is overtopping ${crestName.toLowerCase()} by +${depthIn} inches (${(twl - site.crown).toFixed(2)} ft).
         </div>`;
       } else if (twl >= site.gutter) {
         status = 'yellow';
         const depthIn = ((twl - site.gutter) * 12).toFixed(1);
         const marginFt = (site.crown - twl).toFixed(2);
-        badgeLabel = `🟠 GUTTERS WET (+${depthIn}") • ROADWAY PASSABLE`;
+        badgeLabel = `🟠 ${approachName.toUpperCase()} WET (+${depthIn}") • PASSABLE`;
         color = '#f59e0b';
         diffHtml = `<div style="margin-top: 6px; padding: 4px 8px; background: rgba(245, 158, 11, 0.15); border-left: 3px solid #f59e0b; border-radius: 4px; font-weight: 600; color: #fbbf24;">
-          Curb inverts taking water (+${depthIn} in). Center crown is <b>CLEAR by ${marginFt} ft</b>.
+          ${approachName} taking water (+${depthIn} in). ${crestName} is <b>CLEAR by ${marginFt} ft</b>.
         </div>`;
       } else {
         const marginFt = (site.crown - twl).toFixed(2);
         diffHtml = `<div style="margin-top: 6px; padding: 4px 8px; background: rgba(34, 197, 94, 0.12); border-left: 3px solid #22c55e; border-radius: 4px; color: #86efac;">
-          Entire roadway and curb invert are clear with <b>${marginFt} ft dry margin</b>.
+          Entire ${crestName.toLowerCase()} and ${approachName.toLowerCase()} are clear with <b>${marginFt} ft dry margin</b>.
         </div>`;
       }
 
@@ -4245,11 +4254,11 @@
           ${diffHtml}
           <div style="margin-top: 8px; font-size: 0.74rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 6px;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-              <span style="color: var(--text-muted);">👑 Road Crown Elevation:</span>
+              <span style="color: var(--text-muted);">👑 ${crestName}:</span>
               <span style="font-family: var(--mono); font-weight: 700;">${site.crown.toFixed(2)}' NAVD88 (${crownMllw.toFixed(2)}' MLLW)</span>
             </div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-              <span style="color: var(--text-muted);">📐 Curb Gutter Invert:</span>
+              <span style="color: var(--text-muted);">📐 ${approachName}:</span>
               <span style="font-family: var(--mono); font-weight: 700;">${site.gutter.toFixed(2)}' NAVD88 (${gutterMllw.toFixed(2)}' MLLW)</span>
             </div>
             <div style="display: flex; justify-content: space-between;">
@@ -4652,7 +4661,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       applyRoadSimulatorVisibility();
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=cwc-wet-v63').catch(() => {});
+        navigator.serviceWorker.register('./sw.js?v=cwc-wet-v65').catch(() => {});
       }
       applyVehicleAndCarView();
       initHydrographDragScrub();
