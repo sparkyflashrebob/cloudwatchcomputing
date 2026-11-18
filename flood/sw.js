@@ -1,7 +1,9 @@
-const CACHE_NAME = 'cwc-wet-v67';
+const CACHE_NAME = 'cwc-wet-v68';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
+  './map-dev.html',
+  './map-experiment.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
@@ -29,12 +31,21 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Always Network First for HTML and API data so mobile phones stay 100% in sync with live data
-  if (event.request.mode === 'navigate' || event.request.url.includes('index.html') || event.request.url.includes('api.tidesandcurrents.noaa.gov')) {
+  const url = event.request.url || '';
+  const isExternalApi = !url.startsWith(self.location.origin) ||
+    url.includes('api.tidesandcurrents.noaa.gov') ||
+    url.includes('api.weather.gov') ||
+    url.includes('waterservices.usgs.gov') ||
+    url.includes('api.open-meteo.com') ||
+    url.includes('epqs.nationalmap.gov') ||
+    url.includes('nominatim.openstreetmap.org');
+
+  // Always Network-First (never stale cache) for external telemetry/alerts and HTML pages
+  if (event.request.mode === 'navigate' || url.includes('.html') || isExternalApi) {
     event.respondWith(
-      fetch(event.request)
+      fetch(event.request, { cache: 'no-store' })
         .then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
+          if (networkResponse && networkResponse.status === 200 && url.startsWith(self.location.origin)) {
             const responseToCache = networkResponse.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
           }
@@ -43,7 +54,7 @@ self.addEventListener('fetch', (event) => {
         .catch(() => caches.match(event.request))
     );
   } else {
-    // Assets (icons, manifest) cache first
+    // Local static assets (icons, manifest) cache first
     event.respondWith(
       caches.match(event.request).then((cachedResponse) => {
         return cachedResponse || fetch(event.request).then((networkResponse) => {

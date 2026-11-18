@@ -1141,7 +1141,7 @@
           <span id="statusBadgeText">SYNCING LIVE NOAA DATA...</span>
         </div>
         <button class="location-chip-btn" onclick="openSettings()" title="Tap to switch reporting location">
-          📍 <span id="currentLocationName">Larkspur Plaza Dr (at Heather Way / Sag Crosswalk)</span>
+          📍 <span id="currentLocationName">Larkspur Plaza Dr (at Creekside Dr / Sag Crosswalk)</span>
           <span style="opacity:0.6; font-size:0.65rem;">▾</span>
         </button>
       </div>
@@ -1185,11 +1185,11 @@
         </div>
       </div>
 
-      <!-- Active Storm Surge -->
+      <!-- Surge & Creek Runoff -->
       <div class="metric-card">
         <div class="metric-meta">
-          <span>Active Surge</span>
-          <span style="color:var(--amber);">KELVIN WAVE</span>
+          <span>Surge &amp; Creek Runoff</span>
+          <span id="surgeTypeBadge" style="color:var(--amber);">KELVIN WAVE</span>
         </div>
         <div class="metric-val" id="valSurge" style="color:var(--amber);">
           +1.38 <span>ft</span>
@@ -1362,23 +1362,23 @@
           <!-- Street Surface Water Retention & Drainage Lag Curve -->
           <path id="svgStreetPath" d="" fill="none" stroke="#f97316" stroke-width="2.2" stroke-dasharray="4,2"/>
 
-          <!-- Bottom Time Ticks -->
-          <g id="svgTimeTicks" font-size="9" fill="#94a3b8" font-family="monospace" text-anchor="middle">
-            <text x="55" y="222">12 AM</text>
-            <text x="143" y="222">4 AM</text>
-            <text x="231" y="222">8 AM</text>
-            <text x="320" y="222">12 PM</text>
-            <text x="408" y="222">4 PM</text>
-            <text x="496" y="222">8 PM</text>
-            <text x="585" y="222">12 AM</text>
+          <!-- Bottom Time Ticks (Dynamically Populated from Tide Timeline) -->
+          <g id="svgTimeTicks" font-size="8.5" fill="#94a3b8" font-family="monospace" text-anchor="middle">
+            <text x="55" y="222">-24h</text>
+            <text x="143" y="222">-16h</text>
+            <text x="231" y="222">-8h</text>
+            <text x="320" y="222" fill="#38bdf8" font-weight="bold">NOW</text>
+            <text x="408" y="222">+8h</text>
+            <text x="496" y="222">+16h</text>
+            <text x="585" y="222">+24h</text>
           </g>
 
           <!-- Interactive Time Scrubber Indicator -->
-          <line id="svgScrubLine" x1="390" y1="18" x2="390" y2="202" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="4,2"/>
-          <circle id="svgScrubDot" cx="390" cy="74" r="6.5" fill="#f59e0b" stroke="#ffffff" stroke-width="2.5"/>
-          <g id="svgScrubBadge" transform="translate(390, 15)">
+          <line id="svgScrubLine" x1="320" y1="18" x2="320" y2="202" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="4,2"/>
+          <circle id="svgScrubDot" cx="320" cy="74" r="6.5" fill="#f59e0b" stroke="#ffffff" stroke-width="2.5"/>
+          <g id="svgScrubBadge" transform="translate(320, 15)">
             <rect x="-42" y="-16" width="84" height="20" rx="4" fill="#0f172a" stroke="#f59e0b" stroke-width="1.4"/>
-            <text id="svgScrubText" x="0" y="-2" font-size="10.5" font-weight="bold" fill="#fbbf24" font-family="monospace" text-anchor="middle">2:43 PM</text>
+            <text id="svgScrubText" x="0" y="-2" font-size="10.5" font-weight="bold" fill="#fbbf24" font-family="monospace" text-anchor="middle">--:--</text>
           </g>
         </svg>
       </div>
@@ -1416,7 +1416,7 @@
           <button type="button" id="btnToggleBadges" class="chip-btn active" style="padding: 4px 10px; font-size: 0.72rem;" onclick="toggleMapElevationBadges(event)">📏 Elevation Badges</button>
           <button type="button" id="btnMapGps" class="chip-btn" style="padding: 4px 10px; font-size: 0.72rem;" onclick="locateUserOnMap(event)">📍 My GPS</button>
           <button type="button" id="btnFsMap" class="chip-btn" style="padding: 4px 10px; font-size: 0.72rem;" onclick="toggleMapFullscreen(event)"><span class="fs-icon">⤢</span> Enlarge Map</button>
-          <a href="map-experiment.html" class="chip-btn" style="text-decoration:none; padding: 4px 10px; font-size: 0.72rem; color: var(--cyan); border-color: rgba(56,189,248,0.35);" title="Open Whole-Map Topographic Elevation Lab">🧪 Dev Map</a>
+          <a href="map-dev.html" class="chip-btn" style="text-decoration:none; padding: 4px 10px; font-size: 0.72rem; color: var(--cyan); border-color: rgba(56,189,248,0.35);" title="Open Whole-Map Topographic Elevation Lab">🧪 Dev Map</a>
         </div>
       </div>
       <div id="floodMap" style="width:100%; height:440px; min-height:440px; border-radius:12px; position:relative; overflow:hidden;"></div>
@@ -1680,18 +1680,22 @@
       <div class="setting-group">
         <label style="display:flex; justify-content:space-between; align-items:center;">
           <span>Marin County Hotspots (by City)</span>
-          <span style="font-size:0.75rem; color:var(--text-muted);" id="hotspotCountBadge">10 Hotspots Available</span>
+          <span style="font-size:0.75rem; color:var(--text-muted);" id="hotspotCountBadge">11 Hotspots + GPS</span>
         </label>
         <select id="selectHotspot" class="styled-dropdown" onchange="selectLocation(this.value)">
+          <optgroup label="📍 Live GPS Survey">
+            <option value="custom">📍 Use My Current Location (GPS &amp; USGS 3DEP Elevation)</option>
+          </optgroup>
           <optgroup label="Larkspur &amp; Kentfield">
-            <option value="larkspur" selected>📍 Larkspur Plaza Dr (at Heather Way / Sag Crosswalk) — Crown 7.42'</option>
+            <option value="larkspur" selected>📍 Larkspur Plaza Dr (at Creekside Dr / Sag Crosswalk) — Crown 7.42'</option>
             <option value="larkspurnorth">📍 Larkspur Plaza Dr North (#617 / Heather Gardens) — Crown 7.41'</option>
             <option value="boardwalk">📍 Boardwalk One (at Corte Madera Creek) — Deck 8.04'</option>
             <option value="greenbraeboardwalk">📍 Greenbrae Boardwalk — Boardwalk Deck 7.43'</option>
             <option value="creek">📍 Corte Madera Creek Pathway (Kentfield / Larkspur) — Trail 6.40' - 8.00'</option>
           </optgroup>
           <optgroup label="Corte Madera">
-            <option value="luckyfrontage">📍 Lucky Dr Residential Frontage — Roadway 4.19'</option>
+            <option value="luckyramp">📍 Lucky Dr (Doherty Dr to Fifer Ave Closure Zone) — Roadway 6.15'</option>
+            <option value="luckyfrontage">📍 Lucky Dr Residential Frontage — Roadway 6.35'</option>
             <option value="cortemaderatownpark">📍 Corte Madera Town Park — Park/Field 9.00'</option>
           </optgroup>
           <optgroup label="Mill Valley / Tam Valley">
@@ -1701,9 +1705,6 @@
           <optgroup label="San Rafael">
             <option value="sanrafaelcanal">📍 Canal St &amp; Spinnaker Way (San Rafael Canal) — Roadway 5.70'</option>
           </optgroup>
-          <optgroup label="Custom GPS Survey">
-            <option value="custom">📍 Use My Current Location (GPS &amp; USGS 3DEP Elevation)</option>
-          </optgroup>
         </select>
       </div>
 
@@ -1711,10 +1712,17 @@
       <div class="setting-group">
         <label>Quick Select Hotspot Card</label>
         <div class="select-card-list">
+          <div class="select-card" id="loc-custom" onclick="selectLocation('custom')" style="border-color: rgba(56, 189, 248, 0.45); background: rgba(56, 189, 248, 0.08);">
+            <div>
+              <div class="select-card-name" style="color: var(--cyan);">📍 Use My Current Location (GPS)</div>
+              <div class="select-card-detail" id="customLocDetail">Tap to detect local ground elevation via USGS / DEM</div>
+            </div>
+            <span style="font-size:0.72rem; font-weight:700; color:var(--cyan); white-space:nowrap;">🎯 Detect Now</span>
+          </div>
           <div class="select-card active" id="loc-larkspur" onclick="selectLocation('larkspur')">
             <div>
-              <div class="select-card-name">📍 Larkspur Plaza Dr (Heather Way / Sag Crosswalk)</div>
-              <div class="select-card-detail">Larkspur • Crown: 7.42' | Sag Gutter: 7.15'</div>
+              <div class="select-card-name">📍 Larkspur Plaza Dr (Creekside Dr / Sag Crosswalk)</div>
+              <div class="select-card-detail">Larkspur • Crown: 7.42' | Creekside: 7.28' | Crosswalk: 7.24'</div>
             </div>
             <span>✓</span>
           </div>
@@ -1736,10 +1744,16 @@
               <div class="select-card-detail">Corte Madera • Park/Field: 9.00' | Perimeter: 8.20'</div>
             </div>
           </div>
+          <div class="select-card" id="loc-luckyramp" onclick="selectLocation('luckyramp')">
+            <div>
+              <div class="select-card-name">📍 Lucky Dr (Doherty Dr to Fifer Ave)</div>
+              <div class="select-card-detail">Corte Madera • Flood Closure Corridor: 6.15' | Low Basin: 5.50'</div>
+            </div>
+          </div>
           <div class="select-card" id="loc-luckyfrontage" onclick="selectLocation('luckyfrontage')">
             <div>
               <div class="select-card-name">📍 Lucky Dr Residential Frontage</div>
-              <div class="select-card-detail">Corte Madera • Homes &amp; Frontage Road: 4.19'</div>
+              <div class="select-card-detail">Corte Madera • Road Crown: 6.35' | Low Gutter: 5.91'</div>
             </div>
           </div>
           <div class="select-card" id="loc-manzanita" onclick="selectLocation('manzanita')">
@@ -1758,12 +1772,6 @@
             <div>
               <div class="select-card-name">📍 Corte Madera Creek Path (at Larkspur Plaza)</div>
               <div class="select-card-detail">Larkspur • Tidal Path Overtopped: 6.60'</div>
-            </div>
-          </div>
-          <div class="select-card" id="loc-custom" onclick="selectLocation('custom')">
-            <div>
-              <div class="select-card-name">📍 Use My Current Location (GPS)</div>
-              <div class="select-card-detail" id="customLocDetail">Tap to detect local ground elevation via USGS</div>
             </div>
           </div>
         </div>
@@ -1995,20 +2003,22 @@
         lagMinutes: 180
       },
       larkspur: {
-        name: "Larkspur Plaza Dr (at Heather Way / Sag Crosswalk)",
-        roadBoundary: "Heather Way to Pedestrian Crosswalk (approx. 120 ft sag corridor, full roadway width)",
-        crownBoundary: "Heather Way to Pedestrian Crosswalk sag dip (Drive center divide only)",
-        gutterBoundary: "Curb gutters & street parking stalls (Heather Way to crosswalk)",
-        // Calibrated Ground Truth (from Nov 8 2026 Photos & KML Survey):
+        name: "Larkspur Plaza Dr (at Creekside Dr / Sag Crosswalk)",
+        roadBoundary: "Creekside Drive intersection to Pedestrian Crosswalk (~120 ft sag corridor, full roadway width)",
+        crownBoundary: "Larkspur Plaza Dr center crown passable (7.42'); Creekside Dr intersection (7.28') & crosswalk (7.24') flooded",
+        gutterBoundary: "Pedestrian crosswalk (7.24'), Creekside Dr intersection apron (7.28') & sag curb gutters (7.15')",
+        // Calibrated Ground Truth (from Nov 8, Nov 13 & Nov 18 2026 Photos + KML Survey):
         headwallSeep: 7.10, // Inlet full; water seeps over sidewalk near concrete headwall
         sagGutter: 7.15, // Sag Area Gutters (Street Drains 2, 3, & 4 on complex side; fills first at 7.15')
         gutter: 7.15,    // Low point for street parking / sag gutter
+        crosswalk: 7.24, // Pedestrian crosswalk path & curb ramp approaches flooded (>= 7.28' impassable on foot)
+        creeksideApron: 7.28, // Intersection entrance turning into Creekside Drive floods
         drain1: 7.28,    // Big Drain #1 (Main roadway storm grate; surcharges heavily onto street at 7.28')
         frontGutter: 7.28, // Front Street Gutters (fills at 7.28')
         houseGutter: 7.28, // Front Street Gutters along margins
         frontStall: 7.38,  // Front parking stall apron
         walkwayBase: 7.42, // Concrete walkway bottom slab
-        crown: 7.42,    // Crown on road travel lane overtopping threshold
+        crown: 7.42,    // Center road crown travel lane overtopping threshold
         higherPatch: 7.75, // Higher front parking patch
         highCrown: 7.75, // High road crown ridge in foreground
         priusSag: 7.91,  // Impassable for 5.9" clearance (7.42' crown + 0.49' / 5.9" = 7.91')
@@ -2059,31 +2069,31 @@
         lagMinutes: 60
       },
       luckyramp: {
-        name: "Lucky Dr at US-101 Off-Ramp (Corte Madera)",
-        roadBoundary: "Lucky Dr exit ramp from US-101 southbound & frontage junction",
-        crownBoundary: "US-101 off-ramp low depression onto Lucky Dr",
-        gutterBoundary: "Off-ramp shoulder and low curb pan",
-        crown: 3.78,     // Subsidence depression exit dip (relies on pump station)
-        gutter: 3.50,
-        sagGutter: 3.50,
-        frontGutter: 3.65,
-        yellow: 3.60,
-        priusSag: 4.27,
-        stall: 4.50,
+        name: "Lucky Dr (Doherty Dr to Fifer Ave, Corte Madera)",
+        roadBoundary: "Lucky Dr roadway corridor between Doherty Dr and Fifer Ave",
+        crownBoundary: "Lucky Dr subsided roadway travel lanes (Doherty–Fifer closure zone)",
+        gutterBoundary: "Low subsidence shoulder & catch basin (USGS 3DEP LiDAR 1.16'–5.91')",
+        crown: 6.15,     // Subsided Lucky Dr corridor behind canal flap gates; closed during runoff + high tide
+        gutter: 5.50,
+        sagGutter: 5.50,
+        frontGutter: 5.80,
+        yellow: 5.75,
+        priusSag: 6.64,
+        stall: 6.90,
         lagMinutes: 240
       },
       luckyfrontage: {
         name: "Lucky Dr Residential Frontage (Corte Madera)",
-        roadBoundary: "Lucky Dr residential corridor between US-101 off-ramp & Redwood Hwy",
+        roadBoundary: "Lucky Dr residential corridor between Doherty Dr, Fifer Ave & Redwood Hwy",
         crownBoundary: "Lucky Dr roadway center travel lane",
         gutterBoundary: "Lucky Dr residential street parking & curb gutters",
-        crown: 4.19,     // Residential frontage road crown
-        gutter: 3.90,
-        sagGutter: 3.90,
-        frontGutter: 4.05,
-        yellow: 4.00,
-        priusSag: 4.68,
-        stall: 4.80,
+        crown: 6.35,     // USGS 3DEP LiDAR roadway crown near Fifer Ave / canal frontage
+        gutter: 5.91,
+        sagGutter: 5.91,
+        frontGutter: 6.05,
+        yellow: 6.10,
+        priusSag: 6.84,
+        stall: 7.00,
         lagMinutes: 240
       },
       tam: {
@@ -2186,7 +2196,15 @@
       currentCarView = localStorage.getItem('floodwatch_car_view') || 'side';
     } catch(e) {}
 
-    let liveSurge = 1.38; // ft NAVD88
+    let liveSurge = 1.38; // ft NAVD88 bay storm surge
+    let liveCreekFlowCfs = 1.0; // USGS 11460000 Corte Madera Creek at Ross discharge (cfs)
+    let liveCreekStageFt = 4.24; // USGS 11460000 gage height (ft)
+    let liveCreekRunoffFt = 0.0; // Fluvial creek backwater head at Larkspur (ft)
+    let liveRain24hIn = 0.0; // Rolling 24h precipitation in Larkspur (in)
+    let liveRain6hIn = 0.0; // Rolling 6h precipitation in Larkspur (in)
+    let liveRainRateInHr = 0.0; // Current hourly rainfall rate (in/hr)
+    let usgsFlowSeries = []; // [{ tMs, cfs, stage }]
+    let rainHourlySeries = []; // [{ tMs, precipIn }]
     let tideTimeline = []; // 288 points: Index 0 = -24h, Index 144 = NOW, Index 288 = +24h
     let currentScrubIdx = 144; // Starts at Center (LIVE NOW)
     let nextHighTideObj = null;
@@ -2283,88 +2301,176 @@
       } catch (e) {}
     }
 
-    function detectCustomLocationElevation() {
+    async function fetchWithTimeout(url, timeoutMs = 4500, options = {}) {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+      try {
+        return await fetch(url, { ...options, signal: ctrl.signal });
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    function getPositionTwoStage() {
+      return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          resolve,
+          (err) => {
+            if (err && err.code === 1) {
+              reject(err); // Permission denied — don't retry
+              return;
+            }
+            navigator.geolocation.getCurrentPosition(
+              resolve,
+              reject,
+              { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
+            );
+          },
+          { enableHighAccuracy: true, timeout: 6000, maximumAge: 30000 }
+        );
+      });
+    }
+
+    function updateCustomGpsMapMarker(lat, lon, streetName, crownElev, elevSource) {
+      if (!floodMapInstance || typeof L === 'undefined') return;
+      const pt = (tideTimeline && tideTimeline[currentScrubIdx]) ? tideTimeline[currentScrubIdx] : null;
+      const curTwl = pt ? ((pt.streetTWL !== undefined) ? pt.streetTWL : pt.twl) : 0;
+      const diffFt = crownElev - curTwl;
+      const statusHtml = curTwl >= crownElev
+        ? `<span style="color:#f87171;font-weight:700;">🚨 FLOODED (+${((curTwl - crownElev) * 12).toFixed(1)}" depth)</span>`
+        : `<span style="color:#4ade80;font-weight:700;">🟢 CLEAR (${diffFt.toFixed(2)}' dry margin)</span>`;
+
+      if (mapGpsMarker) {
+        mapGpsMarker.setLatLng([lat, lon]);
+      } else {
+        const gpsIcon = L.divIcon({
+          className: 'gps-marker',
+          html: `<div style="width:16px;height:16px;border-radius:50%;background:#38bdf8;border:3px solid #fff;box-shadow:0 0 14px #38bdf8;"></div>`,
+          iconSize: [16, 16],
+          iconAnchor: [8, 8]
+        });
+        mapGpsMarker = L.marker([lat, lon], { icon: gpsIcon }).addTo(floodMapInstance);
+      }
+      mapGpsMarker.bindPopup(`
+        <div style="font-family:var(--font);font-size:0.8rem;line-height:1.35;">
+          <div style="font-weight:800;color:var(--cyan);margin-bottom:2px;">📍 ${streetName}</div>
+          <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:6px;">${lat.toFixed(5)}°N, ${lon.toFixed(5)}°W</div>
+          <div>${statusHtml}</div>
+          <div style="margin-top:6px;font-family:var(--mono);font-size:0.74rem;">
+            Ground: <b>${crownElev.toFixed(2)}' NAVD88</b> (${elevSource})<br>
+            Water: <b>${curTwl.toFixed(2)}' NAVD88</b>
+          </div>
+        </div>
+      `);
+      floodMapInstance.setView([lat, lon], 16);
+      mapGpsMarker.openPopup();
+    }
+
+    async function detectCustomLocationElevation() {
       const detailEl = document.getElementById('customLocDetail');
+      const heroLocEl = document.getElementById('currentLocationName');
       if (!navigator.geolocation) {
         if (detailEl) detailEl.textContent = "Geolocation not supported by this browser.";
         return;
       }
-      if (detailEl) detailEl.textContent = "Detecting GPS & querying USGS 3DEP elevation...";
-      navigator.geolocation.getCurrentPosition(
-        async (pos) => {
-          const lat = pos.coords.latitude;
-          const lon = pos.coords.longitude;
-          let streetName = `My Location (${lat.toFixed(3)}°N, ${lon.toFixed(3)}°W)`;
+      if (detailEl) detailEl.textContent = "📡 Locking GPS position & ground elevation...";
+      if (heroLocEl) heroLocEl.textContent = "📍 Detecting GPS & Elevation...";
 
-          // Query clean Street Name without house numbers via reverse geocoding
-          try {
-            const geoResp = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
-            const geoData = await geoResp.json();
-            const addr = geoData.address || {};
-            const road = addr.road || addr.pedestrian || addr.cycleway || addr.suburb || "";
-            const town = addr.town || addr.city || addr.village || addr.municipality || "";
-            if (road && town) {
-              streetName = `${road}, ${town}`;
-            } else if (road) {
-              streetName = road;
-            }
-          } catch (e) {}
+      let pos;
+      try {
+        pos = await getPositionTwoStage();
+      } catch (err) {
+        const msg = (err && err.code === 1)
+          ? "⚠️ GPS permission denied in browser/Android site settings."
+          : "⚠️ GPS signal unavailable/timed out. Tap to retry.";
+        if (detailEl) detailEl.textContent = msg;
+        if (activeLocKey === 'custom' && (!THRESHOLDS.custom || !THRESHOLDS.custom.lat)) {
+          activeLocKey = 'larkspur';
+          const dropdownEl = document.getElementById('selectHotspot');
+          if (dropdownEl) dropdownEl.value = 'larkspur';
+        }
+        updateUI();
+        return;
+      }
 
-          // Query USGS 3DEP point elevation
-          try {
-            const resp = await fetch(`https://epqs.nationalmap.gov/v1/json?x=${lon}&y=${lat}&units=Feet`);
-            const data = await resp.json();
-            const elev = parseFloat(data.value);
-            if (!isNaN(elev) && elev > -50 && elev < 500) {
-              const crownElev = parseFloat(elev.toFixed(2));
-              const gutterElev = parseFloat((elev - 0.25).toFixed(2)); // Low point for street parking (3" camber drop)
-              THRESHOLDS.custom = {
-                name: streetName,
-                roadBoundary: `Roadway travel lanes & drainage sag along ${streetName} (~150 ft zone)`,
-                crownBoundary: `Road crown center sag dip along ${streetName}`,
-                gutterBoundary: `Curb gutter pans & low parking margins along ${streetName}`,
-                crown: crownElev,
-                sagGutter: gutterElev,
-                gutter: gutterElev,
-                frontGutter: gutterElev,
-                stall: parseFloat((elev + 0.50).toFixed(2)),
-                lagMinutes: 180
-              };
-              try {
-                localStorage.setItem('cwc_custom_thresholds', JSON.stringify(THRESHOLDS.custom));
-                localStorage.setItem('cwc_active_loc_key', 'custom');
-              } catch(e) {}
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      let streetName = `GPS (${lat.toFixed(4)}°N, ${lon.toFixed(4)}°W)`;
 
-              if (detailEl) detailEl.textContent = `${streetName} • Ground: ${elev.toFixed(1)}' NAVD88`;
-              updateUI();
-              setTimeout(closeSettings, 500);
-            } else {
-              throw new Error("Invalid elevation");
-            }
-          } catch (err) {
-            if (detailEl) detailEl.textContent = `${streetName} • Default 7.40' NAVD88`;
-            THRESHOLDS.custom = {
-              name: streetName,
-              crown: 7.40,
-              sagGutter: 7.15,
-              gutter: 7.15,
-              frontGutter: 7.28,
-              stall: 8.00,
-              lagMinutes: 180
-            };
-            try {
-              localStorage.setItem('cwc_custom_thresholds', JSON.stringify(THRESHOLDS.custom));
-              localStorage.setItem('cwc_active_loc_key', 'custom');
-            } catch(e) {}
-            updateUI();
-            setTimeout(closeSettings, 500);
+      const geoPromise = fetchWithTimeout(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`, 4500)
+        .then(r => r.json())
+        .then(geoData => {
+          const addr = (geoData && geoData.address) || {};
+          const road = addr.road || addr.pedestrian || addr.cycleway || addr.suburb || "";
+          const town = addr.town || addr.city || addr.village || addr.municipality || "";
+          if (road && town) streetName = `${road}, ${town}`;
+          else if (road) streetName = road;
+        })
+        .catch(() => {});
+
+      let elev = null;
+      let elevSource = 'USGS 3DEP';
+      const elevPromise = (async () => {
+        try {
+          const resp = await fetchWithTimeout(`https://epqs.nationalmap.gov/v1/json?x=${lon}&y=${lat}&units=Feet`, 4000);
+          const data = await resp.json();
+          const val = parseFloat(data && data.value);
+          if (!isNaN(val) && val > -50 && val < 500) {
+            elev = val;
+            elevSource = 'USGS 3DEP 1m LiDAR';
+            return;
           }
-        },
-        (err) => {
-          if (detailEl) detailEl.textContent = "GPS Permission denied. Tap to retry.";
-        },
-        { enableHighAccuracy: true, timeout: 10000 }
-      );
+        } catch (e) {}
+
+        // Fast fallback to Open-Meteo 90m/30m DEM if USGS EPQS is slow/down
+        try {
+          const omResp = await fetchWithTimeout(`https://api.open-meteo.com/v1/elevation?latitude=${lat}&longitude=${lon}`, 4000);
+          const omData = await omResp.json();
+          if (omData && Array.isArray(omData.elevation) && omData.elevation.length > 0) {
+            const valM = parseFloat(omData.elevation[0]);
+            if (!isNaN(valM) && valM > -20 && valM < 200) {
+              elev = valM * 3.28084;
+              elevSource = 'Open-Meteo DEM';
+            }
+          }
+        } catch (e) {}
+      })();
+
+      await Promise.all([geoPromise, elevPromise]);
+
+      if (elev === null || isNaN(elev)) {
+        elev = 7.40;
+        elevSource = 'Fallback Datum';
+      }
+
+      const crownElev = parseFloat(elev.toFixed(2));
+      const gutterElev = parseFloat((crownElev - 0.25).toFixed(2)); // 3" street camber drop
+      THRESHOLDS.custom = {
+        name: streetName,
+        lat: lat,
+        lon: lon,
+        elevSource: elevSource,
+        roadBoundary: `Roadway travel lanes & drainage sag along ${streetName} (~150 ft zone)`,
+        crownBoundary: `Road crown center sag dip along ${streetName}`,
+        gutterBoundary: `Curb gutter pans & low parking margins along ${streetName}`,
+        crosswalk: parseFloat((crownElev - 0.18).toFixed(2)),
+        creeksideApron: parseFloat((crownElev - 0.14).toFixed(2)),
+        crown: crownElev,
+        sagGutter: gutterElev,
+        gutter: gutterElev,
+        frontGutter: gutterElev,
+        stall: parseFloat((crownElev + 0.50).toFixed(2)),
+        lagMinutes: 180
+      };
+      try {
+        localStorage.setItem('cwc_custom_thresholds', JSON.stringify(THRESHOLDS.custom));
+        localStorage.setItem('cwc_active_loc_key', 'custom');
+      } catch(e) {}
+
+      if (detailEl) detailEl.textContent = `${streetName} • Ground: ${crownElev.toFixed(2)}' NAVD88 (${elevSource})`;
+      updateUI();
+      updateCustomGpsMapMarker(lat, lon, streetName, crownElev, elevSource);
+      setTimeout(closeSettings, 450);
     }
 
     // Smooth in-place NOAA refresh without reloading the page
@@ -2374,9 +2480,7 @@
         btn.style.transition = 'transform 0.6s ease';
       }
       try {
-        await fetchLiveNOAA();
-      fetchNwsAlerts();
-      setInterval(fetchNwsAlerts, 4 * 60 * 1000);
+        await Promise.all([fetchLiveNOAA(), fetchNwsAlerts()]);
       } finally {
         if (btn) {
           setTimeout(() => {
@@ -2456,7 +2560,81 @@
       }
     }
 
-    function generate48HourTimeline(predArray, obsArray) {
+    function parseLocalTimestampMs(tsStr) {
+      if (!tsStr) return NaN;
+      if (/[Z]|[+-]\d{2}:\d{2}$/.test(tsStr)) {
+        return new Date(tsStr).getTime();
+      }
+      const m = tsStr.match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);
+      if (m) {
+        return new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], 0, 0).getTime();
+      }
+      return new Date(tsStr.replace(' ', 'T')).getTime();
+    }
+
+    // Calibrated fluvial creek backwater head at Larkspur from USGS 11460000 (Ross) discharge
+    function computeCreekRunoffHeadFt(flowCfs) {
+      if (!flowCfs || flowCfs <= 15) return 0.0;
+      return Math.min(0.85, parseFloat((0.088 * Math.pow((flowCfs - 15) / 100, 0.75)).toFixed(2)));
+    }
+
+    function getRainWindowAt(targetMs, hours) {
+      if (!rainHourlySeries || !rainHourlySeries.length) return 0.0;
+      const startMs = targetMs - hours * 3600 * 1000;
+      let sum = 0.0;
+      for (let i = 0; i < rainHourlySeries.length; i++) {
+        const item = rainHourlySeries[i];
+        if (item.tMs >= startMs && item.tMs <= targetMs) {
+          sum += item.precipIn;
+        }
+      }
+      return parseFloat(sum.toFixed(2));
+    }
+
+    function getRainRateAt(targetMs) {
+      if (!rainHourlySeries || !rainHourlySeries.length) return 0.0;
+      let best = 0.0;
+      let minDiff = 45 * 60 * 1000;
+      for (let i = 0; i < rainHourlySeries.length; i++) {
+        const diff = Math.abs(rainHourlySeries[i].tMs - targetMs);
+        if (diff <= minDiff) {
+          minDiff = diff;
+          best = rainHourlySeries[i].precipIn;
+        }
+      }
+      return best;
+    }
+
+    function getCreekFlowAt(targetMs, nowMs) {
+      if (!usgsFlowSeries || !usgsFlowSeries.length) return liveCreekFlowCfs || 1.0;
+      // ~35 min downstream wave travel time from Ross (USGS 11460000) to Larkspur Slough
+      const lookupMs = targetMs - 35 * 60 * 1000;
+      const first = usgsFlowSeries[0];
+      const last = usgsFlowSeries[usgsFlowSeries.length - 1];
+      if (lookupMs <= first.tMs) return first.cfs;
+      if (lookupMs >= last.tMs) {
+        const elapsedHrs = (lookupMs - last.tMs) / (3600 * 1000);
+        const recentRain3h = getRainWindowAt(targetMs, 3);
+        // Active storm rain sustains creek runoff during gauge lag / short forecast; dry decays with ~5h half-life
+        if (targetMs <= nowMs + 30 * 60 * 1000 && recentRain3h >= 0.15) {
+          return Math.max(last.cfs * 0.90, last.cfs * Math.pow(0.5, elapsedHrs / 6.0));
+        }
+        const decayed = last.cfs * Math.pow(0.5, elapsedHrs / 5.0);
+        const rainBoost = recentRain3h >= 0.25 ? recentRain3h * 85 : 0;
+        return Math.max(1.0, parseFloat((decayed + rainBoost).toFixed(1)));
+      }
+      for (let i = 1; i < usgsFlowSeries.length; i++) {
+        const a = usgsFlowSeries[i - 1];
+        const b = usgsFlowSeries[i];
+        if (lookupMs <= b.tMs) {
+          const frac = (b.tMs === a.tMs) ? 0 : (lookupMs - a.tMs) / (b.tMs - a.tMs);
+          return a.cfs + frac * (b.cfs - a.cfs);
+        }
+      }
+      return last.cfs;
+    }
+
+    function generate48HourTimeline(predArray, obsArray, ggPredArray) {
       const data = [];
       const now = new Date();
       const nowMs = now.getTime();
@@ -2474,15 +2652,30 @@
         const timeLabel = `${displayH}:${m < 10 ? '0' : ''}${m} ${ampm}`;
         const dayLabel = ptDate.toLocaleDateString('en-US', { weekday: 'short' });
 
-        // Calculate astronomical tide from 6-minute predictions array with linear interpolation
-        let ast = calculateAstTideAt(ptDate, predArray);
-        
-        // Authoritative Total Water Level for Larkspur (Corte Madera Creek Station 9414874):
-        // TWL = Corte Madera Creek Astronomical Prediction + Active Regional Storm Surge Anomaly.
-        // Golden Gate (9414290) is used exclusively for computing the real-time surge anomaly (+1.44 ft).
-        // This ensures continuous, physically consistent water levels with zero phase lag errors.
-        let twl = ast + liveSurge;
+        // Astronomical tide at Corte Madera Creek / Richmond (Station 9414863 + 0.06' NAVD88)
+        const ast = calculateAstTideAt(ptDate, predArray);
+
+        // Historical observed Golden Gate storm surge for past points when both GG obs & pred exist
+        let ptBaySurge = liveSurge;
         let isPast = (i <= 144);
+        if (isPast && obsArray && obsArray.length && ggPredArray && ggPredArray.length) {
+          const ggObs = findObservedAt(ptDate, obsArray);
+          if (ggObs !== null) {
+            const ggAst = calculateAstTideAt(ptDate, ggPredArray) - 0.06; // exact GG datum (no Richmond +0.06 offset)
+            if (!isNaN(ggAst)) {
+              ptBaySurge = parseFloat((ggObs - ggAst).toFixed(2));
+            }
+          }
+        }
+
+        // Fluvial Creek Runoff (USGS 11460000 at Ross) + Rain Accumulation
+        const flowCfs = getCreekFlowAt(ptMs, nowMs);
+        const creekRunoff = computeCreekRunoffHeadFt(flowCfs);
+        const rainInHr = getRainRateAt(ptMs);
+        const rain6h = getRainWindowAt(ptMs, 6);
+
+        // Authoritative Creek Total Water Level: Ast + Bay Storm Surge + Creek Fluvial Runoff Head
+        const twl = ast + ptBaySurge + creekRunoff;
 
         data.push({
           idx: i,
@@ -2491,72 +2684,69 @@
           dayLabel: dayLabel,
           isPast: isPast,
           ast: parseFloat(ast.toFixed(2)),
-          surge: liveSurge,
+          baySurge: parseFloat(ptBaySurge.toFixed(2)),
+          creekRunoff: parseFloat(creekRunoff.toFixed(2)),
+          creekFlowCfs: Math.round(flowCfs),
+          rainInHr: parseFloat(rainInHr.toFixed(2)),
+          rain6h: parseFloat(rain6h.toFixed(2)),
+          surge: parseFloat((ptBaySurge + creekRunoff).toFixed(2)),
           twl: parseFloat(twl.toFixed(2)),
           streetTWL: 0.0
         });
       }
 
-      // Compute Calibrated Physical Street Drainage Lag across the timeline
-      // Larkspur Plaza Drive drainage physics:
-      // 1. Ingress Phase: Salt water backs up through storm drains when Creek TWL >= 6.70'.
-      //    Curb gutters and front stall aprons fill directly with the rising tide!
-      //    Center road crown (6.95') stays dry until storm swale breaches at ~7.38'.
-      // 2. Crest Phase: Street water level tracks Creek TWL while TWL >= 6.70'.
-      // 3. Receding Phase: Creek drops quickly, but flat storm pipes (0.23% grade) and salt marsh backwater
-      //    limit gravity drainage to ~0.035 ft (0.42 inches) per 10 minutes (4.5 hr drainage lag).
-      //    Street water stays retained on pavement and gutters until drained down to 6.70' (dry).
-      // Compute Calibrated Physical Street Drainage Lag across the timeline
-      // Larkspur Plaza Drive drainage physics:
-      // 1. Ingress Phase: Salt water enters curb gutters when Creek TWL >= 7.15'.
-      //    Big Drain #1 surcharges heavily onto street at >= 7.28'.
-      //    Sag travel lane crown overtopped at >= 7.42'.
-      // 2. Receding Phase:
-      //    Center road crown (camber cross-slope) sheds water rapidly (< 20 min).
-      //    Curb gutter pans have near-flat grade (0.15% longitudinal slope), retaining
-      //    residual puddle water (+1" to 2") that slowly drains/dissipates at ~0.010 ft/10min
-      //    over a 4.5-hour retention lag!
+      // Compute Calibrated Physical Street Drainage Lag + Stormwater Accumulation across timeline:
+      // - Above 7.42' (crowned center road camber): sheds water faster (~0.018–0.025 ft/10min)
+      // - Between 7.15' and 7.42' (sag gutter & Creekside Dr intersection basin): slow gravity drainage
+      //   (~0.010 ft/10min dry [4.5hr lag], slowing to ~0.0025 ft/10min when wet/runoff-impeded)
+      // - Heavy local rainfall (>= 0.25" / 6h) coinciding with elevated creek stage or drain tailwater
+      //   accumulates stormwater in the sag basin & Creekside Dr intersection (up to 7.40' floor).
       let activePonding = 0.0;
       let hasGutterWater = false;
       for (let i = 0; i < data.length; i++) {
         const cur = data[i];
         const next = (i < data.length - 1) ? data[i + 1] : cur;
         const isRising = (next.twl > cur.twl + 0.015);
+        const isWetRunoff = (cur.rain6h >= 0.25 || cur.rainInHr >= 0.08 || cur.creekFlowCfs >= 150);
 
         if (isRising) {
           if (cur.twl >= 7.15) {
             hasGutterWater = true;
-            activePonding = cur.twl;
-          } else {
-            activePonding = 0.0;
+            activePonding = Math.max(activePonding, cur.twl);
           }
         } else {
-          // Receding / Crest phase
           if (cur.twl >= 7.15) {
             hasGutterWater = true;
             activePonding = Math.max(cur.twl, activePonding);
           } else if (hasGutterWater && activePonding > 7.15) {
-            // Water draining with calibrated 4.5-hour gutter retention lag
-            const drainRatePer10Min = 0.010; // ~0.12 inches per 10 min
+            const drainRatePer10Min = (activePonding > 7.42)
+              ? (isWetRunoff ? 0.018 : 0.025)
+              : (isWetRunoff ? 0.0025 : 0.010);
             activePonding = Math.max(cur.twl, activePonding - drainRatePer10Min);
-            if (activePonding <= 7.15 && cur.twl <= 7.15) {
-              activePonding = 0.0; // Fully drained dry
+            if (activePonding <= 7.15 && cur.twl <= 7.15 && !isWetRunoff) {
+              activePonding = 0.0;
               hasGutterWater = false;
             }
-          } else {
+          } else if (!isWetRunoff) {
             activePonding = 0.0;
             hasGutterWater = false;
           }
         }
 
-        // streetTWL: If active water exists on pavement/gutters, track it. Otherwise baseline dry tracks Creek TWL.
-        cur.streetTWL = parseFloat((activePonding > 0 ? activePonding : cur.twl).toFixed(2));
+        if (cur.rain6h >= 0.25 && (cur.twl >= 5.50 || cur.creekFlowCfs >= 100 || activePonding >= 7.15)) {
+          const rainFloor = Math.min(7.40, 7.15 + Math.min(0.25, cur.rain6h * 0.12 + cur.creekRunoff * 0.35));
+          if (rainFloor > activePonding) {
+            activePonding = rainFloor;
+            hasGutterWater = true;
+          }
+        }
+
+        cur.streetTWL = parseFloat((activePonding > 7.15 ? Math.max(activePonding, cur.twl) : cur.twl).toFixed(2));
       }
 
       return data;
     }
 
-    // Helper: Find matching astronomical tide at given Date
     // Helper: Precision Astronomical Tide Interpolation at given Date
     function calculateAstTideAt(d, predArray) {
       if (predArray && predArray.length > 0) {
@@ -2564,14 +2754,14 @@
         let left = 0;
         let right = predArray.length - 1;
 
-        const tFirst = new Date(predArray[0].t.replace(' ', 'T')).getTime();
-        const tLast = new Date(predArray[right].t.replace(' ', 'T')).getTime();
+        const tFirst = parseLocalTimestampMs(predArray[0].t);
+        const tLast = parseLocalTimestampMs(predArray[right].t);
         if (targetMs <= tFirst) return parseFloat(predArray[0].v) + 0.06;
         if (targetMs >= tLast) return parseFloat(predArray[right].v) + 0.06;
 
         while (left <= right) {
           const mid = Math.floor((left + right) / 2);
-          const tMid = new Date(predArray[mid].t.replace(' ', 'T')).getTime();
+          const tMid = parseLocalTimestampMs(predArray[mid].t);
           if (tMid === targetMs) {
             return parseFloat(predArray[mid].v) + 0.06;
           } else if (tMid < targetMs) {
@@ -2583,8 +2773,8 @@
 
         const idx0 = Math.max(0, right);
         const idx1 = Math.min(predArray.length - 1, left);
-        const t0 = new Date(predArray[idx0].t.replace(' ', 'T')).getTime();
-        const t1 = new Date(predArray[idx1].t.replace(' ', 'T')).getTime();
+        const t0 = parseLocalTimestampMs(predArray[idx0].t);
+        const t1 = parseLocalTimestampMs(predArray[idx1].t);
         const v0 = parseFloat(predArray[idx0].v) + 0.06;
         const v1 = parseFloat(predArray[idx1].v) + 0.06;
 
@@ -2604,7 +2794,7 @@
       let best = null;
       let minDiff = 15 * 60 * 1000; // within 15 mins
       for (let o of obsArray) {
-        const oMs = new Date(o.t.replace(' ', 'T')).getTime();
+        const oMs = parseLocalTimestampMs(o.t);
         const diff = Math.abs(oMs - targetMs);
         if (diff < minDiff) {
           minDiff = diff;
@@ -2684,7 +2874,15 @@
         const snap = JSON.parse(raw);
         if (snap.predData && snap.predData.length > 0) {
           if (snap.liveSurge !== undefined) liveSurge = snap.liveSurge;
-          tideTimeline = generate48HourTimeline(snap.predData, snap.obsData || []);
+          if (snap.liveCreekFlowCfs !== undefined) liveCreekFlowCfs = snap.liveCreekFlowCfs;
+          if (snap.liveCreekStageFt !== undefined) liveCreekStageFt = snap.liveCreekStageFt;
+          if (snap.liveCreekRunoffFt !== undefined) liveCreekRunoffFt = snap.liveCreekRunoffFt;
+          if (snap.liveRain24hIn !== undefined) liveRain24hIn = snap.liveRain24hIn;
+          if (snap.liveRain6hIn !== undefined) liveRain6hIn = snap.liveRain6hIn;
+          if (snap.liveRainRateInHr !== undefined) liveRainRateInHr = snap.liveRainRateInHr;
+          if (Array.isArray(snap.usgsFlowSeries)) usgsFlowSeries = snap.usgsFlowSeries;
+          if (Array.isArray(snap.rainHourlySeries)) rainHourlySeries = snap.rainHourlySeries;
+          tideTimeline = generate48HourTimeline(snap.predData, snap.obsData || [], snap.ggPredData || []);
           nextHighTideObj = findNextHighTide(tideTimeline);
           renderSvgHydrograph();
           updateUI();
@@ -2695,37 +2893,93 @@
     }
 
     // Fast Parallel Fetch (Promise.all ~0.6s) of all 3 NOAA Endpoints Simultaneously
-        async function fetchNwsAlerts() {
+    let activeNwsAlerts = [];
+
+    function renderNwsAlertBanner(streetLvl = null) {
+      const banner = document.getElementById('nwsAlertBanner');
+      if (!banner) return;
+
+      const curPt = (tideTimeline && tideTimeline[currentScrubIdx]) ? tideTimeline[currentScrubIdx] : null;
+      const effLvl = streetLvl !== null ? streetLvl : (curPt ? (curPt.streetTWL !== undefined ? curPt.streetTWL : curPt.twl) : 0);
+      const curFlow = curPt && curPt.creekFlowCfs !== undefined ? curPt.creekFlowCfs : liveCreekFlowCfs;
+      const showLuckyClosure = (effLvl >= 6.15 || curFlow >= 150);
+
+      if ((!activeNwsAlerts || activeNwsAlerts.length === 0) && !showLuckyClosure) {
+        banner.style.display = 'none';
+        return;
+      }
+
+      let maxSeverity = 'moderate';
+      let blocksHtml = '';
+
+      if (showLuckyClosure) {
+        maxSeverity = 'severe';
+        blocksHtml += `
+          <div style="padding-bottom:6px; border-bottom:1px solid rgba(255,255,255,0.2);">
+            <div class="nws-title-row">
+              <span>🚧 ALERT MARIN / ROAD CLOSED: Lucky Dr (Corte Madera)</span>
+              <span style="font-size:0.72rem; opacity:0.9;">Doherty Dr to Fifer Ave</span>
+            </div>
+            <div style="font-size:0.75rem; margin-top:3px;">
+              Roadway flooded &amp; closed between Doherty Dr and Fifer Ave (6.15' NAVD88 subsidence basin; Corte Madera Creek ${Math.round(curFlow)} cfs / Street ${effLvl.toFixed(2)}' NAVD88). Use alternate routes.
+            </div>
+          </div>
+        `;
+      }
+
+      activeNwsAlerts.forEach((f, idx) => {
+        const a = f.properties || {};
+        const sev = (a.severity || 'moderate').toLowerCase();
+        if (sev === 'extreme') maxSeverity = 'extreme';
+        else if (sev === 'severe' && maxSeverity !== 'extreme') maxSeverity = 'severe';
+
+        const dividerStyle = (idx < activeNwsAlerts.length - 1) ? 'padding-bottom:6px; border-bottom:1px solid rgba(255,255,255,0.2);' : '';
+        const cleanDesc = (a.description || '').replace(/\s+/g, ' ').trim();
+        blocksHtml += `
+          <div style="${dividerStyle}">
+            <div class="nws-title-row">
+              <span>🚨 ${a.event || 'NWS Weather Alert'}</span>
+              <span style="font-size:0.72rem; opacity:0.88;">${a.headline || ''}</span>
+            </div>
+            <div style="font-size:0.74rem; margin-top:3px;">${cleanDesc ? cleanDesc.slice(0, 200) + (cleanDesc.length > 200 ? '...' : '') : ''}</div>
+          </div>
+        `;
+      });
+
+      banner.className = 'nws-alert-banner severity-' + maxSeverity;
+      banner.innerHTML = `
+        ${blocksHtml}
+        <div class="nws-actions">
+          <a href="https://emergency.marincounty.org/" target="_blank" class="nws-alert-btn">⚠️ Alert Marin</a>
+          <a href="https://protect.genasys.com/" target="_blank" class="nws-alert-btn">🛡️ Evacuation Zones</a>
+        </div>
+      `;
+      banner.style.display = 'flex';
+    }
+
+    async function fetchNwsAlerts() {
       const banner = document.getElementById('nwsAlertBanner');
       if (!banner) return;
       try {
         const res = await fetch('https://api.weather.gov/alerts/active?point=37.94,-122.53', {
+          cache: 'no-store',
           headers: { 'Accept': 'application/geo+json' }
         });
         if (!res.ok) return;
         const data = await res.json();
-        const alerts = (data.features || []).filter(f => {
-          const ev = (f.properties && f.properties.event) || '';
-          return /flood|surge|storm|evacuation|warning|advisory/i.test(ev);
+        const nowMs = Date.now();
+        activeNwsAlerts = (data.features || []).filter(f => {
+          const p = (f && f.properties) || {};
+          const ev = p.event || '';
+          if (!/flood|surge|storm|evacuation|warning|advisory/i.test(ev)) return false;
+          const endStr = p.ends || p.expires;
+          if (endStr) {
+            const endMs = new Date(endStr).getTime();
+            if (!isNaN(endMs) && endMs < nowMs) return false;
+          }
+          return true;
         });
-        if (alerts.length === 0) {
-          banner.style.display = 'none';
-          return;
-        }
-        const alert = alerts[0].properties;
-        banner.className = 'nws-alert-banner severity-' + (alert.severity || 'moderate').toLowerCase();
-        banner.innerHTML = `
-          <div class="nws-title-row">
-            <span>🚨 ${alert.event || 'NWS Weather Alert'}</span>
-            <span style="font-size:0.72rem; opacity:0.85;">${alert.headline || ''}</span>
-          </div>
-          <div style="font-size:0.75rem; margin-top:4px;">${alert.description ? alert.description.slice(0, 180) + '...' : ''}</div>
-          <div class="nws-actions">
-            <a href="https://emergency.marincounty.org/" target="_blank" class="nws-alert-btn">⚠️ Alert Marin</a>
-            <a href="https://protect.genasys.com/" target="_blank" class="nws-alert-btn">🛡️ Evacuation Zones</a>
-          </div>
-        `;
-        banner.style.display = 'flex';
+        renderNwsAlertBanner();
       } catch (e) {
         console.warn('NWS alerts fetch error:', e);
       }
@@ -2734,30 +2988,40 @@
     async function fetchLiveNOAA() {
       let obsData = [];
       let predData = [];
+      let ggPredData = [];
 
       const now = new Date();
-      const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+      const nowMs = now.getTime();
+      const yesterday = new Date(nowMs - 24 * 60 * 60 * 1000);
       const yStr = `${yesterday.getFullYear()}${String(yesterday.getMonth()+1).padStart(2,'0')}${String(yesterday.getDate()).padStart(2,'0')}`;
 
       const urlObsGG = 'https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?range=24&station=9414290&product=water_level&datum=NAVD&time_zone=lst_ldt&units=english&format=json';
-      const urlPredGG = 'https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&station=9414290&product=predictions&datum=NAVD&time_zone=lst_ldt&units=english&interval=6&format=json';
+      const urlPredGG = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=${yStr}&range=48&station=9414290&product=predictions&datum=NAVD&time_zone=lst_ldt&units=english&interval=6&format=json`;
       const urlPredCM = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=${yStr}&range=72&station=9414863&product=predictions&datum=NAVD&time_zone=lst_ldt&units=english&interval=6&format=json`;
+      const urlUsgsCreek = 'https://waterservices.usgs.gov/nwis/iv/?format=json&sites=11460000&period=P2D&parameterCd=00060,00065';
+      const urlOpenMeteo = 'https://api.open-meteo.com/v1/forecast?latitude=37.9408&longitude=-122.5349&hourly=precipitation,rain&current=precipitation,rain&past_days=2&forecast_days=2&timezone=America%2FLos_Angeles&precipitation_unit=inch';
 
       try {
-        // Parallel fetch for instant loading (~0.6s total)
-        const [respObs, respPredGG, respPredCM] = await Promise.all([
+        // Parallel fetch of NOAA Tides + USGS Corte Madera Creek (11460000) + Open-Meteo Larkspur Rain
+        const [respObs, respPredGG, respPredCM, respUsgs, respRain] = await Promise.all([
           fetch(urlObsGG).then(r => r.json()).catch(() => ({ data: [] })),
           fetch(urlPredGG).then(r => r.json()).catch(() => ({ predictions: [] })),
-          fetch(urlPredCM).then(r => r.json()).catch(() => ({ predictions: [] }))
+          fetch(urlPredCM).then(r => r.json()).catch(() => ({ predictions: [] })),
+          fetch(urlUsgsCreek).then(r => r.json()).catch(() => null),
+          fetch(urlOpenMeteo).then(r => r.json()).catch(() => null)
         ]);
+
+        if (respPredGG.predictions && respPredGG.predictions.length > 0) {
+          ggPredData = respPredGG.predictions;
+        }
 
         if (respObs.data && respObs.data.length > 0) {
           obsData = respObs.data;
           const latestObs = parseFloat(obsData[obsData.length - 1].v);
           const latestTime = obsData[obsData.length - 1].t;
 
-          if (respPredGG.predictions && respPredGG.predictions.length > 0) {
-            const match = respPredGG.predictions.find(p => p.t.slice(11, 16) === latestTime.slice(11, 16)) || respPredGG.predictions[respPredGG.predictions.length - 1];
+          if (ggPredData.length > 0) {
+            const match = ggPredData.find(p => p.t === latestTime || p.t.slice(11, 16) === latestTime.slice(11, 16)) || ggPredData[ggPredData.length - 1];
             const pVal = parseFloat(match.v);
             const surge = latestObs - pVal;
             if (!isNaN(surge)) {
@@ -2768,18 +3032,84 @@
 
         if (respPredCM.predictions && respPredCM.predictions.length > 0) {
           predData = respPredCM.predictions;
-        } else {
-          // Fallback to Golden Gate Station 9414290 native NAVD88
-          const respGG = await fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=${yStr}&range=72&station=9414290&product=predictions&datum=NAVD&time_zone=lst_ldt&units=english&interval=6&format=json`).then(r => r.json()).catch(() => ({ predictions: [] }));
-          if (respGG.predictions && respGG.predictions.length > 0) predData = respGG.predictions;
+        } else if (ggPredData.length > 0) {
+          predData = ggPredData;
+        }
+
+        // Parse USGS 11460000 (Corte Madera Creek at Ross) 15-min flow (00060) & stage (00065)
+        if (respUsgs && respUsgs.value && Array.isArray(respUsgs.value.timeSeries)) {
+          const byTime = {};
+          respUsgs.value.timeSeries.forEach(ts => {
+            const pcode = ts.variable && ts.variable.variableCode && ts.variable.variableCode[0] && ts.variable.variableCode[0].value;
+            const vals = (ts.values && ts.values[0] && ts.values[0].value) || [];
+            vals.forEach(pt => {
+              const vNum = parseFloat(pt.value);
+              if (isNaN(vNum) || vNum < 0) return;
+              const tMs = parseLocalTimestampMs(pt.dateTime);
+              if (isNaN(tMs)) return;
+              if (!byTime[pt.dateTime]) byTime[pt.dateTime] = { tMs, cfs: 1.0, stage: 4.24 };
+              if (pcode === '00060') byTime[pt.dateTime].cfs = vNum;
+              if (pcode === '00065') byTime[pt.dateTime].stage = vNum;
+            });
+          });
+          const parsedSeries = Object.values(byTime).sort((a, b) => a.tMs - b.tMs);
+          if (parsedSeries.length > 0) {
+            usgsFlowSeries = parsedSeries;
+            const latestUsgs = parsedSeries[parsedSeries.length - 1];
+            // Account for Ross-to-Larkspur travel wave (~45 min): take effective current flow within last 90 mins
+            const cutoff90m = nowMs - 90 * 60 * 1000;
+            let effFlow = latestUsgs.cfs;
+            let effStage = latestUsgs.stage;
+            parsedSeries.forEach(p => {
+              if (p.tMs >= cutoff90m && p.cfs > effFlow) {
+                effFlow = p.cfs;
+                effStage = p.stage;
+              }
+            });
+            liveCreekFlowCfs = Math.round(effFlow);
+            liveCreekStageFt = parseFloat(effStage.toFixed(2));
+            liveCreekRunoffFt = computeCreekRunoffHeadFt(liveCreekFlowCfs);
+          }
+        }
+
+        // Parse Open-Meteo hourly precipitation for Larkspur
+        if (respRain && respRain.hourly && Array.isArray(respRain.hourly.time)) {
+          const times = respRain.hourly.time;
+          const precips = respRain.hourly.precipitation || [];
+          const series = [];
+          for (let k = 0; k < times.length; k++) {
+            const tMs = parseLocalTimestampMs(times[k]);
+            const pVal = parseFloat(precips[k]);
+            if (!isNaN(tMs) && !isNaN(pVal)) {
+              series.push({ tMs, precipIn: Math.max(0, pVal) });
+            }
+          }
+          if (series.length > 0) {
+            rainHourlySeries = series;
+            liveRain24hIn = getRainWindowAt(nowMs, 24);
+            liveRain6hIn = getRainWindowAt(nowMs, 6);
+            const curPrecip = respRain.current && respRain.current.precipitation !== undefined
+              ? parseFloat(respRain.current.precipitation)
+              : getRainRateAt(nowMs);
+            liveRainRateInHr = !isNaN(curPrecip) ? parseFloat(curPrecip.toFixed(2)) : 0.0;
+          }
         }
 
         // Cache snapshot to localStorage for instant load next time
         try {
           localStorage.setItem('cwc_noaa_snapshot', JSON.stringify({
-            obsData: obsData.slice(-48),
+            obsData: obsData.slice(-240),
+            ggPredData: ggPredData,
             predData: predData,
             liveSurge: liveSurge,
+            liveCreekFlowCfs: liveCreekFlowCfs,
+            liveCreekStageFt: liveCreekStageFt,
+            liveCreekRunoffFt: liveCreekRunoffFt,
+            liveRain24hIn: liveRain24hIn,
+            liveRain6hIn: liveRain6hIn,
+            liveRainRateInHr: liveRainRateInHr,
+            usgsFlowSeries: usgsFlowSeries.slice(-200),
+            rainHourlySeries: rainHourlySeries,
             savedAt: Date.now()
           }));
         } catch (e) {}
@@ -2788,7 +3118,7 @@
         console.error("fetchLiveNOAA error:", e);
       }
 
-      tideTimeline = generate48HourTimeline(predData, obsData);
+      tideTimeline = generate48HourTimeline(predData, obsData, ggPredData);
       nextHighTideObj = findNextHighTide(tideTimeline);
 
       renderSvgHydrograph();
@@ -3052,11 +3382,33 @@
       // Metric calculations
       const twl = point.twl;
       const streetLevel = (point.streetTWL !== undefined) ? point.streetTWL : point.twl;
-      const effectiveTwl = streetLevel; // For fullscreen banner and clearance checks
+      const effectiveTwl = streetLevel; // For fullscreen banner, crosswalk, and map sync
+      const ptBaySurge = (point.baySurge !== undefined) ? point.baySurge : liveSurge;
+      const ptCreekRunoff = (point.creekRunoff !== undefined) ? point.creekRunoff : liveCreekRunoffFt;
+      const ptFlowCfs = (point.creekFlowCfs !== undefined) ? point.creekFlowCfs : liveCreekFlowCfs;
 
-      document.getElementById('valTWL').innerHTML = `${twl.toFixed(2)} <span>ft NAVD88</span>`;
-      document.getElementById('valTWLMLLW').textContent = `Station 9414874: ${(twl - 0.06).toFixed(2)}' MLLW`;
-      document.getElementById('valSurge').innerHTML = `+${liveSurge.toFixed(2)} <span>ft</span>`;
+      const valTwlEl = document.getElementById('valTWL');
+      const valTwlSubEl = document.getElementById('valTWLMLLW');
+      if (streetLevel > twl + 0.04) {
+        valTwlEl.innerHTML = `${streetLevel.toFixed(2)} <span>ft NAVD88 (Street)</span>`;
+        valTwlSubEl.textContent = `🌊 Creek TWL: ${twl.toFixed(2)}' • 🌧️ Street Basin Retained`;
+      } else {
+        valTwlEl.innerHTML = `${twl.toFixed(2)} <span>ft NAVD88</span>`;
+        valTwlSubEl.textContent = `Station 9414874: ${(twl - 0.06).toFixed(2)}' MLLW • Creek: ${Math.round(ptFlowCfs)} cfs`;
+      }
+
+      const valSurgeEl = document.getElementById('valSurge');
+      const valSurgeSubEl = document.getElementById('valSurgeSub');
+      const surgeBadgeEl = document.getElementById('surgeTypeBadge');
+      if (ptCreekRunoff >= 0.05 || liveRain24hIn >= 0.10) {
+        if (surgeBadgeEl) surgeBadgeEl.textContent = '🌧️ TIDE + RUNOFF';
+        valSurgeEl.innerHTML = `+${(ptBaySurge + ptCreekRunoff).toFixed(2)} <span>ft total</span>`;
+        valSurgeSubEl.textContent = `Bay Surge: +${ptBaySurge.toFixed(2)}' • Creek: ${Math.round(ptFlowCfs)} cfs (+${ptCreekRunoff.toFixed(2)}') • Rain: ${liveRain24hIn.toFixed(2)}"`;
+      } else {
+        if (surgeBadgeEl) surgeBadgeEl.textContent = 'KELVIN WAVE';
+        valSurgeEl.innerHTML = `+${ptBaySurge.toFixed(2)} <span>ft</span>`;
+        valSurgeSubEl.textContent = `Bay Surge: +${ptBaySurge.toFixed(2)}' • USGS Creek: ${Math.round(ptFlowCfs)} cfs (Baseflow)`;
+      }
 
       // Update NOAA / NWS Inundation Category Badge
       const noaaBadge = document.getElementById('noaaInundationBadge');
@@ -3192,32 +3544,38 @@
         }
       }
 
-      // Update Zone 3 (Pedestrian Crosswalk & Sidewalk Dip) Card
-      // Verified by Ground Truth Photo Nov 10 2026: Curb ramp & sidewalk sit at ~7.40'-7.42', remaining 100% dry when gutters take water
+      // Update Zone 3 (Pedestrian Crosswalk & Creekside Dr Intersection) Card
+      // Verified by Ground Truth Photos Nov 10 & Nov 18 2026:
+      // Crosswalk path & curb ramp approaches flood at 7.24' NAVD88; Creekside Dr intersection apron floods at 7.28' NAVD88
+      // while center crown of Larkspur Plaza Dr (7.42') remains passable straight through until >= 7.42'.
+      const crosswalkThresh = cfg.crosswalk || (crownElev - 0.18);
+      const creeksideThresh = cfg.creeksideApron || (crownElev - 0.14);
+      const effectiveCrosswalkDepthIn = Math.max(0, (streetLevel - crosswalkThresh) * 12);
+
       const valCrosswalkEl = document.getElementById('valCrosswalkDepth');
       const crosswalkStatusEl = document.getElementById('crosswalkStatusText');
       const valCrosswalkSubEl = document.getElementById('valCrosswalkSub');
 
       if (valCrosswalkEl && crosswalkStatusEl && valCrosswalkSubEl) {
-        if (effectiveCrownDepthIn > 0.1) {
-          const crosswalkDepth = effectiveCrownDepthIn + 1.5;
-          valCrosswalkEl.innerHTML = `+${crosswalkDepth.toFixed(1)} <span>in water</span>`;
+        if (streetLevel >= creeksideThresh) {
+          valCrosswalkEl.innerHTML = `+${effectiveCrosswalkDepthIn.toFixed(1)} <span>in water</span>`;
           valCrosswalkEl.style.color = "var(--red)";
           crosswalkStatusEl.textContent = "IMPASSABLE";
           crosswalkStatusEl.style.color = "var(--red)";
-          valCrosswalkSubEl.textContent = `Crosswalk overtopped (+${crosswalkDepth.toFixed(1)}") • Impassable on foot`;
-        } else if (twl >= 7.38 && effectiveGutterDepthIn > 0.5) {
-          valCrosswalkEl.innerHTML = `+0.5 <span>in puddle</span>`;
+          valCrosswalkSubEl.textContent = `Crosswalk & Creekside Dr intersection flooded (+${effectiveCrosswalkDepthIn.toFixed(1)}") • Impassable on foot`;
+        } else if (streetLevel >= (crosswalkThresh - 0.04)) {
+          const rampIn = Math.max(0.3, effectiveCrosswalkDepthIn);
+          valCrosswalkEl.innerHTML = `+${rampIn.toFixed(1)} <span>in puddle</span>`;
           valCrosswalkEl.style.color = "var(--amber)";
-          crosswalkStatusEl.textContent = "SHALLOW PUDDLE";
+          crosswalkStatusEl.textContent = "RAMP PUDDLE";
           crosswalkStatusEl.style.color = "var(--amber)";
-          valCrosswalkSubEl.textContent = `Shallow splash at base of curb ramp • Passable with boots`;
+          valCrosswalkSubEl.textContent = `Standing water at crosswalk curb ramps • Use caution on foot`;
         } else {
           valCrosswalkEl.innerHTML = `0.0 <span>in (DRY)</span>`;
           valCrosswalkEl.style.color = "var(--green)";
           crosswalkStatusEl.textContent = "100% DRY";
           crosswalkStatusEl.style.color = "var(--green)";
-          valCrosswalkSubEl.textContent = `Curb ramps & crosswalk 100% dry and fully passable on foot`;
+          valCrosswalkSubEl.textContent = `Curb ramps, crosswalk & Creekside Dr intersection 100% dry`;
         }
       }
 
@@ -3261,9 +3619,13 @@
         crownStatusEl.textContent = "CROWN DRY";
         crownStatusEl.style.color = "var(--green)";
         if (crownSubEl) {
-          crownSubEl.textContent = (maxGutterDepthIn > 0.1)
-            ? `Travel lanes clear • Water trapped in low curb gutter (+${maxGutterDepthIn.toFixed(1)}")`
-            : `Road crown (${crownElev.toFixed(2)}') & curb gutters fully dry`;
+          if (streetLevel >= creeksideThresh) {
+            crownSubEl.textContent = `Center crown (${crownElev.toFixed(2)}') passable • Creekside Dr intersection & crosswalk flooded`;
+          } else if (maxGutterDepthIn > 0.1) {
+            crownSubEl.textContent = `Travel lanes clear • Water trapped in low curb gutter (+${maxGutterDepthIn.toFixed(1)}")`;
+          } else {
+            crownSubEl.textContent = `Road crown (${crownElev.toFixed(2)}') & curb gutters fully dry`;
+          }
         }
 
         valClrEl.innerHTML = `${activeVehicleClearance.toFixed(1)} <span>in clr</span>`;
@@ -3273,10 +3635,16 @@
           statusClrEl.style.color = "var(--green)";
         }
         if (depthClrEl) {
-          depthClrEl.textContent = (maxGutterDepthIn > 0.1)
-            ? `Main road clear • Low street parking gutters wet (+${maxGutterDepthIn.toFixed(1)}")`
-            : `Travel lanes completely dry`;
-          depthClrEl.style.color = (maxGutterDepthIn > 0.1) ? "var(--amber)" : "var(--text-muted)";
+          if (streetLevel >= creeksideThresh) {
+            depthClrEl.textContent = `Passable straight on center crown • Avoid Creekside Dr sag apron (+${maxGutterDepthIn.toFixed(1)}")`;
+            depthClrEl.style.color = "var(--amber)";
+          } else if (maxGutterDepthIn > 0.1) {
+            depthClrEl.textContent = `Main road clear • Low street parking gutters wet (+${maxGutterDepthIn.toFixed(1)}")`;
+            depthClrEl.style.color = "var(--amber)";
+          } else {
+            depthClrEl.textContent = `Travel lanes completely dry`;
+            depthClrEl.style.color = "var(--text-muted)";
+          }
         }
       }
 
@@ -3357,13 +3725,24 @@
           getStreetClearanceCountdown('crown'),
           { label: 'AFFECTED CROWN BOUNDARY:', text: cfg.crownBoundary || `${cfg.name} (travel lane sag)` }
         );
-      } else if (effectiveGutterDepthIn > 0.2 || (streetLevel >= (gutterLowPoint + 0.12) && streetLevel >= 7.28)) {
-        // Condition 3: Travel Lanes & Crosswalk Clear • Low Curb Gutters Taking Water
+      } else if (streetLevel >= creeksideThresh) {
+        // Condition 3A: Center Roadway Passable • Crosswalk & Creekside Dr Intersection Flooded
         applyHeroState(
           'yellow',
-          '🚗 TRAVEL LANES & SIDEWALKS OPEN • GUTTERS WET',
-          `Main Street & Crosswalk Open • Low Curb Gutters Wet`,
-          `Center roadway travel lanes, pedestrian crosswalks, and sidewalks are 100% dry and fully passable on foot and by vehicle. Standing puddle water is confined to low curb gutter margins (+${maxGutterDepthIn.toFixed(1)}").`,
+          '⚠️ CENTER ROAD PASSABLE • CROSSWALK & CREEKSIDE DR FLOODED',
+          `Center Roadway Passable • Crosswalk & Creekside Dr Impassable`,
+          `The center roadway on ${cfg.name.split(' (')[0]} (${crownElev.toFixed(2)}' crown) is passable straight through, but standing water (${streetLevel.toFixed(2)}' NAVD88, +${maxGutterDepthIn.toFixed(1)}" in sag gutters) floods the intersection to Creekside Drive and submerges the pedestrian crosswalk (+${effectiveCrosswalkDepthIn.toFixed(1)}"). Crosswalks are not passable on foot.`,
+          'ESTIMATED CROSSWALK & CREEKSIDE CLEAR:',
+          getStreetClearanceCountdown('crosswalk'),
+          { label: 'AFFECTED INTERSECTION & CROSSWALK BOUNDARY:', text: `Pedestrian crosswalk (${crosswalkThresh.toFixed(2)}'), Creekside Dr intersection apron (${creeksideThresh.toFixed(2)}'), and curb gutters (${gutterLowPoint.toFixed(2)}') flooded; ${cfg.name.split(' (')[0]} center crown (${crownElev.toFixed(2)}') passable.` }
+        );
+      } else if (effectiveGutterDepthIn > 0.2 || streetLevel > gutterLowPoint) {
+        // Condition 3B: Center Road Open • Low Curb Gutters Wet
+        applyHeroState(
+          'yellow',
+          '🟡 CENTER ROAD OPEN • LOW CURB GUTTERS WET',
+          `Main Travel Lanes Open • Low Curb Gutters Wet`,
+          `Center roadway travel lanes are dry and passable. Standing water (+${maxGutterDepthIn.toFixed(1)}") is pooling in the low curb gutter pans (${gutterLowPoint.toFixed(2)}') near the crosswalk curb ramps.`,
           'ESTIMATED GUTTER CLEARANCE:',
           getStreetClearanceCountdown('sagGutter'),
           { label: 'AFFECTED PARKING & GUTTER BOUNDARY:', text: cfg.gutterBoundary || `${cfg.name} (curb gutters & street parking margins)` }
@@ -3413,12 +3792,15 @@
       }
 
       
+      // Refresh Alert Marin / NWS active alert banner for current street level & runoff
+      renderNwsAlertBanner(effectiveTwl);
+
       // Update SVG Road Cross Section Simulator
       updateSvgCrossSection(streetLevel, cfg, isRising);
       updateScrubIndicator();
 
-      // Synchronize Marin County Flood & Elevation Map with Hydrograph Scrubber
-      updateFloodMap(twl);
+      // Synchronize Marin County Flood & Elevation Map with Hydrograph Scrubber (reflecting runoff & basin retention)
+      updateFloodMap(effectiveTwl);
     }
     
     function updateSvgCrossSection(twl, cfg, isRising) {
@@ -3547,16 +3929,16 @@
       {
             "id": "larkspur",
             "city": "Larkspur",
-            "name": "Larkspur Plaza Dr (Sag & Crosswalk near Heather Way)",
+            "name": "Larkspur Plaza Dr (Sag & Crosswalk at Creekside Dr)",
             "shortName": "Larkspur Sag",
             "lat": 37.93975,
             "lon": -122.535078,
             "crown": 7.42,
             "gutter": 7.15,
             "crestLabel": "Road Crown (Sag Dip)",
-            "approachLabel": "Street Gutters & Drains",
+            "approachLabel": "Creekside Apron / Crosswalk",
             "type": "road",
-            "desc": "Concave road sag on Larkspur Plaza Dr near Heather Way. Drains 1-4 surcharge at 7.28' NAVD88; road crown overhauls at 7.42' NAVD88."
+            "desc": "Concave road sag on Larkspur Plaza Dr at Creekside Dr. Gutters fill at 7.15', crosswalk at 7.24', Creekside Dr apron at 7.28'; center crown at 7.42' NAVD88."
       },
       {
             "id": "larkspurnorth",
@@ -3615,18 +3997,32 @@
             "desc": "Historic pedestrian wooden boardwalk along Corte Madera Creek. Wooden deck elevation 7.43' NAVD88 (7.52' MLLW); shoreline approach over marsh mudflat at 6.90' NAVD88."
       },
       {
+            "id": "luckyramp",
+            "city": "Corte Madera",
+            "name": "Lucky Dr (Doherty Dr to Fifer Ave Closure Corridor)",
+            "shortName": "Lucky Dr (Doherty–Fifer)",
+            "lat": 37.93615,
+            "lon": -122.52225,
+            "crown": 6.15,
+            "gutter": 5.5,
+            "crestLabel": "Roadway Travel Corridor",
+            "approachLabel": "Low Subsidence Sump & Ditch",
+            "type": "road",
+            "desc": "Lucky Dr between Doherty Dr and Fifer Ave. Low subsidence basin (USGS 3DEP LiDAR 1.16'–5.91'); floods and closes during combined high tide and creek runoff above 6.15' NAVD88."
+      },
+      {
             "id": "luckyfrontage",
             "city": "Corte Madera",
             "name": "Lucky Dr Residential Frontage (Corte Madera)",
             "shortName": "Lucky Frontage",
             "lat": 37.934812,
             "lon": -122.520415,
-            "crown": 7.5,
-            "gutter": 7.1,
+            "crown": 6.35,
+            "gutter": 5.91,
             "crestLabel": "Roadway Center Crown",
             "approachLabel": "Roadside Gutter & Ditch",
             "type": "road",
-            "desc": "Lucky Drive residential roadway along canal edge. Low gutters pond at 7.10' NAVD88; travel lane crown overhauls at 7.50' NAVD88."
+            "desc": "Lucky Drive residential roadway near Fifer Ave & canal edge. Low gutters pond at 5.91' NAVD88 (USGS 3DEP LiDAR); travel lane crown overhauls at 6.35' NAVD88."
       },
       {
             "id": "cortemaderatownpark",
@@ -4250,37 +4646,34 @@
       applyMapBadgesUI();
     }
 
-    function locateUserOnMap(e) {
+    async function locateUserOnMap(e) {
       if (e) e.stopPropagation();
       if (!floodMapInstance) return;
       if (!navigator.geolocation) {
         alert("Geolocation is not supported by your browser.");
         return;
       }
-      navigator.geolocation.getCurrentPosition(
-        pos => {
-          const lat = pos.coords.latitude;
-          const lon = pos.coords.longitude;
-          if (mapGpsMarker) {
-            mapGpsMarker.setLatLng([lat, lon]);
-          } else {
-            const gpsIcon = L.divIcon({
-              className: 'gps-marker',
-              html: `<div style="width:16px;height:16px;border-radius:50%;background:#38bdf8;border:3px solid #fff;box-shadow:0 0 14px #38bdf8;"></div>`,
-              iconSize: [16, 16],
-              iconAnchor: [8, 8]
-            });
-            mapGpsMarker = L.marker([lat, lon], { icon: gpsIcon }).addTo(floodMapInstance);
-            mapGpsMarker.bindPopup("<b>📍 Your Current Location</b>");
-          }
-          floodMapInstance.setView([lat, lon], 15);
-          mapGpsMarker.openPopup();
-        },
-        err => {
-          alert("Could not detect GPS position: " + err.message);
-        },
-        { enableHighAccuracy: true, timeout: 8000 }
-      );
+      try {
+        const pos = await getPositionTwoStage();
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        if (mapGpsMarker) {
+          mapGpsMarker.setLatLng([lat, lon]);
+        } else {
+          const gpsIcon = L.divIcon({
+            className: 'gps-marker',
+            html: `<div style="width:16px;height:16px;border-radius:50%;background:#38bdf8;border:3px solid #fff;box-shadow:0 0 14px #38bdf8;"></div>`,
+            iconSize: [16, 16],
+            iconAnchor: [8, 8]
+          });
+          mapGpsMarker = L.marker([lat, lon], { icon: gpsIcon }).addTo(floodMapInstance);
+          mapGpsMarker.bindPopup("<b>📍 Your Current Location</b>");
+        }
+        floodMapInstance.setView([lat, lon], 16);
+        mapGpsMarker.openPopup();
+      } catch (err) {
+        alert("Could not detect GPS position: " + (err && err.message ? err.message : "Permission denied or unavailable"));
+      }
     }
 
     
@@ -4444,6 +4837,41 @@
       }
 
       updateScrubIndicator();
+
+      // Dynamically synchronize 48-hour X-axis time ticks & scrubber bar labels with live local clock
+      const svgTicksG = document.getElementById('svgTimeTicks');
+      if (svgTicksG && tideTimeline.length >= 289) {
+        const tickDefs = [
+          { idx: 0, x: 55 },
+          { idx: 48, x: 143 },
+          { idx: 96, x: 231 },
+          { idx: 144, x: 320, isNow: true },
+          { idx: 192, x: 408 },
+          { idx: 240, x: 496 },
+          { idx: 288, x: 585 }
+        ];
+        const shortHour = (pt) => {
+          const d = new Date(pt.timeMs);
+          const hr = d.getHours();
+          const ap = hr >= 12 ? 'PM' : 'AM';
+          return `${hr % 12 || 12}${ap}`;
+        };
+        svgTicksG.innerHTML = tickDefs.map(td => {
+          const pt = tideTimeline[td.idx];
+          if (!pt) return '';
+          if (td.isNow) {
+            return `<text x="${td.x}" y="222" fill="#38bdf8" font-weight="bold">${pt.timeLabel}</text>`;
+          }
+          return `<text x="${td.x}" y="222">${pt.dayLabel} ${shortHour(pt)}</text>`;
+        }).join('');
+
+        const setElText = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+        setElText('tickPast24', `-24h (${tideTimeline[0].dayLabel} ${shortHour(tideTimeline[0])})`);
+        setElText('tickPast12', `-12h (${shortHour(tideTimeline[72])})`);
+        setElText('tickLiveNow', `📍 NOW (${tideTimeline[144].timeLabel})`);
+        setElText('tickNext12', `+12h (${shortHour(tideTimeline[216])})`);
+        setElText('tickNext24', `+24h (${tideTimeline[288].dayLabel} ${shortHour(tideTimeline[288])})`);
+      }
     }
 
     function updateScrubIndicator() {
@@ -4507,12 +4935,14 @@
     // Startup Initialization
     document.addEventListener('DOMContentLoaded', () => {
       applyRoadSimulatorVisibility();
+      restoreSavedLocation();
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=cwc-wet-v67').catch(() => {});
+        navigator.serviceWorker.register('./sw.js?v=cwc-wet-v68').catch(() => {});
       }
       applyVehicleAndCarView();
       initHydrographDragScrub();
       initFloodMap();
+      hydrateCachedNOAA();
       loadAlertSettings();
       fetchLiveNOAA();
       fetchNwsAlerts();
