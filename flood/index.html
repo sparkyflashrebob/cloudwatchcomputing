@@ -2895,37 +2895,17 @@
     // Fast Parallel Fetch (Promise.all ~0.6s) of all 3 NOAA Endpoints Simultaneously
     let activeNwsAlerts = [];
 
-    function renderNwsAlertBanner(streetLvl = null) {
+    function renderNwsAlertBanner() {
       const banner = document.getElementById('nwsAlertBanner');
       if (!banner) return;
 
-      const curPt = (tideTimeline && tideTimeline[currentScrubIdx]) ? tideTimeline[currentScrubIdx] : null;
-      const effLvl = streetLvl !== null ? streetLvl : (curPt ? (curPt.streetTWL !== undefined ? curPt.streetTWL : curPt.twl) : 0);
-      const curFlow = curPt && curPt.creekFlowCfs !== undefined ? curPt.creekFlowCfs : liveCreekFlowCfs;
-      const showLuckyClosure = (effLvl >= 6.15 || curFlow >= 150);
-
-      if ((!activeNwsAlerts || activeNwsAlerts.length === 0) && !showLuckyClosure) {
+      if (!activeNwsAlerts || activeNwsAlerts.length === 0) {
         banner.style.display = 'none';
         return;
       }
 
       let maxSeverity = 'moderate';
       let blocksHtml = '';
-
-      if (showLuckyClosure) {
-        maxSeverity = 'severe';
-        blocksHtml += `
-          <div style="padding-bottom:6px; border-bottom:1px solid rgba(255,255,255,0.2);">
-            <div class="nws-title-row">
-              <span>🚧 ALERT MARIN / ROAD CLOSED: Lucky Dr (Corte Madera)</span>
-              <span style="font-size:0.72rem; opacity:0.9;">Doherty Dr to Fifer Ave</span>
-            </div>
-            <div style="font-size:0.75rem; margin-top:3px;">
-              Roadway flooded &amp; closed between Doherty Dr and Fifer Ave (6.15' NAVD88 subsidence basin; Corte Madera Creek ${Math.round(curFlow)} cfs / Street ${effLvl.toFixed(2)}' NAVD88). Use alternate routes.
-            </div>
-          </div>
-        `;
-      }
 
       activeNwsAlerts.forEach((f, idx) => {
         const a = f.properties || {};
@@ -3792,8 +3772,8 @@
       }
 
       
-      // Refresh Alert Marin / NWS active alert banner for current street level & runoff
-      renderNwsAlertBanner(effectiveTwl);
+      // Refresh NWS active alert banner
+      renderNwsAlertBanner();
 
       // Update SVG Road Cross Section Simulator
       updateSvgCrossSection(streetLevel, cfg, isRising);
