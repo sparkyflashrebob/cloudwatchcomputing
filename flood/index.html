@@ -2707,23 +2707,27 @@
         const cur = data[i];
         const next = (i < data.length - 1) ? data[i + 1] : cur;
         const isRising = (next.twl > cur.twl + 0.015);
-        const isWetRunoff = (cur.rain6h >= 0.25 || cur.rainInHr >= 0.08 || cur.creekFlowCfs >= 150);
+        const isWetRunoff = (cur.rain6h >= 0.25 || cur.rainInHr >= 0.08 || cur.creekFlowCfs >= 100);
+        // Calibrated Ground Truth (Nov 10 & Nov 19 2026): In dry weather, slough tide does not spill onto
+        // Larkspur Plaza Dr until >= 7.28' (Drain 1 / Creekside apron). When wet runoff occurs (rain6h >= 0.25"
+        // or creekFlowCfs >= 100), tide-locked drainage traps water in sag gutters at 7.15'.
+        const streetFloodThresh = isWetRunoff ? 7.15 : 7.28;
 
         if (isRising) {
-          if (cur.twl >= 7.15) {
+          if (cur.twl >= streetFloodThresh) {
             hasGutterWater = true;
             activePonding = Math.max(activePonding, cur.twl);
           }
         } else {
-          if (cur.twl >= 7.15) {
+          if (cur.twl >= streetFloodThresh) {
             hasGutterWater = true;
             activePonding = Math.max(cur.twl, activePonding);
-          } else if (hasGutterWater && activePonding > 7.15) {
+          } else if (hasGutterWater && activePonding > streetFloodThresh) {
             const drainRatePer10Min = (activePonding > 7.42)
               ? (isWetRunoff ? 0.018 : 0.025)
               : (isWetRunoff ? 0.0025 : 0.010);
             activePonding = Math.max(cur.twl, activePonding - drainRatePer10Min);
-            if (activePonding <= 7.15 && cur.twl <= 7.15 && !isWetRunoff) {
+            if (activePonding <= streetFloodThresh && cur.twl <= streetFloodThresh && !isWetRunoff) {
               activePonding = 0.0;
               hasGutterWater = false;
             }
@@ -2741,7 +2745,7 @@
           }
         }
 
-        cur.streetTWL = parseFloat((activePonding > 7.15 ? Math.max(activePonding, cur.twl) : cur.twl).toFixed(2));
+        cur.streetTWL = parseFloat((activePonding > streetFloodThresh ? Math.max(activePonding, cur.twl) : cur.twl).toFixed(2));
       }
 
       return data;
@@ -2849,7 +2853,7 @@
           const sHRem = Math.floor(streetDiffMins / 60);
           const sMRem = streetDiffMins % 60;
 
-          const hazard = cur >= 7.55 ? "Small Cars Impassable" : cur >= 7.42 ? "Sag Crown Breached" : cur >= 7.15 ? "Sag Gutters Wet" : "No Hazard";
+          const hazard = cur >= 7.55 ? "Small Cars Impassable" : cur >= 7.42 ? "Sag Crown Breached" : cur >= 7.28 ? "Crosswalk / Gutters Wet" : "No Hazard";
           return {
             idx: i,
             streetIdx: Math.min(timeline.length - 1, i + 2), // ~20 min step forward
@@ -2948,10 +2952,10 @@
         if (!res.ok) return;
         const data = await res.json();
         const nowMs = Date.now();
-        activeNwsAlerts = (data.features || []).filter(f => {
+        const rawAlerts = (data.features || []).filter(f => {
           const p = (f && f.properties) || {};
           const ev = p.event || '';
-          if (!/flood|surge|storm|evacuation|warning|advisory/i.test(ev)) return false;
+          if (!/(flood|coastal|surge|storm|evacuation|high\s*surf)/i.test(ev)) return false;
           const endStr = p.ends || p.expires;
           if (endStr) {
             const endMs = new Date(endStr).getTime();
@@ -2959,6 +2963,24 @@
           }
           return true;
         });
+
+        // Deduplicate by event type, keeping the single latest valid window
+        const eventMap = new Map();
+        rawAlerts.forEach(f => {
+          const p = f.properties || {};
+          const evKey = (p.event || 'Weather Alert').trim().toLowerCase();
+          const endStr = p.ends || p.expires;
+          const endMs = endStr ? new Date(endStr).getTime() : 0;
+          if (!eventMap.has(evKey)) {
+            eventMap.set(evKey, { feature: f, endMs: endMs });
+          } else {
+            if (endMs > eventMap.get(evKey).endMs) {
+              eventMap.set(evKey, { feature: f, endMs: endMs });
+            }
+          }
+        });
+
+        activeNwsAlerts = Array.from(eventMap.values()).map(v => v.feature);
         renderNwsAlertBanner();
       } catch (e) {
         console.warn('NWS alerts fetch error:', e);
@@ -3492,9 +3514,13 @@
       const depthClrEl = document.getElementById('valPriusDepth');
 
       // Zone 2: Curb Gutters & Street Parking Water Calculation (Physical low point for parking)
+      // Ground truth calibrated (Nov 10 & Nov 19 2026): Slough tide below 7.28' does not spill into street gutters in dry weather.
+      // Surcharge begins at 7.28' (Drain 1 / Apron) during dry tides, or at 7.15' when stormwater runoff is locked behind tide flaps.
+      const isWetStorm = (ptFlowCfs >= 100 || liveRain24hIn >= 0.25);
+      const effectiveGutterThresh = isWetStorm ? gutterLowPoint : Math.max(gutterLowPoint, 7.28);
       const effectiveGutterDepthIn = isRising
-        ? ((twl >= gutterLowPoint) ? Math.max(0.2, (twl - gutterLowPoint) * 12) : 0.0)
-        : Math.max(0, (streetLevel - gutterLowPoint) * 12);
+        ? ((twl >= effectiveGutterThresh) ? Math.max(0.2, (twl - effectiveGutterThresh) * 12) : 0.0)
+        : Math.max(0, (streetLevel - effectiveGutterThresh) * 12);
       const maxGutterDepthIn = effectiveGutterDepthIn;
 
       const frontParkingStatusEl = document.getElementById('frontParkingStatusText');
@@ -3716,7 +3742,7 @@
           getStreetClearanceCountdown('crosswalk'),
           { label: 'AFFECTED INTERSECTION & CROSSWALK BOUNDARY:', text: `Pedestrian crosswalk (${crosswalkThresh.toFixed(2)}'), Creekside Dr intersection apron (${creeksideThresh.toFixed(2)}'), and curb gutters (${gutterLowPoint.toFixed(2)}') flooded; ${cfg.name.split(' (')[0]} center crown (${crownElev.toFixed(2)}') passable.` }
         );
-      } else if (effectiveGutterDepthIn > 0.2 || streetLevel > gutterLowPoint) {
+      } else if (effectiveGutterDepthIn > 0.2 || (isWetStorm && streetLevel > gutterLowPoint) || (streetLevel >= 7.28)) {
         // Condition 3B: Center Road Open • Low Curb Gutters Wet
         applyHeroState(
           'yellow',
