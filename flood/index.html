@@ -2006,11 +2006,11 @@
         name: "Larkspur Plaza Dr (at Creekside Dr / Sag Crosswalk)",
         roadBoundary: "Creekside Drive intersection to Pedestrian Crosswalk (~120 ft sag corridor, full roadway width)",
         crownBoundary: "Larkspur Plaza Dr center crown passable (7.42'); Creekside Dr intersection (7.28') & crosswalk (7.24') flooded",
-        gutterBoundary: "Pedestrian crosswalk (7.24'), Creekside Dr intersection apron (7.28') & sag curb gutters (7.15')",
-        // Calibrated Ground Truth (from Nov 8, Nov 13 & Nov 18 2026 Photos + KML Survey):
+        gutterBoundary: "Pedestrian crosswalk (7.24'), Creekside Dr intersection apron (7.28') & sag curb gutters (7.22')",
+        // Calibrated Ground Truth (from Nov 8, Nov 10, Nov 13, Nov 18 & Nov 19 2026 Photos):
         headwallSeep: 7.10, // Inlet full; water seeps over sidewalk near concrete headwall
-        sagGutter: 7.15, // Sag Area Gutters (Street Drains 2, 3, & 4 on complex side; fills first at 7.15')
-        gutter: 7.15,    // Low point for street parking / sag gutter
+        sagGutter: 7.22, // Sag Area Gutters (Street Drains 2, 3, & 4; verified 100% dry at <= 7.22' TWL without rain)
+        gutter: 7.22,    // Low point for street parking / sag gutter
         crosswalk: 7.24, // Pedestrian crosswalk path & curb ramp approaches flooded (>= 7.28' impassable on foot)
         creeksideApron: 7.28, // Intersection entrance turning into Creekside Drive floods
         drain1: 7.28,    // Big Drain #1 (Main roadway storm grate; surcharges heavily onto street at 7.28')
@@ -2023,6 +2023,7 @@
         highCrown: 7.75, // High road crown ridge in foreground
         priusSag: 7.91,  // Impassable for 5.9" clearance (7.42' crown + 0.49' / 5.9" = 7.91')
         stall: 8.15,     // Low Driveway & Ground Apron benchmark
+        carportSwale: 7.60, // Carport #86 central driveway swale (retains puddle after heavy rain / high water)
         streetHighPoint: 8.30, // Street High Point (road crest ; last divide to submerge)
         damageLevel: 8.86, // Interior damage level
         lagMinutes: 270   // 4.5 hour drainage lag for curb gutters & front stalls
@@ -2655,15 +2656,16 @@
         // Astronomical tide at Corte Madera Creek / Richmond (Station 9414863 + 0.06' NAVD88)
         const ast = calculateAstTideAt(ptDate, predArray);
 
-        // Historical observed Golden Gate storm surge for past points when both GG obs & pred exist
+        // Direct local water level observation when available, with astronomical surge calculation
         let ptBaySurge = liveSurge;
         let isPast = (i <= 144);
-        if (isPast && obsArray && obsArray.length && ggPredArray && ggPredArray.length) {
-          const ggObs = findObservedAt(ptDate, obsArray);
-          if (ggObs !== null) {
-            const ggAst = calculateAstTideAt(ptDate, ggPredArray) - 0.06; // exact GG datum (no Richmond +0.06 offset)
-            if (!isNaN(ggAst)) {
-              ptBaySurge = parseFloat((ggObs - ggAst).toFixed(2));
+        let obsWaterLevel = null;
+        if (isPast && obsArray && obsArray.length) {
+          const directObs = findObservedAt(ptDate, obsArray);
+          if (directObs !== null) {
+            obsWaterLevel = directObs;
+            if (directObs > 3.0 && directObs < 11.0) {
+              ptBaySurge = parseFloat((directObs - ast).toFixed(2));
             }
           }
         }
@@ -2674,8 +2676,12 @@
         const rainInHr = getRainRateAt(ptMs);
         const rain6h = getRainWindowAt(ptMs, 6);
 
-        // Authoritative Creek Total Water Level: Ast + Bay Storm Surge + Creek Fluvial Runoff Head
-        const twl = ast + ptBaySurge + creekRunoff;
+        // Authoritative Creek Total Water Level:
+        // For past points with direct Richmond local observations, twl = directObs + creekRunoff;
+        // Otherwise ast + baySurge + creekRunoff.
+        const twl = (isPast && obsWaterLevel !== null && obsWaterLevel > 3.0)
+          ? parseFloat((obsWaterLevel + creekRunoff).toFixed(2))
+          : parseFloat((ast + ptBaySurge + creekRunoff).toFixed(2));
 
         data.push({
           idx: i,
@@ -2719,21 +2725,28 @@
             activePonding = Math.max(activePonding, cur.twl);
           }
         } else {
-          if (cur.twl >= streetFloodThresh) {
-            hasGutterWater = true;
-            activePonding = Math.max(cur.twl, activePonding);
-          } else if (hasGutterWater && activePonding > streetFloodThresh) {
-            const drainRatePer10Min = (activePonding > 7.42)
-              ? (isWetRunoff ? 0.018 : 0.025)
-              : (isWetRunoff ? 0.0025 : 0.010);
-            activePonding = Math.max(cur.twl, activePonding - drainRatePer10Min);
-            if (activePonding <= streetFloodThresh && cur.twl <= streetFloodThresh && !isWetRunoff) {
+          // Falling tide:
+          if (isWetRunoff) {
+            // Storm runoff / creek surge behind closed flap gates drains slowly
+            if (cur.twl >= streetFloodThresh) {
+              activePonding = Math.max(cur.twl, activePonding);
+            } else if (hasGutterWater && activePonding > streetFloodThresh) {
+              const drainRatePer10Min = (activePonding > 7.42) ? 0.018 : 0.0025;
+              activePonding = Math.max(cur.twl, activePonding - drainRatePer10Min);
+              if (activePonding <= streetFloodThresh && cur.twl <= streetFloodThresh) {
+                activePonding = 0.0;
+                hasGutterWater = false;
+              }
+            }
+          } else {
+            // Dry weather / baseflow: open roadway pavement drains freely with receding tide
+            if (cur.twl >= streetFloodThresh) {
+              activePonding = cur.twl;
+              hasGutterWater = true;
+            } else {
               activePonding = 0.0;
               hasGutterWater = false;
             }
-          } else if (!isWetRunoff) {
-            activePonding = 0.0;
-            hasGutterWater = false;
           }
         }
 
@@ -2997,6 +3010,7 @@
       const yesterday = new Date(nowMs - 24 * 60 * 60 * 1000);
       const yStr = `${yesterday.getFullYear()}${String(yesterday.getMonth()+1).padStart(2,'0')}${String(yesterday.getDate()).padStart(2,'0')}`;
 
+      const urlObsRichmond = 'https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?range=24&station=9414863&product=water_level&datum=NAVD&time_zone=lst_ldt&units=english&format=json';
       const urlObsGG = 'https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?range=24&station=9414290&product=water_level&datum=NAVD&time_zone=lst_ldt&units=english&format=json';
       const urlPredGG = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=${yStr}&range=48&station=9414290&product=predictions&datum=NAVD&time_zone=lst_ldt&units=english&interval=6&format=json`;
       const urlPredCM = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=${yStr}&range=72&station=9414863&product=predictions&datum=NAVD&time_zone=lst_ldt&units=english&interval=6&format=json`;
@@ -3004,8 +3018,9 @@
       const urlOpenMeteo = 'https://api.open-meteo.com/v1/forecast?latitude=37.9408&longitude=-122.5349&hourly=precipitation,rain&current=precipitation,rain&past_days=2&forecast_days=2&timezone=America%2FLos_Angeles&precipitation_unit=inch';
 
       try {
-        // Parallel fetch of NOAA Tides + USGS Corte Madera Creek (11460000) + Open-Meteo Larkspur Rain
-        const [respObs, respPredGG, respPredCM, respUsgs, respRain] = await Promise.all([
+        // Parallel fetch of NOAA Tides (Richmond 9414863 primary local bay station + Golden Gate 9414290 backup) + USGS 11460000 + Open-Meteo Rain
+        const [respObsRichmond, respObsGG, respPredGG, respPredCM, respUsgs, respRain] = await Promise.all([
+          fetch(urlObsRichmond).then(r => r.json()).catch(() => ({ data: [] })),
           fetch(urlObsGG).then(r => r.json()).catch(() => ({ data: [] })),
           fetch(urlPredGG).then(r => r.json()).catch(() => ({ predictions: [] })),
           fetch(urlPredCM).then(r => r.json()).catch(() => ({ predictions: [] })),
@@ -3013,15 +3028,35 @@
           fetch(urlOpenMeteo).then(r => r.json()).catch(() => null)
         ]);
 
+        if (respPredCM.predictions && respPredCM.predictions.length > 0) {
+          predData = respPredCM.predictions;
+        } else if (respPredGG.predictions && respPredGG.predictions.length > 0) {
+          predData = respPredGG.predictions;
+        }
+
         if (respPredGG.predictions && respPredGG.predictions.length > 0) {
           ggPredData = respPredGG.predictions;
         }
 
-        if (respObs.data && respObs.data.length > 0) {
-          obsData = respObs.data;
+        // Primary: Richmond 9414863 direct local bay water level observations; Fallback: Golden Gate 9414290
+        let isRichmondObs = false;
+        if (respObsRichmond.data && respObsRichmond.data.length > 0) {
+          obsData = respObsRichmond.data;
+          isRichmondObs = true;
           const latestObs = parseFloat(obsData[obsData.length - 1].v);
           const latestTime = obsData[obsData.length - 1].t;
-
+          if (predData.length > 0) {
+            const match = predData.find(p => p.t === latestTime || p.t.slice(11, 16) === latestTime.slice(11, 16)) || predData[predData.length - 1];
+            const pVal = parseFloat(match.v);
+            const surge = latestObs - pVal;
+            if (!isNaN(surge)) {
+              liveSurge = parseFloat(surge.toFixed(2));
+            }
+          }
+        } else if (respObsGG.data && respObsGG.data.length > 0) {
+          obsData = respObsGG.data;
+          const latestObs = parseFloat(obsData[obsData.length - 1].v);
+          const latestTime = obsData[obsData.length - 1].t;
           if (ggPredData.length > 0) {
             const match = ggPredData.find(p => p.t === latestTime || p.t.slice(11, 16) === latestTime.slice(11, 16)) || ggPredData[ggPredData.length - 1];
             const pVal = parseFloat(match.v);
@@ -3030,12 +3065,6 @@
               liveSurge = parseFloat(surge.toFixed(2));
             }
           }
-        }
-
-        if (respPredCM.predictions && respPredCM.predictions.length > 0) {
-          predData = respPredCM.predictions;
-        } else if (ggPredData.length > 0) {
-          predData = ggPredData;
         }
 
         // Parse USGS 11460000 (Corte Madera Creek at Ross) 15-min flow (00060) & stage (00065)
@@ -3546,7 +3575,9 @@
           valFrontParkingDepthEl.style.color = "var(--green)";
           frontParkingStatusEl.textContent = "100% DRY";
           frontParkingStatusEl.style.color = "var(--green)";
-          valFrontParkingSubEl.textContent = `Street parking low point: ${gutterLowPoint.toFixed(2)}' NAVD88 • Gutters fully dry`;
+          valFrontParkingSubEl.innerHTML = (activeLocKey === 'larkspur')
+            ? `Street parking low point: ${gutterLowPoint.toFixed(2)}' NAVD88 • Gutters fully dry • <span style="color:#cbd5e1;">🅿️ Carport stalls (8.15') dry</span>`
+            : `Street parking low point: ${gutterLowPoint.toFixed(2)}' NAVD88 • Gutters fully dry`;
         }
       }
 
