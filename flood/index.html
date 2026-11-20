@@ -1655,10 +1655,10 @@
     <section class="chart-card" id="chartCard">
       <div class="card-title" style="flex-wrap: wrap; gap: 8px;">
         <span>📈 48-Hour Tide & Street Drainage Forecast</span>
-        <div style="font-size:0.72rem; display:flex; gap:10px; font-family:var(--mono); align-items:center;">
-          <span style="color:#38bdf8;">━ Creek Tide</span>
-          <span style="color:#f97316;">╌ Street Lag</span>
-          <span style="color:#64748b;">┈ Ast</span>
+        <div style="font-size:0.72rem; display:flex; gap:10px; font-family:var(--mono); align-items:center;" id="chartLegendBox">
+          <span style="color:#38bdf8;" id="legendCurve1">━ Creek Tide</span>
+          <span style="color:#f97316;" id="legendCurve2">╌ Street Lag</span>
+          <span style="color:#64748b;" id="legendCurve3">┈ Ast</span>
         </div>
         <div style="margin-left: auto; display: flex; align-items: center; gap: 8px;">
           <button type="button" class="btn-fs-toggle" id="btnFsChart" onclick="toggleChartFullscreen(event)" title="Enlarge Tide Chart to Fullscreen">
@@ -1701,24 +1701,29 @@
             <text id="svgNextHighLabel" x="25" y="-11" fill="#f8fafc" font-size="7" font-weight="bold" font-family="system-ui, sans-serif" text-anchor="middle">▲ Creek Peak ➔ Street (+24m)</text>
           </g>
 
-          <!-- Background Elevation Reference Grid Lines (NOAA Live Calibration) -->
-          <line x1="55" y1="41" x2="585" y2="41" stroke="rgba(255,255,255,0.06)" stroke-dasharray="2,2"/>
-          <text x="50" y="44" fill="#64748b" font-size="8.5" text-anchor="end" font-family="monospace">8.00'</text>
+          <!-- Roadway Reference Lines (for TWL / 3-Day modes) -->
+          <g id="svgRoadRefGroup">
+            <line x1="55" y1="41" x2="585" y2="41" stroke="rgba(255,255,255,0.06)" stroke-dasharray="2,2"/>
+            <text x="50" y="44" fill="#64748b" font-size="8.5" text-anchor="end" font-family="monospace">8.00'</text>
 
-          <!-- Dynamic Vehicle Clearance Limit -->
-          <line id="svgLineImpassable" x1="55" y1="65" x2="585" y2="65" stroke="#ef4444" stroke-dasharray="3,3" stroke-width="1.2"/>
-          <text id="svgTextImpassable" x="50" y="68" fill="#f87171" font-size="9.5" text-anchor="end" font-family="monospace">7.91' Clearance Limit</text>
+            <line id="svgLineImpassable" x1="55" y1="65" x2="585" y2="65" stroke="#ef4444" stroke-dasharray="3,3" stroke-width="1.2"/>
+            <text id="svgTextImpassable" x="50" y="68" fill="#f87171" font-size="9.5" text-anchor="end" font-family="monospace">7.91' Clearance Limit</text>
 
-          <!-- Dynamic Road Crown Level -->
-          <line id="svgLineCrown" x1="55" y1="96" x2="585" y2="96" stroke="#f97316" stroke-dasharray="3,3" stroke-width="1.4"/>
-          <text id="svgTextCrown" x="50" y="99" fill="#fb923c" font-size="10.5" font-weight="bold" text-anchor="end" font-family="monospace">7.42' Road Crown</text>
+            <line id="svgLineCrown" x1="55" y1="96" x2="585" y2="96" stroke="#f97316" stroke-dasharray="3,3" stroke-width="1.4"/>
+            <text id="svgTextCrown" x="50" y="99" fill="#fb923c" font-size="10.5" font-weight="bold" text-anchor="end" font-family="monospace">7.42' Road Crown</text>
 
-          <!-- Dynamic Street Gutter / Low Parking Margin -->
-          <line id="svgLineGutter" x1="55" y1="103" x2="585" y2="103" stroke="#06b6d4" stroke-dasharray="2,2" stroke-width="1.1"/>
-          <text id="svgTextGutter" x="50" y="106" fill="#22d3ee" font-size="10" font-weight="bold" text-anchor="end" font-family="monospace">7.15' Street Gutter</text>
+            <line id="svgLineGutter" x1="55" y1="103" x2="585" y2="103" stroke="#06b6d4" stroke-dasharray="2,2" stroke-width="1.1"/>
+            <text id="svgTextGutter" x="50" y="106" fill="#22d3ee" font-size="10" font-weight="bold" text-anchor="end" font-family="monospace">7.15' Street Gutter</text>
 
-          <line x1="55" y1="200" x2="585" y2="200" stroke="rgba(255,255,255,0.08)"/>
-          <text x="50" y="203" fill="#64748b" font-size="8.5" text-anchor="end" font-family="monospace">5.00'</text>
+            <line x1="55" y1="200" x2="585" y2="200" stroke="rgba(255,255,255,0.08)"/>
+            <text x="50" y="203" fill="#64748b" font-size="8.5" text-anchor="end" font-family="monospace">5.00'</text>
+          </g>
+
+          <!-- Dynamic Grid Lines & Y-Axis Labels for Alternative Modes (Runoff / Surge) -->
+          <g id="svgDynamicGridGroup"></g>
+
+          <!-- 3-Day Peak Badges (Car Puddle icon on peaks exceeding road crown) -->
+          <g id="svgThreeDayPeaksGroup"></g>
 
           <!-- Dynamic Wave Curves -->
           <path id="svgTwlArea" d="" fill="url(#twlGrad)"/>
@@ -2665,15 +2670,25 @@
       const label = document.getElementById('roadSimStatusLabel');
 
       if (roadCard) {
-        roadCard.style.display = showRoadSimulator ? 'block' : 'none';
+        roadCard.style.display = 'block';
       }
       if (checkbox) {
-        checkbox.checked = showRoadSimulator;
+        checkbox.checked = true;
       }
       if (label) {
-        label.textContent = showRoadSimulator ? 'Enabled (Active)' : 'Off by Default';
-        label.style.color = showRoadSimulator ? 'var(--green)' : 'var(--text-muted)';
+        label.textContent = 'Active (Dedicated Tab)';
+        label.style.color = 'var(--green)';
       }
+    }
+
+    function renderRoadCrossSection() {
+      const roadCard = document.getElementById('roadCard');
+      if (roadCard) roadCard.style.display = 'block';
+      applyVehicleAndCarView();
+      const cfg = THRESHOLDS[activeLocKey] || THRESHOLDS.larkspur;
+      const pt = (tideTimeline && tideTimeline.length > currentScrubIdx) ? tideTimeline[currentScrubIdx] : null;
+      const stTwl = pt ? (pt.streetTWL || pt.twl) : (typeof liveSurge !== 'undefined' ? 7.15 + liveSurge : 7.2);
+      updateSvgCrossSection(stTwl, cfg, false);
     }
 
     function toggleRoadSimulator(enabled) {
@@ -3526,16 +3541,20 @@
       const urlOpenMeteo = 'https://api.open-meteo.com/v1/forecast?latitude=37.9408&longitude=-122.5349&hourly=precipitation,rain&current=precipitation,rain&past_days=2&forecast_days=2&timezone=America%2FLos_Angeles&precipitation_unit=inch';
 
       try {
-        // Parallel fetch of NOAA Tides (Richmond 9414863 + Golden Gate 9414290 + Monterey 9413450 Kelvin wave monitor) + USGS Multi-Site + Open-Meteo Rain
+        // Parallel fetch with strict 3.8s timeout to guarantee instant responsiveness and zero hangs
+        const safeFetchJson = (u, def, ms = 3800) => fetchWithTimeout(u, ms)
+          .then(r => (r && r.ok) ? r.json() : def)
+          .catch(() => def);
+
         const [respObsRichmond, respObsGG, respObsMonterey, respPredMonterey, respPredGG, respPredCM, respUsgs, respRain] = await Promise.all([
-          fetch(urlObsRichmond).then(r => r.json()).catch(() => ({ data: [] })),
-          fetch(urlObsGG).then(r => r.json()).catch(() => ({ data: [] })),
-          fetch(urlObsMonterey).then(r => r.json()).catch(() => ({ data: [] })),
-          fetch(urlPredMonterey).then(r => r.json()).catch(() => ({ predictions: [] })),
-          fetch(urlPredGG).then(r => r.json()).catch(() => ({ predictions: [] })),
-          fetch(urlPredCM).then(r => r.json()).catch(() => ({ predictions: [] })),
-          fetch(urlUsgsMulti).then(r => r.json()).catch(() => null),
-          fetch(urlOpenMeteo).then(r => r.json()).catch(() => null)
+          safeFetchJson(urlObsRichmond, { data: [] }),
+          safeFetchJson(urlObsGG, { data: [] }),
+          safeFetchJson(urlObsMonterey, { data: [] }),
+          safeFetchJson(urlPredMonterey, { predictions: [] }),
+          safeFetchJson(urlPredGG, { predictions: [] }),
+          safeFetchJson(urlPredCM, { predictions: [] }),
+          safeFetchJson(urlUsgsMulti, null),
+          safeFetchJson(urlOpenMeteo, null)
         ]);
 
         if (respPredCM.predictions && respPredCM.predictions.length > 0) {
@@ -3692,6 +3711,16 @@
 
       renderSvgHydrograph();
       updateUI();
+      renderTideExtremes();
+
+      const sbText = document.getElementById('statusBadgeText');
+      if (sbText && sbText.textContent.includes('SYNCING')) {
+        sbText.textContent = 'LIVE (NOAA & SENSORS SYNCED)';
+      }
+      const cdVal = document.getElementById('countdownVal');
+      if (cdVal && cdVal.textContent === 'Syncing...') {
+        cdVal.textContent = 'Live Synced';
+      }
     }
 
     // Scrubber update handler
@@ -4025,23 +4054,32 @@
       }
 
       if (tabId === 'tide') {
+        updateUI();
         renderSvgHydrograph();
         renderTideExtremes();
       } else if (tabId === 'map') {
-        if (window.marinMap) {
-          setTimeout(() => marinMap.invalidateSize(), 150);
+        if (window.floodMapInstance) {
+          setTimeout(() => floodMapInstance.invalidateSize(), 100);
+          setTimeout(() => floodMapInstance.invalidateSize(), 350);
+          if (tideTimeline && tideTimeline[currentScrubIdx]) {
+            updateFloodMap(tideTimeline[currentScrubIdx].twl);
+          }
         }
       } else if (tabId === 'car') {
         renderRoadCrossSection();
       }
     }
 
-    // Tide Tab View Mode Switcher ('twl', 'surge', 'runoff')
+    // Tide Tab View Mode Switcher ('twl', 'threeday', 'surge', 'runoff')
     let tideGraphMode = 'twl';
     function setTideGraphMode(mode) {
       tideGraphMode = mode;
       document.querySelectorAll('.seg-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.id === ('btnMode' + mode.charAt(0).toUpperCase() + mode.slice(1)));
+        const isActive = (mode === 'threeday' && btn.id === 'btnMode3Day') ||
+                         (mode === 'twl' && btn.id === 'btnModeTwl') ||
+                         (mode === 'surge' && btn.id === 'btnModeSurge') ||
+                         (mode === 'runoff' && btn.id === 'btnModeRunoff');
+        btn.classList.toggle('active', isActive);
       });
       renderSvgHydrograph();
     }
@@ -5607,79 +5645,180 @@
       if (elStreet) elStreet.setAttribute('d', streetPathD);
       if (elArea) elArea.setAttribute('d', twlAreaD);
 
-      // Dynamic Chart Reference Lines for Active Location
-      const chartCfg = THRESHOLDS[activeLocKey] || THRESHOLDS.larkspur;
-      const chartVInfo = VEHICLES[activeVehicleKey] || VEHICLES.prius;
-      const chartCrownY = getY(chartCfg.crown);
-      const chartGutterY = getY(chartCfg.sagGutter || chartCfg.gutter || (chartCfg.crown - 0.25));
-      const chartImpElev = chartCfg.crown + (activeVehicleClearance / 12);
-      const chartImpY = getY(chartImpElev);
+      // Reference lines & dynamic modes
+      const roadGroup = document.getElementById('svgRoadRefGroup');
+      const dynGroup = document.getElementById('svgDynamicGridGroup');
+      const peaksGroup = document.getElementById('svgThreeDayPeaksGroup');
+      const nextHighMarker = document.getElementById('svgNextHighMarker');
 
-      const lineImp = document.getElementById('svgLineImpassable');
-      const textImp = document.getElementById('svgTextImpassable');
-      if (lineImp) {
-        lineImp.setAttribute('y1', chartImpY.toFixed(1));
-        lineImp.setAttribute('y2', chartImpY.toFixed(1));
-      }
-      if (textImp) {
-        textImp.setAttribute('y', (chartImpY + 3).toFixed(1));
-        textImp.textContent = `${chartImpElev.toFixed(2)}' ${chartVInfo.name.split(' /')[0]} Limit`;
-      }
-      
-      const lineCrown = document.getElementById('svgLineCrown');
-      const textCrown = document.getElementById('svgTextCrown');
-      if (lineCrown) {
-        lineCrown.setAttribute('y1', chartCrownY.toFixed(1));
-        lineCrown.setAttribute('y2', chartCrownY.toFixed(1));
-      }
-      if (textCrown) {
-        textCrown.setAttribute('y', (chartCrownY + 3).toFixed(1));
-        textCrown.textContent = `${chartCfg.crown.toFixed(2)}' Road Crown`;
-      }
-      
-      const lineGutter = document.getElementById('svgLineGutter');
-      const textGutter = document.getElementById('svgTextGutter');
-      if (lineGutter) {
-        lineGutter.setAttribute('y1', chartGutterY.toFixed(1));
-        lineGutter.setAttribute('y2', chartGutterY.toFixed(1));
-      }
-      if (textGutter) {
-        textGutter.setAttribute('y', (chartGutterY + 3).toFixed(1));
-        textGutter.textContent = `${(chartCfg.sagGutter || chartCfg.gutter).toFixed(2)}' Street Gutter`;
-      }
+      const leg1 = document.getElementById('legendCurve1');
+      const leg2 = document.getElementById('legendCurve2');
+      const leg3 = document.getElementById('legendCurve3');
 
-      // Render Next High Tide Dual Markers (Creek Crest + Street Sag Peak)
-      if (nextHighTideObj) {
-        const xPeak = getX(nextHighTideObj.idx);
-        const yPeak = getY(nextHighTideObj.twl);
-        const xStreetPeak = getX(nextHighTideObj.streetIdx || Math.min(tideTimeline.length - 1, nextHighTideObj.idx + 2));
-        const deltaX = Math.max(12, xStreetPeak - xPeak);
+      if (tideGraphMode === 'runoff') {
+        if (roadGroup) roadGroup.style.display = 'none';
+        if (nextHighMarker) nextHighMarker.style.display = 'none';
+        if (peaksGroup) peaksGroup.innerHTML = '';
+
+        if (leg1) { leg1.textContent = '━ Ross Creek Runoff Head'; leg1.style.color = '#38bdf8'; }
+        if (leg2) { leg2.textContent = '╌ Delta Outflow Head'; leg2.style.color = '#f97316'; }
+        if (leg3) { leg3.textContent = '┈ Baseline (0.00\')'; leg3.style.color = '#64748b'; }
+
+        // Clean, non-overlapping Y-axis grid for Runoff Head (0.0' to 1.0')
+        if (dynGroup) {
+          const runoffTicks = [
+            { v: 1.0, lbl: "+1.00' (12\")" },
+            { v: 0.75, lbl: "+0.75' (9\")" },
+            { v: 0.50, lbl: "+0.50' (6\")" },
+            { v: 0.25, lbl: "+0.25' (3\")" },
+            { v: 0.0, lbl: "0.00' (0\")" }
+          ];
+          dynGroup.innerHTML = runoffTicks.map(t => {
+            const y = getY(t.v);
+            return `
+              <line x1="55" y1="${y.toFixed(1)}" x2="585" y2="${y.toFixed(1)}" stroke="rgba(255,255,255,0.08)" stroke-dasharray="2,2"/>
+              <text x="50" y="${(y + 3).toFixed(1)}" fill="#94a3b8" font-size="8.5" text-anchor="end" font-family="monospace">${t.lbl}</text>
+            `;
+          }).join('');
+        }
+      } else if (tideGraphMode === 'surge') {
+        if (roadGroup) roadGroup.style.display = 'none';
+        if (nextHighMarker) nextHighMarker.style.display = 'none';
+        if (peaksGroup) peaksGroup.innerHTML = '';
+
+        if (leg1) { leg1.textContent = '━ Bay Surge (Richmond)'; leg1.style.color = '#fbbf24'; }
+        if (leg2) { leg2.textContent = '╌ Coastal Surge (Monterey)'; leg2.style.color = '#f43f5e'; }
+        if (leg3) { leg3.textContent = '┈ Astro Baseline'; leg3.style.color = '#64748b'; }
+
+        if (dynGroup) {
+          const surgeTicks = [
+            { v: 2.0, lbl: "+2.00'" },
+            { v: 1.5, lbl: "+1.50'" },
+            { v: 1.0, lbl: "+1.00'" },
+            { v: 0.5, lbl: "+0.50'" },
+            { v: 0.0, lbl: "0.00' (Astro)" },
+            { v: -0.5, lbl: "-0.50'" }
+          ];
+          dynGroup.innerHTML = surgeTicks.map(t => {
+            const y = getY(t.v);
+            const isZero = t.v === 0;
+            return `
+              <line x1="55" y1="${y.toFixed(1)}" x2="585" y2="${y.toFixed(1)}" stroke="${isZero ? 'rgba(56,189,248,0.3)' : 'rgba(255,255,255,0.08)'}" stroke-dasharray="${isZero ? '4,4' : '2,2'}"/>
+              <text x="50" y="${(y + 3).toFixed(1)}" fill="${isZero ? '#38bdf8' : '#94a3b8'}" font-size="8.5" text-anchor="end" font-family="monospace">${t.lbl}</text>
+            `;
+          }).join('');
+        }
+      } else {
+        // Mode 'twl' or 'threeday'
+        if (roadGroup) roadGroup.style.display = 'inline';
+        if (dynGroup) dynGroup.innerHTML = '';
+
+        if (leg1) { leg1.textContent = '━ Creek Tide'; leg1.style.color = '#38bdf8'; }
+        if (leg2) { leg2.textContent = '╌ Street Lag'; leg2.style.color = '#f97316'; }
+        if (leg3) { leg3.textContent = '┈ Ast'; leg3.style.color = '#64748b'; }
+
+        // Dynamic Chart Reference Lines for Active Location
+        const chartCfg = THRESHOLDS[activeLocKey] || THRESHOLDS.larkspur;
+        const chartVInfo = VEHICLES[activeVehicleKey] || VEHICLES.prius;
+        const chartCrownY = getY(chartCfg.crown);
+        const chartGutterY = getY(chartCfg.sagGutter || chartCfg.gutter || (chartCfg.crown - 0.25));
+        const chartImpElev = chartCfg.crown + (activeVehicleClearance / 12);
+        const chartImpY = getY(chartImpElev);
+
+        const lineImp = document.getElementById('svgLineImpassable');
+        const textImp = document.getElementById('svgTextImpassable');
+        if (lineImp) {
+          lineImp.setAttribute('y1', chartImpY.toFixed(1));
+          lineImp.setAttribute('y2', chartImpY.toFixed(1));
+        }
+        if (textImp) {
+          textImp.setAttribute('y', (chartImpY + 3).toFixed(1));
+          textImp.textContent = `${chartImpElev.toFixed(2)}' ${chartVInfo.name.split(' /')[0]} Limit`;
+        }
         
-        const markerG = document.getElementById('svgNextHighMarker');
-        if (markerG) {
-          markerG.setAttribute('transform', `translate(${xPeak}, ${yPeak})`);
-          markerG.style.display = 'inline';
-          
-          const lagLine = document.getElementById('svgPeakLagLine');
-          if (lagLine) lagLine.setAttribute('x2', deltaX);
-          
-          const streetDot = document.getElementById('svgStreetPeakDot');
-          if (streetDot) streetDot.setAttribute('cx', deltaX);
-          
-          const label = document.getElementById('svgNextHighLabel');
-          if (label) {
-            const creekT = nextHighTideObj.timeLabel.includes(' ') ? nextHighTideObj.timeLabel.split(' ').slice(1).join(' ') : nextHighTideObj.timeLabel;
-            const streetT = nextHighTideObj.streetTimeLabel.includes(' ') ? nextHighTideObj.streetTimeLabel.split(' ').slice(1).join(' ') : nextHighTideObj.streetTimeLabel;
-            label.textContent = `🌊 Creek ${creekT} (${nextHighTideObj.twl.toFixed(2)}') ➔ 🚗 Street Peak ~${streetT} (+24m)`;
+        const lineCrown = document.getElementById('svgLineCrown');
+        const textCrown = document.getElementById('svgTextCrown');
+        if (lineCrown) {
+          lineCrown.setAttribute('y1', chartCrownY.toFixed(1));
+          lineCrown.setAttribute('y2', chartCrownY.toFixed(1));
+        }
+        if (textCrown) {
+          textCrown.setAttribute('y', (chartCrownY + 3).toFixed(1));
+          textCrown.textContent = `${chartCfg.crown.toFixed(2)}' Road Crown`;
+        }
+        
+        const lineGutter = document.getElementById('svgLineGutter');
+        const textGutter = document.getElementById('svgTextGutter');
+        if (lineGutter) {
+          lineGutter.setAttribute('y1', chartGutterY.toFixed(1));
+          lineGutter.setAttribute('y2', chartGutterY.toFixed(1));
+        }
+        if (textGutter) {
+          textGutter.setAttribute('y', (chartGutterY + 3).toFixed(1));
+          textGutter.textContent = `${(chartCfg.sagGutter || chartCfg.gutter).toFixed(2)}' Street Gutter`;
+        }
+
+        if (nextHighMarker) {
+          if (nextHighTideObj) {
+            const xPeak = getX(nextHighTideObj.idx);
+            const yPeak = getY(nextHighTideObj.twl);
+            const xStreetPeak = getX(nextHighTideObj.streetIdx || Math.min(tideTimeline.length - 1, nextHighTideObj.idx + 2));
+            const deltaX = Math.max(12, xStreetPeak - xPeak);
+            
+            nextHighMarker.setAttribute('transform', `translate(${xPeak}, ${yPeak})`);
+            nextHighMarker.style.display = 'inline';
+            
+            const lagLine = document.getElementById('svgPeakLagLine');
+            if (lagLine) lagLine.setAttribute('x2', deltaX);
+            
+            const streetDot = document.getElementById('svgStreetPeakDot');
+            if (streetDot) streetDot.setAttribute('cx', deltaX);
+            
+            const label = document.getElementById('svgNextHighLabel');
+            if (label) {
+              const creekT = nextHighTideObj.timeLabel.includes(' ') ? nextHighTideObj.timeLabel.split(' ').slice(1).join(' ') : nextHighTideObj.timeLabel;
+              const streetT = nextHighTideObj.streetTimeLabel.includes(' ') ? nextHighTideObj.streetTimeLabel.split(' ').slice(1).join(' ') : nextHighTideObj.streetTimeLabel;
+              label.textContent = `🌊 Creek ${creekT} (${nextHighTideObj.twl.toFixed(2)}') ➔ 🚗 Street Peak ~${streetT} (+24m)`;
+            }
+            
+            const box = document.getElementById('svgNextHighBox');
+            if (box) {
+              box.setAttribute('x', Math.round(deltaX / 2 - 95));
+              box.setAttribute('width', 190);
+            }
+            if (label) {
+              label.setAttribute('x', Math.round(deltaX / 2));
+            }
+          } else {
+            nextHighMarker.style.display = 'none';
           }
-          
-          const box = document.getElementById('svgNextHighBox');
-          if (box) {
-            box.setAttribute('x', Math.round(deltaX / 2 - 95));
-            box.setAttribute('width', 190);
-          }
-          if (label) {
-            label.setAttribute('x', Math.round(deltaX / 2));
+        }
+
+        // 3-Day Peak Badges (WeatherEventTide style: Car Puddle icon on peaks exceeding road crown)
+        if (peaksGroup) {
+          if (tideGraphMode === 'threeday') {
+            let badgesHtml = '';
+            for (let i = 2; i < tideTimeline.length - 2; i++) {
+              const p = tideTimeline[i];
+              if (p.twl >= 6.9 && p.twl > tideTimeline[i - 1].twl && p.twl > tideTimeline[i - 2].twl &&
+                  p.twl >= tideTimeline[i + 1].twl && p.twl > tideTimeline[i + 2].twl) {
+                const xPk = getX(i);
+                const yPk = getY(p.twl);
+                const diffInches = Math.round((p.twl - chartCfg.crown) * 12);
+                const isOver = p.twl >= chartCfg.crown;
+                const badgeColor = isOver ? '#ef4444' : '#f59e0b';
+                const badgeText = isOver ? `🚗 +${diffInches}" PUDDLE` : `🚗 Gutter Wet`;
+                badgesHtml += `
+                  <g transform="translate(${xPk.toFixed(1)}, ${(yPk - 14).toFixed(1)})" text-anchor="middle">
+                    <rect x="-38" y="-14" width="76" height="15" rx="3" fill="#0f172a" stroke="${badgeColor}" stroke-width="1.2"/>
+                    <text x="0" y="-3" fill="${badgeColor}" font-size="7.5" font-weight="bold" font-family="system-ui, sans-serif">${badgeText}</text>
+                  </g>
+                `;
+              }
+            }
+            peaksGroup.innerHTML = badgesHtml;
+          } else {
+            peaksGroup.innerHTML = '';
           }
         }
       }
@@ -5785,7 +5924,7 @@
       applyRoadSimulatorVisibility();
       restoreSavedLocation();
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=cwc-wet-v68').catch(() => {});
+        navigator.serviceWorker.register('./sw.js?v=cwc-wet-v74').catch(() => {});
       }
       applyVehicleAndCarView();
       initHydrographDragScrub();
