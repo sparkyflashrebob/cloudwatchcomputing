@@ -1186,9 +1186,9 @@
       </div>
 
       <!-- Surge & Creek Runoff -->
-      <div class="metric-card">
+      <div class="metric-card" id="cardSurge" onclick="openSurgeModal()" style="cursor: pointer;" title="Click for Regional Ocean & Watershed Telemetry">
         <div class="metric-meta">
-          <span>Surge &amp; Creek Runoff</span>
+          <span>Surge &amp; Runoff <span style="font-size:0.68rem;opacity:0.75;">ⓘ</span></span>
           <span id="surgeTypeBadge" style="color:var(--amber);">KELVIN WAVE</span>
         </div>
         <div class="metric-val" id="valSurge" style="color:var(--amber);">
@@ -2197,7 +2197,11 @@
       currentCarView = localStorage.getItem('floodwatch_car_view') || 'side';
     } catch(e) {}
 
-    let liveSurge = 1.38; // ft NAVD88 bay storm surge
+    let liveSurge = 1.04; // ft NAVD88 bay storm surge (Richmond 9414863 primary)
+    let liveCoastSurge = 0.96; // ft NAVD88 Pacific Coast surge at Monterey (9413450)
+    let isCoastWaveActive = true; // Kelvin wave / regional coast-wide surge indicator
+    let liveSacFlowCfs = 15300; // USGS 11447650 Sacramento River at Freeport discharge (cfs)
+    let liveDeltaRunoffFt = 0.0; // Central Valley / Delta outflow backwater head in SF Bay (ft)
     let liveCreekFlowCfs = 1.0; // USGS 11460000 Corte Madera Creek at Ross discharge (cfs)
     let liveCreekStageFt = 4.24; // USGS 11460000 gage height (ft)
     let liveCreekRunoffFt = 0.0; // Fluvial creek backwater head at Larkspur (ft)
@@ -2573,6 +2577,18 @@
       return new Date(tsStr.replace(' ', 'T')).getTime();
     }
 
+    // Calibrated backwater head in northern SF Bay / San Pablo Bay from Sacramento Delta outflow (USGS 11447650 Freeport)
+    function computeDeltaRunoffHeadFt(flowCfs) {
+      if (!flowCfs || flowCfs <= 25000) return 0.0;
+      if (flowCfs <= 50000) {
+        return parseFloat((0.02 + (flowCfs - 25000) / 25000 * 0.05).toFixed(2));
+      }
+      if (flowCfs <= 90000) {
+        return parseFloat((0.07 + (flowCfs - 50000) / 40000 * 0.11).toFixed(2));
+      }
+      return parseFloat((0.18 + Math.min(0.35, (flowCfs - 90000) / 40000 * 0.22)).toFixed(2));
+    }
+
     // Calibrated fluvial creek backwater head at Larkspur from USGS 11460000 (Ross) discharge
     function computeCreekRunoffHeadFt(flowCfs) {
       if (!flowCfs || flowCfs <= 15) return 0.0;
@@ -2656,7 +2672,7 @@
         // Astronomical tide at Corte Madera Creek / Richmond (Station 9414863 + 0.06' NAVD88)
         const ast = calculateAstTideAt(ptDate, predArray);
 
-        // Direct local water level observation when available, with astronomical surge calculation
+        // Direct local water level observation when available, with adaptive forecast residual blending
         let ptBaySurge = liveSurge;
         let isPast = (i <= 144);
         let obsWaterLevel = null;
@@ -2668,20 +2684,40 @@
               ptBaySurge = parseFloat((directObs - ast).toFixed(2));
             }
           }
+        } else if (!isPast) {
+          // Adaptive multi-horizon forecast residual projection:
+          // - 0 to 2h (Nowcast): 100% current observed liveSurge
+          // - 2 to 12h (Sliding Window): exponential decay toward persistent regional background surge
+          // - 12 to 24h+: stabilized background surge (Kelvin wave persistent surge or 0.10' nominal)
+          const hoursAhead = (ptMs - nowMs) / (3600 * 1000);
+          const baselineSurge = (isCoastWaveActive && liveCoastSurge >= 0.35)
+            ? Math.min(liveCoastSurge, liveSurge)
+            : Math.min(0.15, liveSurge);
+          if (hoursAhead <= 2.0) {
+            ptBaySurge = liveSurge;
+          } else if (hoursAhead <= 12.0) {
+            const blendFactor = Math.exp(-(hoursAhead - 2.0) / 4.5);
+            ptBaySurge = parseFloat((liveSurge * blendFactor + baselineSurge * (1 - blendFactor)).toFixed(2));
+          } else {
+            ptBaySurge = parseFloat(baselineSurge.toFixed(2));
+          }
         }
 
-        // Fluvial Creek Runoff (USGS 11460000 at Ross) + Rain Accumulation
+        // Fluvial Creek Runoff (USGS 11460000 at Ross) + Sacramento Delta Outflow (USGS 11447650)
         const flowCfs = getCreekFlowAt(ptMs, nowMs);
         const creekRunoff = computeCreekRunoffHeadFt(flowCfs);
+        // For past points with direct Richmond observations, Delta outflow is already physically recorded in the water level;
+        // For future forecast points, add active Delta backwater head.
+        const deltaRunoff = (isPast && obsWaterLevel !== null) ? 0.0 : liveDeltaRunoffFt;
         const rainInHr = getRainRateAt(ptMs);
         const rain6h = getRainWindowAt(ptMs, 6);
 
         // Authoritative Creek Total Water Level:
         // For past points with direct Richmond local observations, twl = directObs + creekRunoff;
-        // Otherwise ast + baySurge + creekRunoff.
+        // Otherwise ast + baySurge + creekRunoff + deltaRunoff.
         const twl = (isPast && obsWaterLevel !== null && obsWaterLevel > 3.0)
           ? parseFloat((obsWaterLevel + creekRunoff).toFixed(2))
-          : parseFloat((ast + ptBaySurge + creekRunoff).toFixed(2));
+          : parseFloat((ast + ptBaySurge + creekRunoff + deltaRunoff).toFixed(2));
 
         data.push({
           idx: i,
@@ -2692,10 +2728,11 @@
           ast: parseFloat(ast.toFixed(2)),
           baySurge: parseFloat(ptBaySurge.toFixed(2)),
           creekRunoff: parseFloat(creekRunoff.toFixed(2)),
+          deltaRunoff: parseFloat(deltaRunoff.toFixed(2)),
           creekFlowCfs: Math.round(flowCfs),
           rainInHr: parseFloat(rainInHr.toFixed(2)),
           rain6h: parseFloat(rain6h.toFixed(2)),
-          surge: parseFloat((ptBaySurge + creekRunoff).toFixed(2)),
+          surge: parseFloat((ptBaySurge + creekRunoff + deltaRunoff).toFixed(2)),
           twl: parseFloat(twl.toFixed(2)),
           streetTWL: 0.0
         });
@@ -2891,6 +2928,10 @@
         const snap = JSON.parse(raw);
         if (snap.predData && snap.predData.length > 0) {
           if (snap.liveSurge !== undefined) liveSurge = snap.liveSurge;
+          if (snap.liveCoastSurge !== undefined) liveCoastSurge = snap.liveCoastSurge;
+          if (snap.isCoastWaveActive !== undefined) isCoastWaveActive = snap.isCoastWaveActive;
+          if (snap.liveSacFlowCfs !== undefined) liveSacFlowCfs = snap.liveSacFlowCfs;
+          if (snap.liveDeltaRunoffFt !== undefined) liveDeltaRunoffFt = snap.liveDeltaRunoffFt;
           if (snap.liveCreekFlowCfs !== undefined) liveCreekFlowCfs = snap.liveCreekFlowCfs;
           if (snap.liveCreekStageFt !== undefined) liveCreekStageFt = snap.liveCreekStageFt;
           if (snap.liveCreekRunoffFt !== undefined) liveCreekRunoffFt = snap.liveCreekRunoffFt;
@@ -3012,19 +3053,24 @@
 
       const urlObsRichmond = 'https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?range=24&station=9414863&product=water_level&datum=NAVD&time_zone=lst_ldt&units=english&format=json';
       const urlObsGG = 'https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?range=24&station=9414290&product=water_level&datum=NAVD&time_zone=lst_ldt&units=english&format=json';
+      const urlObsMonterey = 'https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?range=6&station=9413450&product=water_level&datum=NAVD&time_zone=lst_ldt&units=english&format=json';
+      const urlPredMonterey = 'https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&station=9413450&product=predictions&datum=NAVD&time_zone=lst_ldt&units=english&format=json';
       const urlPredGG = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=${yStr}&range=48&station=9414290&product=predictions&datum=NAVD&time_zone=lst_ldt&units=english&interval=6&format=json`;
       const urlPredCM = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=${yStr}&range=72&station=9414863&product=predictions&datum=NAVD&time_zone=lst_ldt&units=english&interval=6&format=json`;
-      const urlUsgsCreek = 'https://waterservices.usgs.gov/nwis/iv/?format=json&sites=11460000&period=P2D&parameterCd=00060,00065';
+      // Multi-site USGS query: 11460000 (Corte Madera Creek at Ross) + 11447650 (Sacramento River at Freeport)
+      const urlUsgsMulti = 'https://waterservices.usgs.gov/nwis/iv/?format=json&sites=11460000,11447650&period=P2D&parameterCd=00060,00065';
       const urlOpenMeteo = 'https://api.open-meteo.com/v1/forecast?latitude=37.9408&longitude=-122.5349&hourly=precipitation,rain&current=precipitation,rain&past_days=2&forecast_days=2&timezone=America%2FLos_Angeles&precipitation_unit=inch';
 
       try {
-        // Parallel fetch of NOAA Tides (Richmond 9414863 primary local bay station + Golden Gate 9414290 backup) + USGS 11460000 + Open-Meteo Rain
-        const [respObsRichmond, respObsGG, respPredGG, respPredCM, respUsgs, respRain] = await Promise.all([
+        // Parallel fetch of NOAA Tides (Richmond 9414863 + Golden Gate 9414290 + Monterey 9413450 Kelvin wave monitor) + USGS Multi-Site + Open-Meteo Rain
+        const [respObsRichmond, respObsGG, respObsMonterey, respPredMonterey, respPredGG, respPredCM, respUsgs, respRain] = await Promise.all([
           fetch(urlObsRichmond).then(r => r.json()).catch(() => ({ data: [] })),
           fetch(urlObsGG).then(r => r.json()).catch(() => ({ data: [] })),
+          fetch(urlObsMonterey).then(r => r.json()).catch(() => ({ data: [] })),
+          fetch(urlPredMonterey).then(r => r.json()).catch(() => ({ predictions: [] })),
           fetch(urlPredGG).then(r => r.json()).catch(() => ({ predictions: [] })),
           fetch(urlPredCM).then(r => r.json()).catch(() => ({ predictions: [] })),
-          fetch(urlUsgsCreek).then(r => r.json()).catch(() => null),
+          fetch(urlUsgsMulti).then(r => r.json()).catch(() => null),
           fetch(urlOpenMeteo).then(r => r.json()).catch(() => null)
         ]);
 
@@ -3067,27 +3113,51 @@
           }
         }
 
-        // Parse USGS 11460000 (Corte Madera Creek at Ross) 15-min flow (00060) & stage (00065)
+        // Pacific Coast Kelvin Wave & Coastal Surge Detection (NOAA 9413450 Monterey)
+        if (respObsMonterey.data && respObsMonterey.data.length > 0 && respPredMonterey.predictions && respPredMonterey.predictions.length > 0) {
+          const mObs = parseFloat(respObsMonterey.data[respObsMonterey.data.length - 1].v);
+          const mPred = parseFloat(respPredMonterey.predictions[respPredMonterey.predictions.length - 1].v);
+          if (!isNaN(mObs) && !isNaN(mPred)) {
+            liveCoastSurge = parseFloat((mObs - mPred).toFixed(2));
+            isCoastWaveActive = (liveCoastSurge >= 0.40 && liveSurge >= 0.40);
+          }
+        }
+
+        // Parse USGS Multi-Site: 11460000 (Ross Creek) + 11447650 (Sacramento River at Freeport)
         if (respUsgs && respUsgs.value && Array.isArray(respUsgs.value.timeSeries)) {
-          const byTime = {};
+          const byTimeRoss = {};
           respUsgs.value.timeSeries.forEach(ts => {
+            const siteCode = ts.sourceInfo && ts.sourceInfo.siteCode && ts.sourceInfo.siteCode[0] && ts.sourceInfo.siteCode[0].value;
             const pcode = ts.variable && ts.variable.variableCode && ts.variable.variableCode[0] && ts.variable.variableCode[0].value;
             const vals = (ts.values && ts.values[0] && ts.values[0].value) || [];
-            vals.forEach(pt => {
-              const vNum = parseFloat(pt.value);
-              if (isNaN(vNum) || vNum < 0) return;
-              const tMs = parseLocalTimestampMs(pt.dateTime);
-              if (isNaN(tMs)) return;
-              if (!byTime[pt.dateTime]) byTime[pt.dateTime] = { tMs, cfs: 1.0, stage: 4.24 };
-              if (pcode === '00060') byTime[pt.dateTime].cfs = vNum;
-              if (pcode === '00065') byTime[pt.dateTime].stage = vNum;
-            });
+
+            if (siteCode === '11447650') {
+              // Sacramento River at Freeport (Delta Outflow)
+              if (pcode === '00060' && vals.length > 0) {
+                const latestVal = parseFloat(vals[vals.length - 1].value);
+                if (!isNaN(latestVal) && latestVal > 0) {
+                  liveSacFlowCfs = Math.round(latestVal);
+                  liveDeltaRunoffFt = computeDeltaRunoffHeadFt(liveSacFlowCfs);
+                }
+              }
+            } else {
+              // Corte Madera Creek at Ross
+              vals.forEach(pt => {
+                const vNum = parseFloat(pt.value);
+                if (isNaN(vNum) || vNum < 0) return;
+                const tMs = parseLocalTimestampMs(pt.dateTime);
+                if (isNaN(tMs)) return;
+                if (!byTimeRoss[pt.dateTime]) byTimeRoss[pt.dateTime] = { tMs, cfs: 1.0, stage: 4.24 };
+                if (pcode === '00060') byTimeRoss[pt.dateTime].cfs = vNum;
+                if (pcode === '00065') byTimeRoss[pt.dateTime].stage = vNum;
+              });
+            }
           });
-          const parsedSeries = Object.values(byTime).sort((a, b) => a.tMs - b.tMs);
+
+          const parsedSeries = Object.values(byTimeRoss).sort((a, b) => a.tMs - b.tMs);
           if (parsedSeries.length > 0) {
             usgsFlowSeries = parsedSeries;
             const latestUsgs = parsedSeries[parsedSeries.length - 1];
-            // Account for Ross-to-Larkspur travel wave (~45 min): take effective current flow within last 90 mins
             const cutoff90m = nowMs - 90 * 60 * 1000;
             let effFlow = latestUsgs.cfs;
             let effStage = latestUsgs.stage;
@@ -3133,6 +3203,10 @@
             ggPredData: ggPredData,
             predData: predData,
             liveSurge: liveSurge,
+            liveCoastSurge: liveCoastSurge,
+            isCoastWaveActive: isCoastWaveActive,
+            liveSacFlowCfs: liveSacFlowCfs,
+            liveDeltaRunoffFt: liveDeltaRunoffFt,
             liveCreekFlowCfs: liveCreekFlowCfs,
             liveCreekStageFt: liveCreekStageFt,
             liveCreekRunoffFt: liveCreekRunoffFt,
@@ -3378,6 +3452,29 @@
 
     // Core Dynamic UI State Update
 
+        function openSurgeModal(e) {
+      if (e) e.stopPropagation();
+      const modal = document.getElementById('surgeModal');
+      if (modal) {
+        const bayVal = document.getElementById('modalBaySurgeVal');
+        const coastVal = document.getElementById('modalCoastSurgeVal');
+        const creekVal = document.getElementById('modalCreekVal');
+        const deltaVal = document.getElementById('modalDeltaVal');
+        if (bayVal) bayVal.textContent = `${liveSurge >= 0 ? '+' : ''}${liveSurge.toFixed(2)} ft (Richmond 9414863)`;
+        if (coastVal) coastVal.textContent = `${liveCoastSurge >= 0 ? '+' : ''}${liveCoastSurge.toFixed(2)} ft (Monterey 9413450)`;
+        if (creekVal) creekVal.textContent = `${liveCreekFlowCfs} cfs (+${liveCreekRunoffFt.toFixed(2)}' backwater head)`;
+        if (deltaVal) {
+          const deltaSub = (liveDeltaRunoffFt > 0) ? ("+" + liveDeltaRunoffFt.toFixed(2) + "'") : "Normal flow; 0.00'";
+          deltaVal.textContent = liveSacFlowCfs.toLocaleString() + " cfs (" + deltaSub + " Bay head)";
+        }
+        modal.classList.add('open');
+      }
+    }
+    function closeSurgeModal() {
+      const modal = document.getElementById('surgeModal');
+      if (modal) modal.classList.remove('open');
+    }
+
     function openNoaaModal(e) {
       if (e) e.stopPropagation();
       const modal = document.getElementById('noaaModal');
@@ -3431,15 +3528,39 @@
       const valSurgeEl = document.getElementById('valSurge');
       const valSurgeSubEl = document.getElementById('valSurgeSub');
       const surgeBadgeEl = document.getElementById('surgeTypeBadge');
+      const ptDeltaRunoff = (point.deltaRunoff !== undefined) ? point.deltaRunoff : liveDeltaRunoffFt;
+
+      let badgeText = 'CALM / ASTRONOMICAL';
+      let badgeColor = 'var(--text-muted)';
       if (ptCreekRunoff >= 0.05 || liveRain24hIn >= 0.10) {
-        if (surgeBadgeEl) surgeBadgeEl.textContent = '🌧️ TIDE + RUNOFF';
-        valSurgeEl.innerHTML = `+${(ptBaySurge + ptCreekRunoff).toFixed(2)} <span>ft total</span>`;
-        valSurgeSubEl.textContent = `Bay Surge: +${ptBaySurge.toFixed(2)}' • Creek: ${Math.round(ptFlowCfs)} cfs (+${ptCreekRunoff.toFixed(2)}') • Rain: ${liveRain24hIn.toFixed(2)}"`;
-      } else {
-        if (surgeBadgeEl) surgeBadgeEl.textContent = 'KELVIN WAVE';
-        valSurgeEl.innerHTML = `+${ptBaySurge.toFixed(2)} <span>ft</span>`;
-        valSurgeSubEl.textContent = `Bay Surge: +${ptBaySurge.toFixed(2)}' • USGS Creek: ${Math.round(ptFlowCfs)} cfs (Baseflow)`;
+        badgeText = '🌧️ TIDE + RUNOFF';
+        badgeColor = 'var(--red)';
+      } else if (isCoastWaveActive || (liveCoastSurge >= 0.40 && ptBaySurge >= 0.40)) {
+        badgeText = '🌊 KELVIN / COAST PULSE';
+        badgeColor = 'var(--amber)';
+      } else if (ptBaySurge >= 0.40) {
+        badgeText = '💨 STORM SURGE';
+        badgeColor = 'var(--amber)';
       }
+
+      if (surgeBadgeEl) {
+        surgeBadgeEl.textContent = badgeText;
+        surgeBadgeEl.style.color = badgeColor;
+      }
+
+      const totalSurge = ptBaySurge + ptCreekRunoff + ptDeltaRunoff;
+      valSurgeEl.innerHTML = `${totalSurge >= 0 ? '+' : ''}${totalSurge.toFixed(2)} <span>ft total</span>`;
+      valSurgeEl.style.color = badgeColor;
+
+      let subParts = [`Bay: ${ptBaySurge >= 0 ? '+' : ''}${ptBaySurge.toFixed(2)}'`];
+      if (liveCoastSurge !== null && Math.abs(liveCoastSurge) >= 0.20) {
+        subParts.push(`Pacific: ${liveCoastSurge >= 0 ? '+' : ''}${liveCoastSurge.toFixed(2)}'`);
+      }
+      subParts.push(`Creek: ${Math.round(ptFlowCfs)} cfs${ptCreekRunoff > 0 ? ` (+${ptCreekRunoff.toFixed(2)}')` : ''}`);
+      if (liveSacFlowCfs > 0) {
+        subParts.push(`Delta: ${(liveSacFlowCfs / 1000).toFixed(0)}k cfs${ptDeltaRunoff > 0 ? ` (+${ptDeltaRunoff.toFixed(2)}')` : ''}`);
+      }
+      valSurgeSubEl.textContent = subParts.join(' • ');
 
       // Update NOAA / NWS Inundation Category Badge
       const noaaBadge = document.getElementById('noaaInundationBadge');
@@ -5132,6 +5253,77 @@
     }
 
 </script>
+
+    <!-- SURGE & REGIONAL OCEAN INTELLIGENCE MODAL -->
+  <div class="modal" id="surgeModal" onclick="if(event.target===this)closeSurgeModal()">
+    <div class="modal-box" style="max-width: 540px;">
+      <div class="modal-header">
+        <h2 style="font-size: 1.02rem; display: flex; align-items: center; gap: 8px;">
+          <span>🌊</span> Regional Ocean &amp; Watershed Telemetry
+        </h2>
+        <button class="btn-icon" onclick="closeSurgeModal()">✕</button>
+      </div>
+      <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 14px; line-height: 1.4;">
+        Real-time telemetry fusing NOAA coastal oceanography, local fluvial streamflows, and California Central Valley Delta discharge:
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <!-- San Francisco Bay Surge -->
+        <div style="padding: 12px; border-radius: 12px; border: 1px solid rgba(56, 189, 248, 0.35); background: rgba(56, 189, 248, 0.08);">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+            <div style="font-weight: 700; color: #38bdf8; font-size: 0.88rem;">🏛️ SF Bay Water Level (Richmond Station 9414863)</div>
+            <div id="modalBaySurgeVal" style="font-family: var(--mono); font-size: 0.78rem; color: #38bdf8; font-weight: 700;">+1.04 ft</div>
+          </div>
+          <div style="font-size: 0.76rem; color: #e2e8f0; line-height: 1.35;">
+            Authoritative local bay observation inside San Francisco Bay (6 miles from Corte Madera Creek). Avoids oceanic wave setup and coastal surf distortion.
+          </div>
+        </div>
+
+        <!-- Pacific Coast Kelvin Wave Monitor -->
+        <div style="padding: 12px; border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.35); background: rgba(245, 158, 11, 0.08);">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+            <div style="font-weight: 700; color: #fcd34d; font-size: 0.88rem;">🌊 California Coast Surge &amp; Kelvin Wave Monitor</div>
+            <div id="modalCoastSurgeVal" style="font-family: var(--mono); font-size: 0.78rem; color: #fcd34d; font-weight: 700;">+0.96 ft (Monterey 9413450)</div>
+          </div>
+          <div style="font-size: 0.76rem; color: #e2e8f0; line-height: 1.35;">
+            Tracks coastally trapped Kelvin waves moving northward along California. A persistent coast-wide surge of +0.5' to +1.0'+ elevates King Tides for days independent of local weather.
+          </div>
+        </div>
+
+        <!-- Local Fluvial Creek Watershed -->
+        <div style="padding: 12px; border-radius: 12px; border: 1px solid rgba(34, 197, 94, 0.35); background: rgba(34, 197, 94, 0.08);">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+            <div style="font-weight: 700; color: #4ade80; font-size: 0.88rem;">🏞️ Fluvial Creek Runoff (USGS 11460000 Ross)</div>
+            <div id="modalCreekVal" style="font-family: var(--mono); font-size: 0.78rem; color: #4ade80; font-weight: 700;">8 cfs (+0.00')</div>
+          </div>
+          <div style="font-size: 0.76rem; color: #e2e8f0; line-height: 1.35;">
+            15-minute streamflow telemetry from Corte Madera Creek at Ross. Flow above 15 cfs produces active hydraulic backwater head behind closed tidal flap gates.
+          </div>
+        </div>
+
+        <!-- Sacramento Delta Outflow -->
+        <div style="padding: 12px; border-radius: 12px; border: 1px solid rgba(168, 85, 247, 0.35); background: rgba(168, 85, 247, 0.08);">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+            <div style="font-weight: 700; color: #c084fc; font-size: 0.88rem;">💧 Sacramento Delta Outflow (USGS 11447650 Freeport)</div>
+            <div id="modalDeltaVal" style="font-family: var(--mono); font-size: 0.78rem; color: #c084fc; font-weight: 700;">15,300 cfs (Normal Flow)</div>
+          </div>
+          <div style="font-size: 0.76rem; color: #e2e8f0; line-height: 1.35;">
+            Monitors Central Valley river discharge through Carquinez Strait into San Pablo Bay. Major winter atmospheric rivers (&gt;50k–100k cfs) create standing backwater head (+0.1' to +0.4'+) across northern SF Bay.
+          </div>
+        </div>
+
+        <!-- Adaptive Blending Architecture -->
+        <div style="padding: 12px; border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.25); background: rgba(148, 163, 184, 0.05);">
+          <div style="font-weight: 700; color: #cbd5e1; font-size: 0.84rem; margin-bottom: 4px;">🎯 Adaptive Multi-Horizon Forecast Blending</div>
+          <div style="font-size: 0.75rem; color: #94a3b8; line-height: 1.35;">
+            • <b>0–2h Nowcast</b>: 100% live Richmond residual calibration.<br>
+            • <b>2–12h Sliding Window</b>: Exponential decay blending live surge with sustained coast-wide ocean baseline.<br>
+            • <b>12–48h Hydrologic Engine</b>: Astronomical tides + regional Kelvin baseline + QPF storm runoff + Delta outflow.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- NOAA / NWS INUNDATION CATEGORIES MODAL -->
   <div class="modal" id="noaaModal" onclick="if(event.target===this)closeNoaaModal()">
