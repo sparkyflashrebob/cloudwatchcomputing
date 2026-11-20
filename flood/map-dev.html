@@ -397,7 +397,7 @@
       </div>
     </div>
     <div class="nav-links">
-      <a href="index.html" class="btn-link">← Return to Main App</a>
+      <a href="index.html#map" class="btn-link" onclick="if(window.history.length > 1){ window.history.back(); return false; }">← Return to Map</a>
     </div>
   </header>
 
@@ -490,7 +490,9 @@
     let inundationLayer2ft = null;
     let inundationLayer3ft = null;
     let activeInundationLayer = null;
-    let showInundation = true;
+    let showInundation = localStorage.getItem('cwc_dev_inundation') !== 'false';
+    let showElevationBadges = localStorage.getItem('cwc_dev_badges') !== 'false';
+    let syncLive = localStorage.getItem('cwc_sync_live') !== 'false';
 
     // Surveyed Marin County Benchmarks (Calibrated Ground Truth)
     const MARIN_BENCHMARKS = [
@@ -852,6 +854,48 @@
       if (leg) leg.classList.toggle('collapsed');
     }
 
+    function applyInundationUI() {
+      const btn = document.getElementById('btnToggleInundation');
+      if (btn) {
+        if (showInundation) {
+          btn.textContent = '🌊 Flood Layer: ON';
+          btn.style.background = '#0284c7';
+          btn.style.color = '#fff';
+        } else {
+          btn.textContent = '🌊 Flood Layer: OFF';
+          btn.style.background = 'rgba(255,255,255,0.05)';
+          btn.style.color = 'var(--text)';
+        }
+      }
+    }
+
+    function applyElevationBadgesUI() {
+      const mapEl = document.getElementById('devMap');
+      const btn = document.getElementById('btnToggleBadges');
+      if (mapEl) {
+        if (showElevationBadges) {
+          mapEl.classList.remove('hide-elevation-badges');
+        } else {
+          mapEl.classList.add('hide-elevation-badges');
+        }
+      }
+      if (btn) {
+        if (showElevationBadges) {
+          btn.classList.add('active');
+          btn.textContent = '🏷️ Badges: ON';
+        } else {
+          btn.classList.remove('active');
+          btn.textContent = '🏷️ Badges: OFF';
+        }
+      }
+    }
+
+    function toggleElevationBadges() {
+      showElevationBadges = !showElevationBadges;
+      localStorage.setItem('cwc_dev_badges', showElevationBadges ? 'true' : 'false');
+      applyElevationBadgesUI();
+    }
+
     function initDevMap() {
       if (typeof L === 'undefined') {
         setTimeout(initDevMap, 150);
@@ -1133,16 +1177,13 @@ function generateMarkerHtml(site, navd, mllw) {
 
     function toggleInundationLayer() {
       showInundation = !showInundation;
-      const btn = document.getElementById('btnToggleInundation');
+      localStorage.setItem('cwc_dev_inundation', showInundation ? 'true' : 'false');
       if (showInundation) {
-        if (activeInundationLayer) activeInundationLayer.addTo(devMapInstance);
-        btn.textContent = '🌊 Flood Layer: ON';
-        btn.style.background = '#0284c7';
+        if (activeInundationLayer && devMapInstance) activeInundationLayer.addTo(devMapInstance);
       } else {
-        if (activeInundationLayer) devMapInstance.removeLayer(activeInundationLayer);
-        btn.textContent = '🌊 Flood Layer: OFF';
-        btn.style.background = 'rgba(255,255,255,0.05)';
+        if (activeInundationLayer && devMapInstance) devMapInstance.removeLayer(activeInundationLayer);
       }
+      applyInundationUI();
     }
 
     // Live NOAA Tide Fetch from Golden Gate Station 9414290

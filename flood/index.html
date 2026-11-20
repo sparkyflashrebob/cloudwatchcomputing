@@ -1574,19 +1574,19 @@
 
         <div class="tide-readout-row">
           <div class="tide-readout-item">
-            <span class="tide-readout-lbl">OBSERVED</span>
+            <span class="tide-readout-lbl" id="tideLbl1">OBSERVED</span>
             <span class="tide-readout-val" style="color: var(--cyan);" id="tideHeaderObs">--.-- ft</span>
           </div>
           <div class="tide-readout-item">
-            <span class="tide-readout-lbl">ASTRO TIDE</span>
+            <span class="tide-readout-lbl" id="tideLbl2">ASTRO TIDE</span>
             <span class="tide-readout-val" style="color: #60a5fa;" id="tideHeaderAst">--.-- ft</span>
           </div>
           <div class="tide-readout-item">
-            <span class="tide-readout-lbl">BAY SURGE</span>
+            <span class="tide-readout-lbl" id="tideLbl3">BAY SURGE</span>
             <span class="tide-readout-val" style="color: var(--amber);" id="tideHeaderSurge">+--.-- ft</span>
           </div>
           <div class="tide-readout-item">
-            <span class="tide-readout-lbl">COAST SURGE</span>
+            <span class="tide-readout-lbl" id="tideLbl4">COAST SURGE</span>
             <span class="tide-readout-val" style="color: #f43f5e;" id="tideHeaderCoastSurge">+--.-- ft</span>
           </div>
         </div>
@@ -2078,18 +2078,19 @@
       </div>
 
       <div id="reportConfirmView" style="display: none; text-align: center; padding: 14px 6px;">
-        <div style="font-size: 1.1rem; font-weight: 800; color: #4ade80; margin-bottom: 6px;" id="reportConfirmTitle">Thank you: Water arriving</div>
-        <div style="font-size: 0.78rem; color: #94a3b8; margin-bottom: 16px;">Your report helps calibrate drainage models and alerts neighbours.</div>
-        <label style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); padding: 8px 16px; border-radius: 10px; cursor: pointer; margin-bottom: 16px; font-size: 0.82rem; font-weight: 600; color: #f8fafc;">
+        <div style="font-size: 1.15rem; font-weight: 800; color: #34d399; margin-bottom: 6px;" id="reportConfirmTitle">Thank you: Water arriving</div>
+        <div style="font-size: 0.78rem; color: #94a3b8; margin-bottom: 16px;">Your report helps neighbours and improves the forecast.</div>
+        <label style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); padding: 10px 18px; border-radius: 12px; cursor: pointer; margin-bottom: 8px; font-size: 0.84rem; font-weight: 600; color: #f8fafc; width: 100%; box-sizing: border-box;">
           <span>📷 Add a photo from your library</span>
           <input type="file" accept="image/*" style="display: none;" onchange="handleReportPhoto(this)">
         </label>
+        <div style="font-size: 0.70rem; color: var(--text-muted); margin-bottom: 16px;">Optional. Photos may be shown on the location's page.</div>
         <div id="reportPhotoPreview" style="display: none; margin-bottom: 14px;">
           <img id="reportPhotoImg" style="max-width: 100%; max-height: 140px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15);">
         </div>
         <div style="display: flex; gap: 10px; justify-content: center;">
-          <button type="button" class="chip-btn" onclick="resetReportView()">Undo</button>
-          <button type="button" class="chip-btn active" onclick="closeReportModal()">Done</button>
+          <button type="button" class="chip-btn" id="btnReportUndo" onclick="resetReportView()" style="min-width: 90px; border-radius: 8px;">Undo (30)</button>
+          <button type="button" class="chip-btn active" onclick="closeReportModal()" style="min-width: 90px; border-radius: 8px; background: #0284c7; border-color: #38bdf8;">Done</button>
         </div>
       </div>
     </div>
@@ -3009,35 +3010,6 @@
 
       // Update Vehicle Card Label
       const vInfo = VEHICLES[activeVehicleKey] || VEHICLES.prius;
-      // Update Tide Header Summary (WeatherEventTide style)
-      const tideTimeEl = document.getElementById('tideHeaderTime');
-      const tideTwlEl = document.getElementById('tideHeaderTWL');
-      const tideObsEl = document.getElementById('tideHeaderObs');
-      const tideAstEl = document.getElementById('tideHeaderAst');
-      const tideSurgeEl = document.getElementById('tideHeaderSurge');
-      const tideCoastSurgeEl = document.getElementById('tideHeaderCoastSurge');
-      const tideMoonIconEl = document.getElementById('tideHeaderMoonIcon');
-      const tideMoonLabelEl = document.getElementById('tideHeaderMoonLabel');
-      const tideRangeBadge = document.getElementById('tideDateRangeBadge');
-
-      if (tideTimeEl) tideTimeEl.textContent = point.timeLabel + ' (' + point.dayLabel + ')';
-      if (tideTwlEl) tideTwlEl.innerHTML = point.twl.toFixed(2) + ' <span>ft</span>';
-      if (tideObsEl) tideObsEl.textContent = point.isPast ? (point.twl.toFixed(2) + ' ft') : 'Forecast';
-      if (tideAstEl) tideAstEl.textContent = point.ast.toFixed(2) + ' ft';
-      if (tideSurgeEl) tideSurgeEl.textContent = (point.baySurge >= 0 ? '+' : '') + point.baySurge.toFixed(2) + ' ft';
-      if (tideCoastSurgeEl) tideCoastSurgeEl.textContent = (liveCoastSurge >= 0 ? '+' : '') + liveCoastSurge.toFixed(2) + ' ft';
-
-      const moonInfo = getMoonPhaseInfo(new Date(point.timeMs));
-      if (tideMoonIconEl) tideMoonIconEl.textContent = moonInfo.icon;
-      if (tideMoonLabelEl) tideMoonLabelEl.textContent = moonInfo.name;
-
-      if (tideRangeBadge && tideTimeline.length > 0) {
-        const dStart = new Date(tideTimeline[0].timeMs);
-        const dEnd = new Date(tideTimeline[tideTimeline.length - 1].timeMs);
-        tideRangeBadge.textContent = dStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' – ' + dEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      }
-      renderTideExtremes();
-    
       const labelVeh = document.getElementById('labelVehicleClearance');
       if (labelVeh) {
         labelVeh.textContent = `${vInfo.name} (${vInfo.clearance}" CLR)`;
@@ -3979,10 +3951,21 @@
       if (modal) modal.classList.add('open');
     }
     function closeReportModal() {
+      if (reportUndoTimer) {
+        clearInterval(reportUndoTimer);
+        reportUndoTimer = null;
+      }
       const modal = document.getElementById('reportModal');
       if (modal) modal.classList.remove('open');
     }
+    let reportUndoTimer = null;
+    let reportUndoSeconds = 30;
+
     function resetReportView() {
+      if (reportUndoTimer) {
+        clearInterval(reportUndoTimer);
+        reportUndoTimer = null;
+      }
       const cView = document.getElementById('reportChoicesView');
       const confView = document.getElementById('reportConfirmView');
       const pPrev = document.getElementById('reportPhotoPreview');
@@ -4004,6 +3987,23 @@
       if (cView) cView.style.display = 'none';
       if (confView) confView.style.display = 'block';
       
+      const undoBtn = document.getElementById('btnReportUndo');
+      reportUndoSeconds = 30;
+      if (undoBtn) undoBtn.textContent = `Undo (${reportUndoSeconds})`;
+      if (reportUndoTimer) clearInterval(reportUndoTimer);
+      reportUndoTimer = setInterval(() => {
+        reportUndoSeconds--;
+        if (undoBtn) {
+          if (reportUndoSeconds > 0) {
+            undoBtn.textContent = `Undo (${reportUndoSeconds})`;
+          } else {
+            undoBtn.textContent = 'Undo';
+            clearInterval(reportUndoTimer);
+            reportUndoTimer = null;
+          }
+        }
+      }, 1000);
+
       try {
         localStorage.setItem('cwc_last_user_report', JSON.stringify({
           status: statusKey,
@@ -4040,6 +4040,14 @@
     let currentAppTab = 'data';
     function switchAppTab(tabId) {
       currentAppTab = tabId;
+      try {
+        if (window.history && window.history.replaceState) {
+          window.history.replaceState(null, '', '#' + tabId);
+        } else {
+          window.location.hash = tabId;
+        }
+      } catch (e) {}
+
       document.querySelectorAll('.app-tab-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tabId);
       });
@@ -4058,15 +4066,32 @@
         renderSvgHydrograph();
         renderTideExtremes();
       } else if (tabId === 'map') {
-        if (window.floodMapInstance) {
-          setTimeout(() => floodMapInstance.invalidateSize(), 100);
-          setTimeout(() => floodMapInstance.invalidateSize(), 350);
-          if (tideTimeline && tideTimeline[currentScrubIdx]) {
-            updateFloodMap(tideTimeline[currentScrubIdx].twl);
-          }
+        if (!floodMapInstance) {
+          initFloodMap();
+        }
+        if (floodMapInstance) {
+          setTimeout(() => {
+            floodMapInstance.invalidateSize();
+            floodMapInstance.setView([37.935, -122.528], floodMapInstance.getZoom() || 13, { animate: false });
+          }, 60);
+          setTimeout(() => {
+            floodMapInstance.invalidateSize();
+          }, 250);
+          setTimeout(() => {
+            floodMapInstance.invalidateSize();
+          }, 600);
+          const pt = (tideTimeline && tideTimeline.length > currentScrubIdx) ? tideTimeline[currentScrubIdx] : null;
+          if (pt) updateFloodMap(pt.streetTWL || pt.twl);
         }
       } else if (tabId === 'car') {
         renderRoadCrossSection();
+      }
+    }
+
+    function applyHashTab() {
+      const hash = window.location.hash.replace('#', '').toLowerCase();
+      if (hash === 'map' || hash === 'tide' || hash === 'car' || hash === 'data') {
+        switchAppTab(hash);
       }
     }
 
@@ -4082,6 +4107,7 @@
         btn.classList.toggle('active', isActive);
       });
       renderSvgHydrograph();
+      updateUI();
     }
 
     // Quick Day Jumper (-1 = yesterday peak, 0 = live now, 1 = tomorrow next peak)
@@ -4636,6 +4662,69 @@
       
       // Refresh NWS active alert banner
       renderNwsAlertBanner();
+
+      // Update Tide Header Summary (WeatherEventTide style on Tide Tab)
+      const tideTimeEl = document.getElementById('tideHeaderTime');
+      const tideTwlEl = document.getElementById('tideHeaderTWL');
+      const tideObsEl = document.getElementById('tideHeaderObs');
+      const tideAstEl = document.getElementById('tideHeaderAst');
+      const tideSurgeEl = document.getElementById('tideHeaderSurge');
+      const tideCoastSurgeEl = document.getElementById('tideHeaderCoastSurge');
+      const tideMoonIconEl = document.getElementById('tideHeaderMoonIcon');
+      const tideMoonLabelEl = document.getElementById('tideHeaderMoonLabel');
+      const tideRangeBadge = document.getElementById('tideDateRangeBadge');
+
+      const lbl1 = document.getElementById('tideLbl1');
+      const lbl2 = document.getElementById('tideLbl2');
+      const lbl3 = document.getElementById('tideLbl3');
+      const lbl4 = document.getElementById('tideLbl4');
+
+      if (tideTimeEl) tideTimeEl.textContent = point.timeLabel + ' (' + point.dayLabel + ')';
+
+      if (tideGraphMode === 'runoff') {
+        if (tideTwlEl) tideTwlEl.innerHTML = `+${(ptCreekRunoff || 0.0).toFixed(2)} <span>ft Runoff</span>`;
+        if (lbl1) lbl1.textContent = 'CREEK FLOW';
+        if (tideObsEl) tideObsEl.textContent = `${Math.round(ptFlowCfs)} cfs`;
+        if (lbl2) lbl2.textContent = 'CREEK STAGE';
+        if (tideAstEl) tideAstEl.textContent = `${liveCreekStageFt.toFixed(2)} ft`;
+        if (lbl3) lbl3.textContent = 'DELTA HEAD';
+        if (tideSurgeEl) tideSurgeEl.textContent = `+${liveDeltaRunoffFt.toFixed(2)} ft`;
+        if (lbl4) lbl4.textContent = '24H RAIN';
+        if (tideCoastSurgeEl) tideCoastSurgeEl.textContent = `${liveRain24hIn.toFixed(2)} in`;
+      } else if (tideGraphMode === 'surge') {
+        if (tideTwlEl) tideTwlEl.innerHTML = `${ptBaySurge >= 0 ? '+' : ''}${ptBaySurge.toFixed(2)} <span>ft Surge</span>`;
+        if (lbl1) lbl1.textContent = 'BAY SURGE';
+        if (tideObsEl) tideObsEl.textContent = `${ptBaySurge >= 0 ? '+' : ''}${ptBaySurge.toFixed(2)} ft`;
+        if (lbl2) lbl2.textContent = 'COAST SURGE';
+        if (tideAstEl) tideAstEl.textContent = `${liveCoastSurge >= 0 ? '+' : ''}${liveCoastSurge.toFixed(2)} ft`;
+        if (lbl3) lbl3.textContent = 'KELVIN WAVE';
+        if (tideSurgeEl) tideSurgeEl.textContent = isCoastWaveActive ? 'ACTIVE 🌊' : 'CALM';
+        if (lbl4) lbl4.textContent = 'TOTAL WATER';
+        if (tideCoastSurgeEl) tideCoastSurgeEl.textContent = `${point.twl.toFixed(2)} ft`;
+      } else {
+        if (tideTwlEl) tideTwlEl.innerHTML = `${point.twl.toFixed(2)} <span>ft</span>`;
+        if (lbl1) lbl1.textContent = 'OBSERVED';
+        if (tideObsEl) tideObsEl.textContent = point.isPast ? (`${point.twl.toFixed(2)} ft`) : 'Forecast';
+        if (lbl2) lbl2.textContent = 'ASTRO TIDE';
+        if (tideAstEl) tideAstEl.textContent = `${point.ast.toFixed(2)} ft`;
+        if (lbl3) lbl3.textContent = 'BAY SURGE';
+        if (tideSurgeEl) tideSurgeEl.textContent = `${ptBaySurge >= 0 ? '+' : ''}${ptBaySurge.toFixed(2)} ft`;
+        if (lbl4) lbl4.textContent = 'COAST SURGE';
+        if (tideCoastSurgeEl) tideCoastSurgeEl.textContent = `${liveCoastSurge >= 0 ? '+' : ''}${liveCoastSurge.toFixed(2)} ft`;
+      }
+
+      if (point.timeMs) {
+        const moonInfo = getMoonPhaseInfo(new Date(point.timeMs));
+        if (tideMoonIconEl) tideMoonIconEl.textContent = moonInfo.icon;
+        if (tideMoonLabelEl) tideMoonLabelEl.textContent = moonInfo.name;
+      }
+
+      if (tideRangeBadge && tideTimeline.length > 0) {
+        const dStart = new Date(tideTimeline[0].timeMs);
+        const dEnd = new Date(tideTimeline[tideTimeline.length - 1].timeMs);
+        tideRangeBadge.textContent = dStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' – ' + dEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }
+      renderTideExtremes();
 
       // Update SVG Road Cross Section Simulator
       updateSvgCrossSection(streetLevel, cfg, isRising);
@@ -5868,13 +5957,29 @@
       const xSpan = xMax - xMin;
       const yBottom = 200;
       const yTop = 30;
-      const elevMin = 5.0;
-      const elevMax = 8.2;
-      const elevSpan = elevMax - elevMin;
 
       const pt = tideTimeline[currentScrubIdx];
+      let elevMin = 5.0;
+      let elevMax = 8.2;
+      let valToPlot = pt.twl;
+      let labelText = `${pt.dayLabel} ${pt.timeLabel} (${pt.twl.toFixed(2)}')`;
+
+      if (tideGraphMode === 'runoff') {
+        elevMin = 0.0;
+        elevMax = 1.0;
+        valToPlot = pt.creekRunoff || 0.0;
+        const fl = Math.round(pt.creekFlowCfs || liveCreekFlowCfs);
+        labelText = `${pt.dayLabel} ${pt.timeLabel} • Runoff Head: +${valToPlot.toFixed(2)}' (${fl} cfs)`;
+      } else if (tideGraphMode === 'surge') {
+        elevMin = -0.5;
+        elevMax = 2.0;
+        valToPlot = pt.baySurge;
+        labelText = `${pt.dayLabel} ${pt.timeLabel} • Surge: ${(valToPlot >= 0 ? '+' : '')}${valToPlot.toFixed(2)}'`;
+      }
+
+      const elevSpan = elevMax - elevMin;
       const curX = xMin + (currentScrubIdx / (tideTimeline.length - 1)) * xSpan;
-      const curY = yBottom - ((Math.max(elevMin, Math.min(elevMax, pt.twl)) - elevMin) / elevSpan) * (yBottom - yTop);
+      const curY = yBottom - ((Math.max(elevMin, Math.min(elevMax, valToPlot)) - elevMin) / elevSpan) * (yBottom - yTop);
 
       const scrubLine = document.getElementById('svgScrubLine');
       const scrubDot = document.getElementById('svgScrubDot');
@@ -5890,11 +5995,11 @@
         scrubDot.setAttribute('cy', curY);
       }
       if (scrubBadge) {
-        const badgeX = Math.max(90, Math.min(550, curX));
+        const badgeX = Math.max(105, Math.min(535, curX));
         scrubBadge.setAttribute('transform', `translate(${badgeX}, 15)`);
       }
       if (scrubText) {
-        scrubText.textContent = `${pt.dayLabel} ${pt.timeLabel} (${pt.twl.toFixed(2)}')`;
+        scrubText.textContent = labelText;
       }
     }
 
@@ -5923,8 +6028,10 @@
     document.addEventListener('DOMContentLoaded', () => {
       applyRoadSimulatorVisibility();
       restoreSavedLocation();
+      applyHashTab();
+      window.addEventListener('hashchange', applyHashTab);
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=cwc-wet-v74').catch(() => {});
+        navigator.serviceWorker.register('./sw.js?v=cwc-wet-v75').catch(() => {});
       }
       applyVehicleAndCarView();
       initHydrographDragScrub();
