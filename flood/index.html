@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>CWC Marin Flood Watch WET • Weather • Event • Tide</title>
+  <title>CWC Marin Flood Watch FET • Flood • Event • Tide</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="favicon.ico">
   <meta name="theme-color" content="#0b0f19">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="CWC Marin Flood Watch WET">
+  <meta name="apple-mobile-web-app-title" content="CWC Marin Flood Watch FET">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -1102,6 +1102,259 @@
       background: rgba(0,0,0,0.45);
     }
 
+  
+    /* App Tabs Navigation & Tabbed Layout */
+    .app-tabs-nav {
+      display: flex;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 4px;
+      gap: 4px;
+      margin-bottom: 14px;
+      position: sticky;
+      top: 8px;
+      z-index: 999;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+    .app-tab-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 8px;
+      border-radius: 9px;
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      font-family: var(--font);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      white-space: nowrap;
+    }
+    .app-tab-btn:hover {
+      color: #f8fafc;
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .app-tab-btn.active {
+      background: #0284c7;
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(2, 132, 199, 0.45);
+    }
+    .tab-page {
+      display: none;
+      animation: fadeInTab 0.25s ease-out forwards;
+    }
+    .tab-page.active {
+      display: block;
+    }
+    @keyframes fadeInTab {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Tide Tab Summary Header (Inspired by WeatherEventTide Reference) */
+    .tide-summary-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
+    }
+    .tide-summary-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .tide-time-group {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+    .tide-time-text {
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      color: var(--cyan);
+      font-weight: 700;
+    }
+    .tide-twl-large {
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: #ffffff;
+      font-family: var(--mono);
+      letter-spacing: -0.02em;
+    }
+    .tide-twl-large span {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .tide-moon-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+    .tide-moon-icon {
+      font-size: 1.15rem;
+    }
+    .tide-moon-label {
+      font-size: 0.72rem;
+      color: #e2e8f0;
+      font-family: var(--font);
+      font-weight: 600;
+    }
+
+    .tide-readout-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .tide-readout-item {
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+    .tide-readout-lbl {
+      display: block;
+      font-size: 0.64rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      margin-bottom: 3px;
+    }
+    .tide-readout-val {
+      font-family: var(--mono);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .tide-mode-row {
+      display: flex;
+      margin-bottom: 12px;
+    }
+    .segmented-control {
+      display: flex;
+      width: 100%;
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 3px;
+      gap: 4px;
+    }
+    .seg-btn {
+      flex: 1;
+      padding: 7px 10px;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      color: #94a3b8;
+      font-size: 0.74rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .seg-btn:hover {
+      color: #f8fafc;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .seg-btn.active {
+      background: #0284c7;
+      color: #ffffff;
+      box-shadow: 0 1px 6px rgba(2, 132, 199, 0.35);
+    }
+
+    .tide-day-jump-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .tide-date-range-badge {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--cyan);
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    /* Quick Links on Data Page */
+    .data-quick-links {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .quick-link-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+    .quick-link-card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      background: rgba(15, 23, 42, 0.7);
+      transform: translateY(-1px);
+    }
+    .ql-icon {
+      font-size: 1.4rem;
+    }
+    .ql-text {
+      flex: 1;
+    }
+    .ql-title {
+      font-weight: 700;
+      font-size: 0.86rem;
+      color: #f8fafc;
+      margin-bottom: 2px;
+    }
+    .ql-desc {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+    .ql-arrow {
+      color: var(--cyan);
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    @media (max-width: 600px) {
+      .tide-readout-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .app-tab-btn {
+        font-size: 0.76rem;
+        padding: 8px 4px;
+      }
+    }
+    
   </style>
 </head>
 <body>
@@ -1113,11 +1366,12 @@
       <div class="brand">
         <div class="app-icon">🌊</div>
         <div class="brand-title">
-          <h1>CWC Marin Flood Watch WET</h1>
-          <p>Weather • Event • Tide & FloodWatch</p>
+          <h1>CWC Marin Flood Watch FET</h1>
+          <p>Flood • Event • Tide &amp; FloodWatch</p>
         </div>
       </div>
       <div class="header-actions">
+        <button class="btn-icon" id="btnReportCondition" title="Report Street Condition" onclick="openReportModal()" style="color:var(--amber);">📢</button>
         <button class="btn-icon" id="btnSyncNOAA" title="Refresh Live NOAA Tide Data" onclick="refreshLiveData(this)">🔄</button>
         <button class="btn-icon" title="Settings & Thresholds" onclick="openSettings()">⚙️</button>
       </div>
@@ -1134,7 +1388,25 @@
     </div>
 
     <!-- MAIN LIVE STATUS HERO BANNER -->
-    <section class="status-hero green" id="heroBanner">
+        <!-- MAIN NAVIGATION TABS -->
+    <nav class="app-tabs-nav" id="appTabsNav">
+      <button type="button" class="app-tab-btn active" data-tab="data" onclick="switchAppTab('data')">
+        <span>📊</span> <span>Data</span>
+      </button>
+      <button type="button" class="app-tab-btn" data-tab="tide" onclick="switchAppTab('tide')">
+        <span>🌊</span> <span>Tide</span>
+      </button>
+      <button type="button" class="app-tab-btn" data-tab="map" onclick="switchAppTab('map')">
+        <span>🗺️</span> <span>Map</span>
+      </button>
+      <button type="button" class="app-tab-btn" data-tab="car" onclick="switchAppTab('car')">
+        <span>🚗</span> <span>Car View</span>
+      </button>
+    </nav>
+
+    <!-- TAB 1: DATA & STATUS TILES -->
+    <div id="tabContentData" class="tab-page active">
+      <section class="status-hero green" id="heroBanner">
       <div class="status-header-row">
         <div class="badge-pill green" id="statusBadge">
           <span class="pulse-dot"></span>
@@ -1256,7 +1528,100 @@
       </div>
     </section>
 
-    <!-- TIME TRAVEL SCRUBBER (48-HOUR ROLLING WINDOW CENTERED ON LIVE NOW) -->
+          <!-- Quick Jump Cards to Other Tabs -->
+      <div class="data-quick-links">
+        <button type="button" class="quick-link-card" onclick="switchAppTab('tide')">
+          <div class="ql-icon">🌊</div>
+          <div class="ql-text">
+            <div class="ql-title">Interactive Tide &amp; Drainage Forecast</div>
+            <div class="ql-desc">48-Hour Hydrograph, Surge Trend, &amp; Scrubber</div>
+          </div>
+          <div class="ql-arrow">→</div>
+        </button>
+        <button type="button" class="quick-link-card" onclick="switchAppTab('map')">
+          <div class="ql-icon">🗺️</div>
+          <div class="ql-text">
+            <div class="ql-title">Marin Elevation &amp; Inundation Map</div>
+            <div class="ql-desc">Survey Benchmarks &amp; Real-Time Depth Pins</div>
+          </div>
+          <div class="ql-arrow">→</div>
+        </button>
+        <button type="button" class="quick-link-card" onclick="switchAppTab('car')">
+          <div class="ql-icon">🚗</div>
+          <div class="ql-text">
+            <div class="ql-title">Vehicle Clearance Simulator</div>
+            <div class="ql-desc">Pavement cross-section, ground clearance &amp; curb depths</div>
+          </div>
+          <div class="ql-arrow">→</div>
+        </button>
+      </div>
+    </div><!-- END TAB 1 (DATA) -->
+
+    <!-- TAB 2: TIDE CHART & TRENDS -->
+    <div id="tabContentTide" class="tab-page" style="display: none;">
+      <!-- Tide Header Summary (WeatherEventTide style) -->
+      <div class="tide-summary-box">
+        <div class="tide-summary-top">
+          <div class="tide-time-group">
+            <span class="tide-time-text" id="tideHeaderTime">--:--</span>
+            <span class="tide-twl-large" id="tideHeaderTWL">--.-- <span>ft</span></span>
+          </div>
+          <div class="tide-moon-group" id="tideHeaderMoonBox" title="Current Moon Phase">
+            <span class="tide-moon-icon" id="tideHeaderMoonIcon">🌕</span>
+            <span class="tide-moon-label" id="tideHeaderMoonLabel">Full Moon</span>
+          </div>
+        </div>
+
+        <div class="tide-readout-row">
+          <div class="tide-readout-item">
+            <span class="tide-readout-lbl">OBSERVED</span>
+            <span class="tide-readout-val" style="color: var(--cyan);" id="tideHeaderObs">--.-- ft</span>
+          </div>
+          <div class="tide-readout-item">
+            <span class="tide-readout-lbl">ASTRO TIDE</span>
+            <span class="tide-readout-val" style="color: #60a5fa;" id="tideHeaderAst">--.-- ft</span>
+          </div>
+          <div class="tide-readout-item">
+            <span class="tide-readout-lbl">BAY SURGE</span>
+            <span class="tide-readout-val" style="color: var(--amber);" id="tideHeaderSurge">+--.-- ft</span>
+          </div>
+          <div class="tide-readout-item">
+            <span class="tide-readout-lbl">COAST SURGE</span>
+            <span class="tide-readout-val" style="color: #f43f5e;" id="tideHeaderCoastSurge">+--.-- ft</span>
+          </div>
+        </div>
+
+        <!-- Mode Segmented Control (Inspired by WeatherEventTide Reference) -->
+        <div class="tide-mode-row">
+          <div class="segmented-control" style="flex-wrap: wrap;">
+            <button type="button" class="seg-btn active" id="btnModeTwl" onclick="setTideGraphMode('twl')">
+              ~ Day Tide
+            </button>
+            <button type="button" class="seg-btn" id="btnMode3Day" onclick="setTideGraphMode('threeday')">
+              〰 3-Day Forecast
+            </button>
+            <button type="button" class="seg-btn" id="btnModeSurge" onclick="setTideGraphMode('surge')">
+              🌊 Surge &amp; Kelvin Trend
+            </button>
+            <button type="button" class="seg-btn" id="btnModeRunoff" onclick="setTideGraphMode('runoff')">
+              🏞️ Watershed Runoff
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Day Jump Bar -->
+        <div class="tide-day-jump-row">
+          <div style="display: flex; gap: 6px;">
+            <button type="button" class="chip-btn" onclick="jumpToDay(-1)">← Yesterday</button>
+            <button type="button" class="chip-btn active" id="btnDayToday" onclick="jumpToDay(0)">📍 Today (Live)</button>
+            <button type="button" class="chip-btn" onclick="jumpToDay(1)">Tomorrow →</button>
+          </div>
+          <div class="tide-date-range-badge" id="tideDateRangeBadge">
+            48-Hour Rolling Window
+          </div>
+        </div>
+      </div>
+      <!-- TIME TRAVEL SCRUBBER (48-HOUR ROLLING WINDOW CENTERED ON LIVE NOW) -->
     <section class="scrubber-card">
       <div class="scrubber-header">
         <div class="scrubber-title">
@@ -1404,7 +1769,19 @@
       </div>
     </section>
 
-    <!-- INTERACTIVE REAL-TIME FLOOD & WATER ELEVATION MAP (MARIN COUNTY) -->
+          <!-- HIGH / LOW TIDE EXTREMES TABLE -->
+      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:14px; padding:14px; margin-top:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <span style="font-weight:700; font-size:0.86rem; color:#f8fafc;">📋 High &amp; Low Tide Cycle Forecast</span>
+          <span style="font-size:0.72rem; color:var(--text-muted);">Tap any row to scrub ⏱️</span>
+        </div>
+        <div id="tideExtremesList"></div>
+      </div>
+    </div><!-- END TAB 2 (TIDE) -->
+
+    <!-- TAB 3: MARIN COUNTY FLOOD & ELEVATION MAP -->
+    <div id="tabContentMap" class="tab-page" style="display: none;">
+      <!-- INTERACTIVE REAL-TIME FLOOD & WATER ELEVATION MAP (MARIN COUNTY) -->
     <section class="card map-card" id="mapCard">
       <div class="card-title" style="flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
         <div>
@@ -1433,8 +1810,12 @@
       </div>
     </section>
 
-    <!-- INTERACTIVE ROAD CROSS-SECTION SIMULATOR (SVG) -->
-    <section class="cross-section-card" id="roadCard" style="display:none;">
+        </div><!-- END TAB 3 (MAP) -->
+
+    <!-- TAB 4: VEHICLE CLEARANCE & CROSS-SECTION SIMULATOR -->
+    <div id="tabContentCar" class="tab-page" style="display: none;">
+      <!-- INTERACTIVE ROAD CROSS-SECTION SIMULATOR (SVG) -->
+    <section class="cross-section-card" id="roadCard" style="display:block;">
       <div class="card-title" style="flex-wrap: wrap; gap: 8px;">
         <div>
           <span id="roadSimTitle">🚗 Street Parking &amp; Vehicle Clearance Simulator</span>
@@ -1652,7 +2033,61 @@
         </svg>
       </div>
     </section>
+    </div><!-- END TAB 4 (CAR VIEW) -->
 
+  </div>
+
+    <!-- COMMUNITY STREET CONDITION REPORT MODAL (Inspired by Reference) -->
+  <div class="modal" id="reportModal" onclick="if(event.target===this)closeReportModal()">
+    <div class="modal-box" style="max-width: 480px;">
+      <div class="modal-header">
+        <div>
+          <h2 style="font-size: 1.05rem; font-weight: 800; color: #f8fafc; margin-bottom: 2px;">What do you see here?</h2>
+          <div style="font-size: 0.75rem; color: var(--cyan); font-family: var(--mono);" id="reportLocationLabel">Larkspur Plaza Dr (at Creekside Dr)</div>
+        </div>
+        <button class="btn-icon" onclick="closeReportModal()">✕</button>
+      </div>
+
+      <div id="reportChoicesView">
+        <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 12px;">
+          Tap to submit your real-time observation. Ground truth calibrates our drainage lag models:
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+          <button type="button" onclick="submitStreetReport('arriving')" style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 12px; padding: 12px; text-align: left; cursor: pointer;">
+            <div style="font-weight: 700; color: #fcd34d; font-size: 0.88rem; margin-bottom: 3px;">🌊 Water arriving</div>
+            <div style="font-size: 0.72rem; color: #94a3b8; line-height: 1.3;">Water is just reaching gutters or apron</div>
+          </button>
+          <button type="button" onclick="submitStreetReport('flooded')" style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 12px; padding: 12px; text-align: left; cursor: pointer;">
+            <div style="font-weight: 700; color: #f87171; font-size: 0.88rem; margin-bottom: 3px;">🚨 Flooded</div>
+            <div style="font-size: 0.72rem; color: #94a3b8; line-height: 1.3;">Water actively across roadway or stalls</div>
+          </button>
+          <button type="button" onclick="submitStreetReport('draining')" style="background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 12px; padding: 12px; text-align: left; cursor: pointer;">
+            <div style="font-weight: 700; color: #38bdf8; font-size: 0.88rem; margin-bottom: 3px;">💧 Draining</div>
+            <div style="font-size: 0.72rem; color: #94a3b8; line-height: 1.3;">Passable again, residual puddles left</div>
+          </button>
+          <button type="button" onclick="submitStreetReport('clear')" style="background: rgba(34, 197, 94, 0.12); border: 1px solid rgba(34, 197, 94, 0.4); border-radius: 12px; padding: 12px; text-align: left; cursor: pointer;">
+            <div style="font-weight: 700; color: #4ade80; font-size: 0.88rem; margin-bottom: 3px;">✅ All clear</div>
+            <div style="font-size: 0.72rem; color: #94a3b8; line-height: 1.3;">Asphalt completely dry &amp; open</div>
+          </button>
+        </div>
+      </div>
+
+      <div id="reportConfirmView" style="display: none; text-align: center; padding: 14px 6px;">
+        <div style="font-size: 1.1rem; font-weight: 800; color: #4ade80; margin-bottom: 6px;" id="reportConfirmTitle">Thank you: Water arriving</div>
+        <div style="font-size: 0.78rem; color: #94a3b8; margin-bottom: 16px;">Your report helps calibrate drainage models and alerts neighbours.</div>
+        <label style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); padding: 8px 16px; border-radius: 10px; cursor: pointer; margin-bottom: 16px; font-size: 0.82rem; font-weight: 600; color: #f8fafc;">
+          <span>📷 Add a photo from your library</span>
+          <input type="file" accept="image/*" style="display: none;" onchange="handleReportPhoto(this)">
+        </label>
+        <div id="reportPhotoPreview" style="display: none; margin-bottom: 14px;">
+          <img id="reportPhotoImg" style="max-width: 100%; max-height: 140px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15);">
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+          <button type="button" class="chip-btn" onclick="resetReportView()">Undo</button>
+          <button type="button" class="chip-btn active" onclick="closeReportModal()">Done</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- SETTINGS MODAL -->
@@ -2559,6 +2994,35 @@
 
       // Update Vehicle Card Label
       const vInfo = VEHICLES[activeVehicleKey] || VEHICLES.prius;
+      // Update Tide Header Summary (WeatherEventTide style)
+      const tideTimeEl = document.getElementById('tideHeaderTime');
+      const tideTwlEl = document.getElementById('tideHeaderTWL');
+      const tideObsEl = document.getElementById('tideHeaderObs');
+      const tideAstEl = document.getElementById('tideHeaderAst');
+      const tideSurgeEl = document.getElementById('tideHeaderSurge');
+      const tideCoastSurgeEl = document.getElementById('tideHeaderCoastSurge');
+      const tideMoonIconEl = document.getElementById('tideHeaderMoonIcon');
+      const tideMoonLabelEl = document.getElementById('tideHeaderMoonLabel');
+      const tideRangeBadge = document.getElementById('tideDateRangeBadge');
+
+      if (tideTimeEl) tideTimeEl.textContent = point.timeLabel + ' (' + point.dayLabel + ')';
+      if (tideTwlEl) tideTwlEl.innerHTML = point.twl.toFixed(2) + ' <span>ft</span>';
+      if (tideObsEl) tideObsEl.textContent = point.isPast ? (point.twl.toFixed(2) + ' ft') : 'Forecast';
+      if (tideAstEl) tideAstEl.textContent = point.ast.toFixed(2) + ' ft';
+      if (tideSurgeEl) tideSurgeEl.textContent = (point.baySurge >= 0 ? '+' : '') + point.baySurge.toFixed(2) + ' ft';
+      if (tideCoastSurgeEl) tideCoastSurgeEl.textContent = (liveCoastSurge >= 0 ? '+' : '') + liveCoastSurge.toFixed(2) + ' ft';
+
+      const moonInfo = getMoonPhaseInfo(new Date(point.timeMs));
+      if (tideMoonIconEl) tideMoonIconEl.textContent = moonInfo.icon;
+      if (tideMoonLabelEl) tideMoonLabelEl.textContent = moonInfo.name;
+
+      if (tideRangeBadge && tideTimeline.length > 0) {
+        const dStart = new Date(tideTimeline[0].timeMs);
+        const dEnd = new Date(tideTimeline[tideTimeline.length - 1].timeMs);
+        tideRangeBadge.textContent = dStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' – ' + dEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }
+      renderTideExtremes();
+    
       const labelVeh = document.getElementById('labelVehicleClearance');
       if (labelVeh) {
         labelVeh.textContent = `${vInfo.name} (${vInfo.clearance}" CLR)`;
@@ -3475,6 +3939,63 @@
       if (modal) modal.classList.remove('open');
     }
 
+    
+    // Community Street Condition Reporting Modal
+    function openReportModal() {
+      const modal = document.getElementById('reportModal');
+      const lbl = document.getElementById('reportLocationLabel');
+      const cfg = THRESHOLDS[activeLocKey] || THRESHOLDS.larkspur;
+      if (lbl) lbl.textContent = cfg.name;
+      resetReportView();
+      if (modal) modal.classList.add('open');
+    }
+    function closeReportModal() {
+      const modal = document.getElementById('reportModal');
+      if (modal) modal.classList.remove('open');
+    }
+    function resetReportView() {
+      const cView = document.getElementById('reportChoicesView');
+      const confView = document.getElementById('reportConfirmView');
+      const pPrev = document.getElementById('reportPhotoPreview');
+      if (cView) cView.style.display = 'block';
+      if (confView) confView.style.display = 'none';
+      if (pPrev) pPrev.style.display = 'none';
+    }
+    function submitStreetReport(statusKey) {
+      const titles = {
+        'arriving': 'Thank you: Water arriving',
+        'flooded': 'Thank you: Flooded',
+        'draining': 'Thank you: Draining',
+        'clear': 'Thank you: All clear'
+      };
+      const titleEl = document.getElementById('reportConfirmTitle');
+      if (titleEl) titleEl.textContent = titles[statusKey] || 'Thank you for your report!';
+      const cView = document.getElementById('reportChoicesView');
+      const confView = document.getElementById('reportConfirmView');
+      if (cView) cView.style.display = 'none';
+      if (confView) confView.style.display = 'block';
+      
+      try {
+        localStorage.setItem('cwc_last_user_report', JSON.stringify({
+          status: statusKey,
+          loc: activeLocKey,
+          time: Date.now()
+        }));
+      } catch(e) {}
+    }
+    function handleReportPhoto(input) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.getElementById('reportPhotoImg');
+          const prev = document.getElementById('reportPhotoPreview');
+          if (img) img.src = e.target.result;
+          if (prev) prev.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+    
     function openNoaaModal(e) {
       if (e) e.stopPropagation();
       const modal = document.getElementById('noaaModal');
@@ -3485,6 +4006,131 @@
       if (modal) modal.classList.remove('open');
     }
 
+    
+    // App Tab Navigation
+    let currentAppTab = 'data';
+    function switchAppTab(tabId) {
+      currentAppTab = tabId;
+      document.querySelectorAll('.app-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabId);
+      });
+      document.querySelectorAll('.tab-page').forEach(page => {
+        page.classList.remove('active');
+        page.style.display = 'none';
+      });
+      const targetPage = document.getElementById('tabContent' + tabId.charAt(0).toUpperCase() + tabId.slice(1));
+      if (targetPage) {
+        targetPage.classList.add('active');
+        targetPage.style.display = 'block';
+      }
+
+      if (tabId === 'tide') {
+        renderSvgHydrograph();
+        renderTideExtremes();
+      } else if (tabId === 'map') {
+        if (window.marinMap) {
+          setTimeout(() => marinMap.invalidateSize(), 150);
+        }
+      } else if (tabId === 'car') {
+        renderRoadCrossSection();
+      }
+    }
+
+    // Tide Tab View Mode Switcher ('twl', 'surge', 'runoff')
+    let tideGraphMode = 'twl';
+    function setTideGraphMode(mode) {
+      tideGraphMode = mode;
+      document.querySelectorAll('.seg-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.id === ('btnMode' + mode.charAt(0).toUpperCase() + mode.slice(1)));
+      });
+      renderSvgHydrograph();
+    }
+
+    // Quick Day Jumper (-1 = yesterday peak, 0 = live now, 1 = tomorrow next peak)
+    function jumpToDay(offsetDays) {
+      if (!tideTimeline || !tideTimeline.length) return;
+      if (offsetDays === 0) {
+        onScrub(144);
+      } else if (offsetDays === -1) {
+        let bestIdx = 72;
+        let maxTwl = -999;
+        for (let i = 0; i <= 120; i++) {
+          if (tideTimeline[i].twl > maxTwl) {
+            maxTwl = tideTimeline[i].twl;
+            bestIdx = i;
+          }
+        }
+        onScrub(bestIdx);
+      } else if (offsetDays === 1) {
+        let bestIdx = 216;
+        let maxTwl = -999;
+        for (let i = 150; i < tideTimeline.length; i++) {
+          if (tideTimeline[i].twl > maxTwl) {
+            maxTwl = tideTimeline[i].twl;
+            bestIdx = i;
+          }
+        }
+        onScrub(bestIdx);
+      }
+    }
+
+    // Moon Phase Calculation
+    function getMoonPhaseInfo(date) {
+      const knownNewMoon = new Date('2024-01-11T11:57:00Z').getTime();
+      const diffDays = (date.getTime() - knownNewMoon) / (1000 * 60 * 60 * 24);
+      const cycle = (diffDays % 29.53058867 + 29.53058867) % 29.53058867;
+      if (cycle < 1.84) return { name: 'New Moon (King Tide)', icon: '🌑' };
+      if (cycle < 5.53) return { name: 'Waxing Crescent', icon: '🌒' };
+      if (cycle < 9.22) return { name: 'First Quarter', icon: '🌓' };
+      if (cycle < 12.91) return { name: 'Waxing Gibbous', icon: '🌔' };
+      if (cycle < 16.61) return { name: 'Full Moon (King Tide)', icon: '🌕' };
+      if (cycle < 20.30) return { name: 'Waning Gibbous', icon: '🌖' };
+      if (cycle < 23.99) return { name: 'Last Quarter', icon: '🌗' };
+      if (cycle < 27.68) return { name: 'Waning Crescent', icon: '🌘' };
+      return { name: 'New Moon (King Tide)', icon: '🌑' };
+    }
+
+    // Dynamic High / Low Tide Extremes Table (Inspired by WET Reference)
+    function renderTideExtremes() {
+      const container = document.getElementById('tideExtremesList');
+      if (!container || !tideTimeline.length) return;
+      const extremes = [];
+      for (let i = 2; i < tideTimeline.length - 2; i++) {
+        const prev = tideTimeline[i - 1].twl;
+        const cur = tideTimeline[i].twl;
+        const next = tideTimeline[i + 1].twl;
+        if (cur > prev && cur > next && cur >= tideTimeline[i - 2].twl && cur >= tideTimeline[i + 2].twl) {
+          extremes.push({ idx: i, type: 'high', pt: tideTimeline[i] });
+        } else if (cur < prev && cur < next && cur <= tideTimeline[i - 2].twl && cur <= tideTimeline[i + 2].twl) {
+          extremes.push({ idx: i, type: 'low', pt: tideTimeline[i] });
+        }
+      }
+
+      let html = '';
+      const cfg = THRESHOLDS[activeLocKey] || THRESHOLDS.larkspur;
+      const floodThresh = cfg.sagGutter || cfg.gutter || 7.22;
+
+      extremes.forEach(ext => {
+        const isHigh = ext.type === 'high';
+        const isFlooding = isHigh && (ext.pt.twl >= floodThresh);
+        const barBg = isFlooding ? 'rgba(245, 158, 11, 0.16)' : 'rgba(15, 23, 42, 0.45)';
+        const barBorder = isFlooding ? 'rgba(245, 158, 11, 0.4)' : 'rgba(255, 255, 255, 0.08)';
+        const color = isFlooding ? 'var(--amber)' : (isHigh ? 'var(--cyan)' : '#94a3b8');
+        const arrow = isHigh ? '▲' : '▼';
+        const warning = isFlooding ? ' ⚠️' : '';
+        html += '<div style="display:flex; justify-content:space-between; align-items:center; padding:9px 14px; background:' + barBg + '; border:1px solid ' + barBorder + '; border-radius:10px; margin-bottom:6px; cursor:pointer;" onclick="onScrub(' + ext.idx + ')">' +
+          '<div style="display:flex; align-items:center; gap:8px;">' +
+            '<span style="font-family:var(--mono); font-size:0.75rem; color:#94a3b8;">' + ext.pt.dayLabel + ' ' + ext.pt.timeLabel + '</span>' +
+            '<span style="color:' + color + '; font-size:0.75rem; font-weight:700;">' + arrow + ' ' + (isHigh ? 'High Tide' : 'Low Tide') + '</span>' +
+          '</div>' +
+          '<div style="font-family:var(--mono); font-size:0.86rem; font-weight:700; color:' + color + ';">' +
+            ext.pt.twl.toFixed(2) + ' ft' + warning +
+          '</div>' +
+        '</div>';
+      });
+      container.innerHTML = html || '<div style="color:var(--text-muted); font-size:0.75rem;">Computing tide cycles...</div>';
+    }
+    
     function updateUI() {
       if (!tideTimeline.length) return;
       const point = tideTimeline[currentScrubIdx];
@@ -4868,10 +5514,22 @@
       const xMin = 55;
       const xMax = 585;
       const xSpan = xMax - xMin; // 530px
-      const yBottom = 200; // Elevation 5.0'
-      const yTop = 30;    // Elevation 8.0'
-      const elevMin = 5.0;
-      const elevMax = 8.2;
+      const yBottom = 200;
+      const yTop = 30;
+
+      // Dynamic Y-axis scale based on graph mode:
+      // - 'twl': 5.0' to 8.2' (Total water level & road thresholds)
+      // - 'surge': -0.5' to +2.0' (Bay surge vs Pacific coast Kelvin surge)
+      // - 'runoff': 0.0' to 1.0' (Ross Creek cfs head & Sacramento Delta outflow)
+      let elevMin = 5.0;
+      let elevMax = 8.2;
+      if (tideGraphMode === 'surge') {
+        elevMin = -0.5;
+        elevMax = 2.0;
+      } else if (tideGraphMode === 'runoff') {
+        elevMin = 0.0;
+        elevMax = 1.0;
+      }
       const elevSpan = elevMax - elevMin;
 
       function getX(idx) {
@@ -4884,22 +5542,54 @@
 
       let twlPoints = [];
       let astPoints = [];
-
-      for (let i = 0; i < tideTimeline.length; i++) {
-        const x = getX(i);
-        const yTwl = getY(tideTimeline[i].twl);
-        const yAst = getY(tideTimeline[i].ast);
-        twlPoints.push(`${x.toFixed(1)},${yTwl.toFixed(1)}`);
-        astPoints.push(`${x.toFixed(1)},${yAst.toFixed(1)}`);
-      }
-
       let streetPoints = [];
-      for (let i = 0; i < tideTimeline.length; i++) {
-        const x = getX(i);
-        const pt = tideTimeline[i];
-        const sLevel = (pt.streetTWL !== undefined && pt.streetTWL > 0) ? pt.streetTWL : pt.twl;
-        const yStreet = getY(sLevel);
-        streetPoints.push(`${x.toFixed(1)},${yStreet.toFixed(1)}`);
+
+      if (tideGraphMode === 'surge') {
+        // Mode: Surge & Kelvin Trend
+        // Primary curve = Bay Surge (Richmond 9414863)
+        // Baseline curve = Pacific Coast Surge (Monterey 9413450)
+        // Reference curve = 0.00' (Astro zero-surge)
+        for (let i = 0; i < tideTimeline.length; i++) {
+          const x = getX(i);
+          const pt = tideTimeline[i];
+          const ySurge = getY(pt.baySurge);
+          const yCoast = getY(liveCoastSurge);
+          const yZero = getY(0.0);
+          twlPoints.push(x.toFixed(1) + ',' + ySurge.toFixed(1));
+          streetPoints.push(x.toFixed(1) + ',' + yCoast.toFixed(1));
+          astPoints.push(x.toFixed(1) + ',' + yZero.toFixed(1));
+        }
+      } else if (tideGraphMode === 'runoff') {
+        // Mode: Watershed Runoff
+        // Primary curve = Creek Runoff Head (Ross Creek)
+        // Secondary curve = Delta Runoff Head (Sacramento River)
+        for (let i = 0; i < tideTimeline.length; i++) {
+          const x = getX(i);
+          const pt = tideTimeline[i];
+          const yCreek = getY(pt.creekRunoff || 0.0);
+          const yDelta = getY(liveDeltaRunoffFt || 0.0);
+          const yZero = getY(0.0);
+          twlPoints.push(x.toFixed(1) + ',' + yCreek.toFixed(1));
+          streetPoints.push(x.toFixed(1) + ',' + yDelta.toFixed(1));
+          astPoints.push(x.toFixed(1) + ',' + yZero.toFixed(1));
+        }
+      } else {
+        // Standard Day Tide (TWL)
+        for (let i = 0; i < tideTimeline.length; i++) {
+          const x = getX(i);
+          const yTwl = getY(tideTimeline[i].twl);
+          const yAst = getY(tideTimeline[i].ast);
+          twlPoints.push(x.toFixed(1) + ',' + yTwl.toFixed(1));
+          astPoints.push(x.toFixed(1) + ',' + yAst.toFixed(1));
+        }
+
+        for (let i = 0; i < tideTimeline.length; i++) {
+          const x = getX(i);
+          const pt = tideTimeline[i];
+          const sLevel = (pt.streetTWL !== undefined && pt.streetTWL > 0) ? pt.streetTWL : pt.twl;
+          const yStreet = getY(sLevel);
+          streetPoints.push(x.toFixed(1) + ',' + yStreet.toFixed(1));
+        }
       }
 
       const twlPathD = "M " + twlPoints.join(" L ");
